@@ -1,0 +1,1341 @@
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap');
+
+  :root {
+    --ink: #0b0d10;
+    --panel: #14171c;
+    --panel-2: #1b1f26;
+    --line: rgba(255, 255, 255, 0.07);
+    --line-strong: rgba(255, 255, 255, 0.14);
+    --text: #eef1ef;
+    --muted: #79808a;
+    --amber: #d6f84c;
+    --amber-dim: rgba(214, 248, 76, 0.13);
+    --good: #3fd68a;
+    --danger: #ff5a4d;
+    --head: 'Anton', 'Archivo', system-ui, sans-serif;
+    --disp: 'Archivo', system-ui, sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --body: system-ui, -apple-system, sans-serif;
+  }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  html, body { margin: 0; background: var(--ink); }
+
+  body {
+    font-family: var(--body);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+  }
+
+  #app {
+    width: 100%;
+    max-width: 480px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background:
+      radial-gradient(120% 60% at 50% -10%, rgba(214,248,76,0.07), transparent 60%),
+      var(--ink);
+  }
+
+  /* Header */
+  header {
+    padding: 22px 20px 14px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .wordmark {
+    font-family: var(--head);
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    font-size: 32px;
+    line-height: 1;
+    color: var(--text);
+    text-transform: uppercase;
+  }
+  .wordmark b {
+    color: var(--ink);
+    background: var(--amber);
+    padding: 0 6px;
+    border-radius: 3px;
+  }
+  .datestamp {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 24px;
+    padding: 0 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: var(--disp);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 15px;
+    padding: 14px 0;
+    cursor: pointer;
+    position: relative;
+  }
+  .tab.active { color: var(--text); }
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: -1px;
+    height: 2px;
+    background: var(--amber);
+  }
+
+  main { flex: 1; padding: 20px 16px 120px; }
+
+  /* Empty states */
+  .empty {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+  }
+  .empty .big {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 22px;
+    color: var(--text);
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .empty p { font-size: 14px; line-height: 1.5; margin: 0 auto; max-width: 260px; }
+
+  /* Exercise card */
+  .exercise {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--amber);
+    border-radius: 4px;
+    margin-bottom: 14px;
+    overflow: hidden;
+  }
+  .ex-name { text-transform: uppercase; }
+  .ex-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 10px;
+    gap: 10px;
+  }
+  .ex-name {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 20px;
+    letter-spacing: 0.03em;
+  }
+  .ex-best {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--amber);
+    background: var(--amber-dim);
+    padding: 3px 7px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .ex-del {
+    background: none; border: none; color: var(--muted);
+    font-size: 18px; cursor: pointer; padding: 4px 6px; line-height: 1;
+  }
+  .ex-del:hover { color: var(--danger); }
+
+  /* Set grid */
+  .set-labels, .set-row {
+    display: grid;
+    grid-template-columns: 30px 1fr 1fr 48px;
+    gap: 8px;
+    align-items: center;
+    padding: 0 16px;
+  }
+  .set-labels {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-top: 4px;
+    padding-bottom: 6px;
+  }
+  .set-labels span:first-child { text-align: center; }
+  .set-labels span:last-child { text-align: center; }
+
+  .set-row { padding-top: 5px; padding-bottom: 5px; }
+  .set-row.done { background: rgba(111,191,115,0.06); }
+  .set-num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--muted);
+    text-align: center;
+  }
+  .set-row.done .set-num { color: var(--good); }
+
+  .set-row input {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--text);
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 17px;
+    text-align: center;
+    padding: 9px 4px;
+    outline: none;
+    -moz-appearance: textfield;
+  }
+  .set-row input::-webkit-outer-spin-button,
+  .set-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .set-row input:focus { border-color: var(--amber); }
+  .set-row input::placeholder { color: var(--muted); font-weight: 500; }
+
+  .check {
+    width: 40px; height: 40px;
+    justify-self: center;
+    border-radius: 10px;
+    border: 1px solid var(--line-strong);
+    background: var(--panel-2);
+    color: var(--muted);
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .08s ease;
+    position: relative;
+    overflow: visible;
+  }
+  .check:active { transform: scale(0.92); }
+  .set-row.done .check {
+    background: var(--good);
+    border-color: var(--good);
+    color: #12220f;
+  }
+
+  .set-del {
+    grid-column: 1 / -1;
+  }
+
+  .addset {
+    width: calc(100% - 32px);
+    margin: 8px 16px 14px;
+    background: none;
+    border: 1px dashed var(--line-strong);
+    color: var(--muted);
+    border-radius: 10px;
+    padding: 9px;
+    font-family: var(--disp);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .addset:hover { color: var(--text); border-color: var(--line-strong); }
+
+  .add-ex {
+    width: 100%;
+    background: var(--panel);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    border-radius: 6px;
+    padding: 16px;
+    font-family: var(--disp);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  .add-ex:hover { border-color: var(--amber); }
+
+  /* Clocks strip */
+  #clocks {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 12px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--ink);
+    border-bottom: 1px solid var(--line);
+  }
+  .total-time {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    font-variant-numeric: tabular-nums;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .total-time .live {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--amber);
+    animation: blink 1.4s infinite;
+    box-shadow: 0 0 10px rgba(214,248,76,0.6);
+  }
+  .total-time .ms {
+    font-size: 22px;
+    color: var(--muted);
+    align-self: flex-end;
+    margin-bottom: 3px;
+    margin-left: -4px;
+  }
+  .total-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 6px;
+  }
+  .rest {
+    text-align: right;
+    padding: 8px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    min-width: 94px;
+  }
+  .rest { cursor: pointer; }
+  .rest.running { border-color: rgba(214,248,76,0.45); background: var(--amber-dim); }
+  .rest.ready { border-color: rgba(111,191,115,0.45); background: rgba(111,191,115,0.10); }
+  .rest.ready .rest-time { color: var(--good); font-size: 18px; }
+  .rest.ready .dot { background: var(--good); animation: none; }
+  .rest-time {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .rest.running .rest-time { color: var(--amber); }
+  .rest-lbl {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: flex; align-items: center; gap: 5px; justify-content: flex-end;
+  }
+  .rest .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); }
+  .rest.running .dot { background: var(--amber); animation: blink 1s infinite; }
+  @keyframes blink { 50% { opacity: 0.2; } }
+
+  /* Check stamp animation */
+  .stamp {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%,-50%);
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--good);
+    pointer-events: none;
+    text-shadow: 0 0 14px rgba(111,191,115,0.7);
+    animation: stampPop 0.55s cubic-bezier(.2,.8,.2,1) forwards;
+  }
+  @keyframes stampPop {
+    0%   { transform: translate(-50%,-50%) scale(2.6) rotate(-22deg); opacity: 0; }
+    35%  { transform: translate(-50%,-50%) scale(0.82) rotate(-7deg); opacity: 1; }
+    55%  { transform: translate(-50%,-50%) scale(1.0) rotate(-9deg); opacity: 1; }
+    100% { transform: translate(-50%,-50%) scale(1.25) rotate(-9deg); opacity: 0; }
+  }
+  .set-row.flash { animation: rowFlash 0.6s ease-out; }
+  @keyframes rowFlash {
+    0%   { background: rgba(111,191,115,0.30); }
+    100% { background: rgba(111,191,115,0.06); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stamp { animation-duration: 0.3s; }
+    .total-time .live, .rest.running .dot { animation: none; }
+  }
+
+  /* Bottom bar */
+  .bottombar {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: center;
+    padding: 14px 16px calc(16px + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--ink) 55%, transparent);
+    pointer-events: none;
+  }
+  .bottombar .inner {
+    width: 100%;
+    max-width: 480px - 32px;
+    pointer-events: auto;
+  }
+  .btn-primary {
+    width: 100%;
+    background: var(--amber);
+    color: #12160a;
+    border: none;
+    border-radius: 6px;
+    padding: 17px;
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 17px;
+    cursor: pointer;
+  }
+  .btn-primary:active { filter: brightness(0.94); }
+  .btn-secondary {
+    width: 100%;
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--line-strong);
+    border-radius: 6px;
+    padding: 17px;
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 17px;
+    cursor: pointer;
+  }
+
+  .session-stats {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding: 14px 16px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+  }
+  .stat .num {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--amber);
+    letter-spacing: -0.01em;
+  }
+  .stat .lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* History */
+  .hist {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .hist-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 16px;
+    cursor: pointer;
+  }
+  .hist-date {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: 0.03em;
+  }
+  .hist-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 3px;
+  }
+  .hist-vol {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--amber);
+    text-align: right;
+  }
+  .hist-vol small { display: block; font-size: 9px; color: var(--muted); letter-spacing: 0.08em; }
+  .hist-body { padding: 0 16px 14px; border-top: 1px solid var(--line); display: none; }
+  .hist.open .hist-body { display: block; }
+  .hist-ex { padding-top: 12px; }
+  .hist-ex .n {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 16px;
+    letter-spacing: 0.03em;
+    margin-bottom: 4px;
+  }
+  .hist-ex .s {
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .hist-del {
+    margin-top: 14px;
+    background: none;
+    border: 1px solid var(--line-strong);
+    color: var(--muted);
+    border-radius: 9px;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-family: var(--disp);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .hist-del:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* Today banner */
+  .today-banner {
+    background: var(--amber);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 14px 16px;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .today-banner .tb-lbl {
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+  .today-banner .tb-name {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 20px;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+  .today-banner button {
+    background: var(--ink);
+    color: var(--amber);
+    border: none;
+    border-radius: 6px;
+    padding: 11px 16px;
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* Template card */
+  .tpl {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--amber);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    padding: 14px 16px;
+  }
+  .tpl-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .tpl-name {
+    font-family: var(--disp);
+    font-weight: 800;
+    font-size: 19px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .tpl-sub {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .tpl-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .tpl-start {
+    background: var(--amber);
+    color: var(--ink);
+    border: none;
+    border-radius: 6px;
+    padding: 9px 14px;
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .tpl-icon {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 6px;
+    width: 36px; height: 36px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tpl-icon:hover { color: var(--danger); border-color: var(--danger); }
+
+  .days {
+    display: flex;
+    gap: 5px;
+    margin-top: 12px;
+  }
+  .day {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    border-radius: 5px;
+    padding: 7px 0;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.04em;
+    text-align: center;
+    cursor: pointer;
+    text-transform: uppercase;
+  }
+  .day.on {
+    background: var(--amber);
+    border-color: var(--amber);
+    color: var(--ink);
+  }
+
+  /* Template editor */
+  .tpl-editor .ed-name {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: var(--disp);
+    font-weight: 700;
+    font-size: 18px;
+    padding: 13px;
+    outline: none;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+  .tpl-editor .ed-name:focus { border-color: var(--amber); }
+  .ed-ex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+  }
+  .ed-ex .en {
+    font-family: var(--disp);
+    font-weight: 600;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+  .stepper { display: flex; align-items: center; gap: 10px; }
+  .stepper button {
+    width: 30px; height: 30px;
+    background: var(--panel-2);
+    border: 1px solid var(--line-strong);
+    color: var(--text);
+    border-radius: 6px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .stepper .cnt {
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 15px;
+    min-width: 46px;
+    text-align: center;
+  }
+  .stepper .cnt small { color: var(--muted); font-weight: 500; }
+  .ed-del {
+    background: none; border: none; color: var(--muted);
+    font-size: 16px; cursor: pointer; padding: 4px;
+  }
+  .ed-del:hover { color: var(--danger); }
+  .ed-row { display: flex; gap: 10px; margin-top: 14px; }
+  .ed-row button { flex: 1; }
+
+  /* Sheet (exercise picker) */
+  .sheet-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55);
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 50;
+  }
+  .sheet-bg.show { display: flex; }
+  .sheet {
+    width: 100%;
+    max-width: 480px;
+    background: var(--panel);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-top: 1px solid var(--line-strong);
+    padding: 18px 16px calc(20px + env(safe-area-inset-bottom));
+    max-height: 78vh;
+    overflow-y: auto;
+  }
+  .sheet h3 {
+    font-family: var(--disp);
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-size: 15px;
+    color: var(--muted);
+    margin: 0 0 12px;
+  }
+  .custom-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .custom-row input {
+    flex: 1;
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: var(--body);
+    font-size: 15px;
+    padding: 12px;
+    outline: none;
+  }
+  .custom-row input:focus { border-color: var(--amber); }
+  .custom-row button {
+    background: var(--amber);
+    color: #1a1207;
+    border: none;
+    border-radius: 10px;
+    padding: 0 16px;
+    font-family: var(--disp);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-size: 15px;
+    cursor: pointer;
+  }
+  .presets { display: flex; flex-wrap: wrap; gap: 8px; }
+  .preset {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 10px 14px;
+    font-family: var(--body);
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .preset:hover { border-color: var(--amber); }
+</style>
+
+<div id="app">
+  <header>
+    <div class="wordmark">S<b>E</b>TTI</div>
+    <div class="datestamp" id="datestamp"></div>
+  </header>
+  <div class="tabs">
+    <button class="tab active" data-view="session">Treeni</button>
+    <button class="tab" data-view="templates">Pohjat</button>
+    <button class="tab" data-view="history">Historia</button>
+  </div>
+  <div id="clocks" style="display:none"></div>
+  <main id="main"></main>
+</div>
+
+<div class="bottombar" id="bottombar"></div>
+
+<div class="sheet-bg" id="sheetbg">
+  <div class="sheet">
+    <h3>Lisää liike</h3>
+    <div class="custom-row">
+      <input id="customName" placeholder="Oma liike…" autocomplete="off" />
+      <button id="customAdd">OK</button>
+    </div>
+    <div class="presets" id="presets"></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---------- storage (with in-memory fallback) ----------
+  const mem = {};
+  async function sGet(key) {
+    try { const r = await window.storage.get(key); return r ? r.value : null; }
+    catch (e) { return key in mem ? mem[key] : null; }
+  }
+  async function sSet(key, val) {
+    try { await window.storage.set(key, val); }
+    catch (e) { mem[key] = val; }
+  }
+
+  // ---------- state ----------
+  let view = 'session';
+  let active = null;      // { exercises: [ {name, sets:[{w,r,done}]} ] }
+  let workouts = [];      // finished workouts, newest first
+  let templates = [];     // [{ id, name, exercises:[{name, sets:[{w,r}]}] }]
+  let schedule = {};      // { "0".."6" (getDay) : templateId }
+  let editingTemplate = null; // template draft being edited
+  let sheetTarget = 'active'; // 'active' | 'template'
+  const PRESETS = [
+    'Penkkipunnerrus','Kyykky','Maastaveto','Ylätalja','Pystypunnerrus',
+    'Kulmasoutu','Hauiskääntö','Ojentaja','Leuanveto','Dippi',
+    'Jalkaprässi','Hip thrust','Pohkeet','Vipunosto','Reisikoukku'
+  ];
+  let customPresets = [];
+
+  const el = (id) => document.getElementById(id);
+  const main = el('main');
+  const bottombar = el('bottombar');
+
+  // ---------- load ----------
+  async function load() {
+    const w = await sGet('workouts');
+    workouts = w ? JSON.parse(w) : [];
+    const a = await sGet('active');
+    active = a ? JSON.parse(a) : null;
+    const c = await sGet('customPresets');
+    customPresets = c ? JSON.parse(c) : [];
+    const t = await sGet('templates');
+    templates = t ? JSON.parse(t) : [];
+    const sch = await sGet('schedule');
+    schedule = sch ? JSON.parse(sch) : {};
+    el('datestamp').textContent = fmtStamp(new Date());
+    render();
+  }
+
+  function persistActive() { sSet('active', active ? JSON.stringify(active) : ''); }
+  function persistWorkouts() { sSet('workouts', JSON.stringify(workouts)); }
+  function persistTemplates() { sSet('templates', JSON.stringify(templates)); }
+  function persistSchedule() { sSet('schedule', JSON.stringify(schedule)); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+  function todayTemplate() {
+    const id = schedule[new Date().getDay()];
+    return id ? templates.find(t => t.id === id) : null;
+  }
+
+  // ---------- helpers ----------
+  function fmtStamp(d) {
+    const days = ['SU','MA','TI','KE','TO','PE','LA'];
+    return days[d.getDay()] + ' ' + String(d.getDate()).padStart(2,'0') + '.' +
+      String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+  }
+  function fmtDate(iso) {
+    const d = new Date(iso);
+    return String(d.getDate()).padStart(2,'0') + '.' + String(d.getMonth()+1).padStart(2,'0') + '.' + d.getFullYear();
+  }
+  function volume(ex) {
+    let v = 0;
+    ex.forEach(e => e.sets.forEach(s => {
+      const w = parseFloat(String(s.w).replace(',','.')) || 0;
+      const r = parseInt(s.r) || 0;
+      v += w * r;
+    }));
+    return v;
+  }
+  function totalSets(ex) { return ex.reduce((n,e)=> n + e.sets.length, 0); }
+  function bestFor(name) {
+    let best = 0;
+    workouts.forEach(w => w.exercises.forEach(e => {
+      if (e.name === name) e.sets.forEach(s => {
+        const val = parseFloat(String(s.w).replace(',','.')) || 0;
+        if (val > best) best = val;
+      });
+    }));
+    return best;
+  }
+  function esc(s){ return String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+
+  // ---------- clocks ----------
+  function fmtClock(ms, allowHours) {
+    let s = Math.max(0, Math.floor(ms/1000));
+    const h = Math.floor(s/3600); s -= h*3600;
+    let m = Math.floor(s/60); s -= m*60;
+    const ss = String(s).padStart(2,'0');
+    if (allowHours && h > 0) return h + ':' + String(m).padStart(2,'0') + ':' + ss;
+    if (h > 0) m += h*60;
+    return m + ':' + ss;
+  }
+  function restBase() {
+    if (!active) return null;
+    let m = 0;
+    active.exercises.forEach(e => e.sets.forEach(s => {
+      if (s.done && s.doneAt && s.doneAt > m) m = s.doneAt;
+    }));
+    return m || null;
+  }
+  function ensureClocks() {
+    const c = el('clocks');
+    if (c.dataset.built) return;
+    c.innerHTML = `
+      <div class="total">
+        <div class="total-time"><span class="live"></span><span id="totalTime">0:00</span><span class="ms" id="totalMs">.000</span></div>
+        <div class="total-lbl">Treenin kesto</div>
+      </div>
+      <div class="rest" id="restWrap" title="Vaihda lepoaikaa">
+        <div class="rest-time" id="restTime">–:––</div>
+        <div class="rest-lbl"><span class="dot"></span><span id="restLbl">Lepo · 1:30</span></div>
+      </div>`;
+    el('restWrap').onclick = cycleRest;
+    c.dataset.built = '1';
+  }
+
+  const REST_DURS = [60, 90, 120, 150, 180];
+  function fmtDur(sec) { return Math.floor(sec/60) + ':' + String(sec%60).padStart(2,'0'); }
+  function cycleRest() {
+    if (!active) return;
+    const cur = active.restDur || 90;
+    const i = REST_DURS.indexOf(cur);
+    active.restDur = REST_DURS[(i + 1) % REST_DURS.length];
+    persistActive();
+    tick();
+  }
+  function tick() {
+    const c = el('clocks');
+    if (active && view === 'session') {
+      ensureClocks();
+      c.style.display = 'flex';
+      const elapsed = Date.now() - new Date(active.date).getTime();
+      el('totalTime').textContent = fmtClock(elapsed, true);
+      el('totalMs').textContent = '.' + String(Math.max(0, elapsed) % 1000).padStart(3, '0');
+      const dur = (active.restDur || 90) * 1000;
+      const base = restBase();
+      const rw = el('restWrap');
+      el('restLbl').textContent = 'Lepo · ' + fmtDur(active.restDur || 90);
+      if (base) {
+        const remaining = dur - (Date.now() - base);
+        if (remaining > 0) {
+          rw.classList.add('running'); rw.classList.remove('ready');
+          el('restTime').textContent = fmtClock(Math.ceil(remaining/1000)*1000, false);
+        } else {
+          rw.classList.remove('running'); rw.classList.add('ready');
+          el('restTime').textContent = 'Valmiina';
+        }
+      } else {
+        rw.classList.remove('running', 'ready');
+        el('restTime').textContent = '–:––';
+      }
+    } else {
+      c.style.display = 'none';
+    }
+  }
+
+  // ---------- stamp animation ----------
+  function animateStamp(ei, si) {
+    const btn = main.querySelector(`.check[data-ei="${ei}"][data-si="${si}"]`);
+    if (!btn) return;
+    const stamp = document.createElement('span');
+    stamp.className = 'stamp';
+    stamp.textContent = '✓';
+    stamp.addEventListener('animationend', () => stamp.remove());
+    btn.appendChild(stamp);
+    const row = btn.closest('.set-row');
+    if (row) { row.classList.add('flash'); row.addEventListener('animationend', () => row.classList.remove('flash'), { once:true }); }
+  }
+
+  // ---------- render ----------
+  function render() {
+    document.querySelectorAll('.tab').forEach(t =>
+      t.classList.toggle('active', t.dataset.view === view));
+    if (view === 'session') renderSession();
+    else if (view === 'templates') renderTemplates();
+    else renderHistory();
+    tick();
+  }
+
+  function renderSession() {
+    if (!active) {
+      const sug = todayTemplate();
+      const dayName = ['sunnuntai','maanantai','tiistai','keskiviikko','torstai','perjantai','lauantai'][new Date().getDay()];
+      main.innerHTML = `
+        ${sug ? `<div class="today-banner">
+          <div>
+            <div class="tb-lbl">Tänään · ${dayName}</div>
+            <div class="tb-name">${esc(sug.name)}</div>
+          </div>
+          <button data-act="starttpl" data-id="${sug.id}">Aloita ▶</button>
+        </div>` : ''}
+        <div class="empty">
+          <div class="big">Valmiina?</div>
+          <p>${sug ? 'Aloita päivän pohja yltä, tai käynnistä tyhjä treeni.' : 'Aloita treeni, lisää liikkeet ja logaa sarjat. Kaikki tallentuu itsestään.'}</p>
+        </div>`;
+      bottombar.innerHTML = `<div class="inner"><button class="btn-primary" id="start">Aloita tyhjä treeni</button></div>`;
+      el('start').onclick = startWorkout;
+      return;
+    }
+
+    let html = `
+      <div class="session-stats">
+        <div class="stat"><div class="num">${active.exercises.length}</div><div class="lbl">liikettä</div></div>
+        <div class="stat"><div class="num">${totalSets(active.exercises)}</div><div class="lbl">sarjaa</div></div>
+        <div class="stat"><div class="num">${Math.round(volume(active.exercises))}</div><div class="lbl">kg volyymi</div></div>
+      </div>`;
+
+    active.exercises.forEach((exr, ei) => {
+      const best = bestFor(exr.name);
+      html += `<div class="exercise" data-ei="${ei}">
+        <div class="ex-head">
+          <div class="ex-name">${esc(exr.name)}</div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            ${best > 0 ? `<span class="ex-best">PE ${best} kg</span>` : ''}
+            <button class="ex-del" data-act="delex" data-ei="${ei}">✕</button>
+          </div>
+        </div>
+        <div class="set-labels"><span>#</span><span>Paino (kg)</span><span>Toistot</span><span>OK</span></div>`;
+
+      exr.sets.forEach((s, si) => {
+        html += `<div class="set-row ${s.done ? 'done' : ''}">
+          <div class="set-num">${si+1}</div>
+          <input inputmode="decimal" data-f="w" data-ei="${ei}" data-si="${si}" value="${s.w ?? ''}" placeholder="0" />
+          <input inputmode="numeric" data-f="r" data-ei="${ei}" data-si="${si}" value="${s.r ?? ''}" placeholder="0" />
+          <button class="check" data-act="done" data-ei="${ei}" data-si="${si}">${s.done ? '✓' : ''}</button>
+        </div>`;
+      });
+
+      html += `<button class="addset" data-act="addset" data-ei="${ei}">+ Sarja</button>
+      </div>`;
+    });
+
+    html += `<button class="add-ex" id="addex">+ Lisää liike</button>`;
+    if (active.exercises.length) {
+      html += `<button class="add-ex" id="savetpl" style="margin-top:10px;border-style:dashed;color:var(--muted)">☆ Tallenna pohjaksi</button>`;
+    }
+    main.innerHTML = html;
+
+    bottombar.innerHTML = `<div class="inner"><button class="btn-primary" id="finish">Lopeta ja tallenna</button></div>`;
+
+    // wire structural buttons (event delegation for the rest)
+    el('addex').onclick = () => openSheet('active');
+    el('finish').onclick = finishWorkout;
+    if (el('savetpl')) el('savetpl').onclick = saveActiveAsTemplate;
+  }
+
+  function renderHistory() {
+    bottombar.innerHTML = '';
+    if (!workouts.length) {
+      main.innerHTML = `
+        <div class="empty">
+          <div class="big">Ei vielä treenejä</div>
+          <p>Kun tallennat ensimmäisen treenin, se ilmestyy tänne.</p>
+        </div>`;
+      return;
+    }
+    let html = '';
+    workouts.forEach((w, wi) => {
+      html += `<div class="hist" data-wi="${wi}">
+        <div class="hist-head" data-act="toggle" data-wi="${wi}">
+          <div>
+            <div class="hist-date">${fmtDate(w.date)}</div>
+            <div class="hist-sub">${w.exercises.length} liikettä · ${totalSets(w.exercises)} sarjaa</div>
+          </div>
+          <div class="hist-vol">${Math.round(volume(w.exercises))}<small>KG VOL</small></div>
+        </div>
+        <div class="hist-body">`;
+      w.exercises.forEach(e => {
+        const sets = e.sets.map(s => `${(s.w||'0')}kg × ${(s.r||'0')}`).join('   ');
+        html += `<div class="hist-ex"><div class="n">${esc(e.name)}</div><div class="s">${esc(sets)}</div></div>`;
+      });
+      html += `<button class="hist-del" data-act="delwo" data-wi="${wi}">Poista treeni</button>
+        </div></div>`;
+    });
+    main.innerHTML = html;
+  }
+
+  const DAY_ORDER = [1,2,3,4,5,6,0];
+  const DAY_LBL = { 1:'Ma', 2:'Ti', 3:'Ke', 4:'To', 5:'Pe', 6:'La', 0:'Su' };
+
+  function renderTemplates() {
+    if (editingTemplate) { renderTemplateEditor(); return; }
+    bottombar.innerHTML = `<div class="inner"><button class="btn-primary" id="newtpl">+ Uusi pohja</button></div>`;
+    el('newtpl').onclick = newTemplate;
+
+    if (!templates.length) {
+      main.innerHTML = `
+        <div class="empty">
+          <div class="big">Ei pohjia</div>
+          <p>Luo treenipohja, niin voit toistaa saman treenin ja asettaa sen viikonpäiville.</p>
+        </div>`;
+      return;
+    }
+
+    let html = '';
+    templates.forEach((t, ti) => {
+      const names = t.exercises.map(e => `${esc(e.name)} · ${e.sets.length}×`).join('   ');
+      html += `<div class="tpl" data-ti="${ti}">
+        <div class="tpl-head">
+          <div>
+            <div class="tpl-name">${esc(t.name)}</div>
+            <div class="tpl-sub">${t.exercises.length} liikettä<br>${names}</div>
+          </div>
+          <div class="tpl-actions">
+            <button class="tpl-start" data-act="starttpl" data-id="${t.id}">Aloita</button>
+            <button class="tpl-icon" data-act="edittpl" data-ti="${ti}" title="Muokkaa">✎</button>
+            <button class="tpl-icon" data-act="deltpl" data-ti="${ti}" title="Poista">✕</button>
+          </div>
+        </div>
+        <div class="days">
+          ${DAY_ORDER.map(d => `<div class="day ${schedule[d]===t.id?'on':''}" data-act="assign" data-day="${d}" data-id="${t.id}">${DAY_LBL[d]}</div>`).join('')}
+        </div>
+      </div>`;
+    });
+    main.innerHTML = html;
+  }
+
+  function renderTemplateEditor() {
+    bottombar.innerHTML = '';
+    const t = editingTemplate;
+    let html = `<div class="tpl-editor">
+      <input class="ed-name" id="edName" placeholder="Pohjan nimi…" value="${esc(t.name)}" autocomplete="off" />`;
+    t.exercises.forEach((e, i) => {
+      html += `<div class="ed-ex">
+        <div class="en">${esc(e.name)}</div>
+        <div class="stepper">
+          <button data-act="edminus" data-i="${i}">–</button>
+          <div class="cnt">${e.sets.length} <small>sarjaa</small></div>
+          <button data-act="edplus" data-i="${i}">+</button>
+          <button class="ed-del" data-act="eddel" data-i="${i}">✕</button>
+        </div>
+      </div>`;
+    });
+    html += `<button class="add-ex" id="edAddEx" style="margin-top:8px">+ Lisää liike</button>
+      <div class="ed-row">
+        <button class="btn-secondary" id="edCancel">Peruuta</button>
+        <button class="btn-primary" id="edSave">Tallenna pohja</button>
+      </div>
+    </div>`;
+    main.innerHTML = html;
+    el('edName').oninput = (e) => { editingTemplate.name = e.target.value; };
+    el('edAddEx').onclick = () => openSheet('template');
+    el('edCancel').onclick = () => { editingTemplate = null; render(); };
+    el('edSave').onclick = saveTemplate;
+  }
+
+  // ---------- actions ----------
+  function startWorkout() {
+    active = { date: new Date().toISOString(), exercises: [] };
+    persistActive();
+    openSheet();
+    render();
+  }
+
+  function addExercise(name) {
+    name = name.trim();
+    if (!name) return;
+    if (sheetTarget === 'template' && editingTemplate) {
+      editingTemplate.exercises.push({ name, sets: [{ w:'', r:'' }] });
+      render();
+    } else {
+      active.exercises.push({ name, sets: [{ w:'', r:'', done:false }] });
+      persistActive();
+      render();
+    }
+  }
+
+  function newTemplate() {
+    editingTemplate = { id: uid(), name: '', exercises: [] };
+    view = 'templates';
+    render();
+  }
+
+  function saveTemplate() {
+    const t = editingTemplate;
+    t.name = (t.name || '').trim();
+    if (!t.name) { alert('Anna pohjalle nimi.'); return; }
+    if (!t.exercises.length) { alert('Lisää vähintään yksi liike.'); return; }
+    const idx = templates.findIndex(x => x.id === t.id);
+    if (idx >= 0) templates[idx] = t; else templates.push(t);
+    persistTemplates();
+    editingTemplate = null;
+    render();
+  }
+
+  function saveActiveAsTemplate() {
+    editingTemplate = {
+      id: uid(),
+      name: '',
+      exercises: active.exercises.map(e => ({
+        name: e.name,
+        sets: e.sets.map(s => ({ w: s.w || '', r: s.r || '' }))
+      }))
+    };
+    view = 'templates';
+    render();
+  }
+
+  function startFromTemplate(id) {
+    const t = templates.find(x => x.id === id);
+    if (!t) return;
+    if (active && active.exercises.length &&
+        !confirm('Kesken oleva treeni korvataan pohjalla. Jatketaanko?')) return;
+    active = {
+      date: new Date().toISOString(),
+      restDur: 90,
+      exercises: t.exercises.map(e => ({
+        name: e.name,
+        sets: e.sets.map(s => ({ w: s.w || '', r: s.r || '', done: false }))
+      }))
+    };
+    persistActive();
+    view = 'session';
+    render();
+  }
+
+  function finishWorkout() {
+    // strip empty sets/exercises
+    const cleaned = active.exercises
+      .map(e => ({ name: e.name, sets: e.sets.filter(s => (s.w!=='' && s.w!=null) || (s.r!=='' && s.r!=null)) }))
+      .filter(e => e.sets.length > 0);
+    if (!cleaned.length) {
+      if (!confirm('Ei täytettyjä sarjoja. Hylätäänkö treeni?')) return;
+      active = null; persistActive(); render(); return;
+    }
+    workouts.unshift({ date: active.date, exercises: cleaned });
+    persistWorkouts();
+    active = null;
+    persistActive();
+    view = 'history';
+    render();
+  }
+
+  // event delegation on main
+  main.addEventListener('click', (e) => {
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const act = b.dataset.act;
+    const ei = b.dataset.ei != null ? +b.dataset.ei : null;
+    const si = b.dataset.si != null ? +b.dataset.si : null;
+    const wi = b.dataset.wi != null ? +b.dataset.wi : null;
+    const ti = b.dataset.ti != null ? +b.dataset.ti : null;
+    const idx = b.dataset.i != null ? +b.dataset.i : null;
+
+    if (act === 'starttpl') {
+      startFromTemplate(b.dataset.id); return;
+    } else if (act === 'edittpl') {
+      editingTemplate = JSON.parse(JSON.stringify(templates[ti])); render(); return;
+    } else if (act === 'deltpl') {
+      if (confirm('Poistetaanko pohja?')) {
+        const id = templates[ti].id;
+        templates.splice(ti,1);
+        Object.keys(schedule).forEach(d => { if (schedule[d]===id) delete schedule[d]; });
+        persistTemplates(); persistSchedule(); render();
+      }
+      return;
+    } else if (act === 'assign') {
+      const day = b.dataset.day, id = b.dataset.id;
+      if (schedule[day] === id) delete schedule[day]; else schedule[day] = id;
+      persistSchedule(); render(); return;
+    } else if (act === 'edplus') {
+      editingTemplate.exercises[idx].sets.push({ w:'', r:'' }); render(); return;
+    } else if (act === 'edminus') {
+      const s = editingTemplate.exercises[idx].sets;
+      if (s.length > 1) s.pop();
+      render(); return;
+    } else if (act === 'eddel') {
+      editingTemplate.exercises.splice(idx,1); render(); return;
+    }
+
+    if (act === 'addset') {
+      const sets = active.exercises[ei].sets;
+      const last = sets[sets.length-1] || { w:'', r:'' };
+      sets.push({ w:last.w, r:last.r, done:false });
+      persistActive(); render();
+    } else if (act === 'delex') {
+      active.exercises.splice(ei,1); persistActive(); render();
+    } else if (act === 'done') {
+      const s = active.exercises[ei].sets[si];
+      s.done = !s.done;
+      if (s.done) s.doneAt = Date.now(); else delete s.doneAt;
+      persistActive(); render();
+      if (s.done) animateStamp(ei, si);
+    } else if (act === 'toggle') {
+      main.querySelector(`.hist[data-wi="${wi}"]`).classList.toggle('open');
+    } else if (act === 'delwo') {
+      if (confirm('Poistetaanko tämä treeni?')) { workouts.splice(wi,1); persistWorkouts(); render(); }
+    }
+  });
+
+  // live input updates without re-render (keep focus)
+  main.addEventListener('input', (e) => {
+    const f = e.target.dataset.f;
+    if (!f) return;
+    const ei = +e.target.dataset.ei, si = +e.target.dataset.si;
+    active.exercises[ei].sets[si][f] = e.target.value;
+    persistActive();
+    // update stat bar live
+    const stats = main.querySelectorAll('.stat .num');
+    if (stats.length === 3) stats[2].textContent = Math.round(volume(active.exercises));
+  });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t => t.onclick = () => { editingTemplate = null; view = t.dataset.view; render(); });
+
+  (function loop() { tick(); requestAnimationFrame(loop); })();
+
+  // ---------- sheet ----------
+  const sheetbg = el('sheetbg');
+  function openSheet(target) {
+    sheetTarget = target === 'template' ? 'template' : 'active';
+    const all = PRESETS.concat(customPresets.filter(c => !PRESETS.includes(c)));
+    el('presets').innerHTML = all.map(p => `<button class="preset">${esc(p)}</button>`).join('');
+    el('presets').querySelectorAll('.preset').forEach(btn => btn.onclick = () => {
+      addExercise(btn.textContent); closeSheet();
+    });
+    el('customName').value = '';
+    sheetbg.classList.add('show');
+    setTimeout(() => el('customName').focus(), 60);
+  }
+  function closeSheet() { sheetbg.classList.remove('show'); }
+  sheetbg.onclick = (e) => { if (e.target === sheetbg) closeSheet(); };
+  el('customAdd').onclick = () => {
+    const v = el('customName').value.trim();
+    if (!v) return;
+    if (!customPresets.includes(v) && !PRESETS.includes(v)) {
+      customPresets.push(v); sSet('customPresets', JSON.stringify(customPresets));
+    }
+    addExercise(v); closeSheet();
+  };
+  el('customName').addEventListener('keydown', (e) => { if (e.key === 'Enter') el('customAdd').click(); });
+
+  load();
+})();
+</script>
