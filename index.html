@@ -124,6 +124,16 @@
     /* teal secondary — cool contrast to the pink */
     --b1:#e3f4f1; --b2:#c2e7e0; --b3:#93d3c8; --b4:#5cb8aa; --b5:#329888; --b6:#217a6d; --b7:#1a5d53; --b8:#14413a; --b9:#0d2b26; --b-base:#329888;
   }
+  body.pal-violet {
+    --a1:#efe9fb; --a2:#ddd0f5; --a3:#c1abec; --a4:#a07fe0; --a5:#855fd0; --a6:#6f47bd; --a7:#58399a; --a8:#3e2870; --a9:#281a49; --a-base:#7a54c4;
+    /* teal secondary */
+    --b1:#e3f4f1; --b2:#c2e7e0; --b3:#93d3c8; --b4:#5cb8aa; --b5:#329888; --b6:#217a6d; --b7:#1a5d53; --b8:#14413a; --b9:#0d2b26; --b-base:#329888;
+  }
+  body.pal-crimson {
+    --a1:#fce9ea; --a2:#f8cfd1; --a3:#efa8ac; --a4:#e17a80; --a5:#d1555d; --a6:#bd3b44; --a7:#9a2c34; --a8:#6f2025; --a9:#451317; --a-base:#cc4a52;
+    /* slate-blue secondary — cool contrast to the red */
+    --b1:#eaeff5; --b2:#d3dded; --b3:#aabfdb; --b4:#7c9bc4; --b5:#5578ab; --b6:#425f8c; --b7:#33496c; --b8:#22314a; --b9:#151f2e; --b-base:#5578ab;
+  }
 
   /* ── dark theme: bg/surface/text flip, tonal ramps invert so every
      "accent-200 bg + accent-800 text" pair stays readable on dark ── */
@@ -406,7 +416,7 @@ const S = {
   log: load('log', DEMO_LOG),         // real logged sessions: {date,name,sets:[{g,kg,reps}],vol,mins}
   dark: load('dark', false),
   unit: load('unit', 'kg'),
-  accent: (load('accent', 'forest') === 'graphite' ? 'pink' : load('accent', 'forest')),
+  accent: (function(){ const a = load('accent', 'forest'); return a === 'graphite' ? 'pink' : a === 'clay' ? 'forest' : a; })(),
   rest: load('rest', REST_SECONDS),
   mark: load('mark', 'check')          // completed-day marker: 'check' | 'bowtie'
 };
@@ -513,10 +523,11 @@ const STICKER_FILTER = 'drop-shadow(1.4px 0 0 '+STICKER_RIM+') drop-shadow(-1.4p
 const STICKER_FILTER_SM = 'drop-shadow(1px 0 0 '+STICKER_RIM+') drop-shadow(-1px 0 0 '+STICKER_RIM+') drop-shadow(0 1px 0 '+STICKER_RIM+') drop-shadow(0 -1px 0 '+STICKER_RIM+') drop-shadow(0 1.5px 1.5px rgba(0,0,0,.35))';
 
 const PALETTES = [
-  {id:'clay',     name:'Clay',     c:'#c67139'},
-  {id:'forest',   name:'Forest',   c:'#5a9440'},
-  {id:'ocean',    name:'Ocean',    c:'#2f88b4'},
-  {id:'pink', name:'Pink', c:'#e0669e'}
+  {id:'forest',  name:'Forest',  c:'#4e8a34'},
+  {id:'ocean',   name:'Ocean',   c:'#2b7fa2'},
+  {id:'pink',    name:'Pink',    c:'#cf5488'},
+  {id:'violet',  name:'Violet',  c:'#7a54c4'},
+  {id:'crimson', name:'Crimson', c:'#cc4a52'}
 ];
 
 function applyPrefs(){
