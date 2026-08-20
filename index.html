@@ -160,6 +160,14 @@
     }
     .island { display: none; }
   }
+  /* "at the gym" live pulse for friend avatars */
+  @keyframes livePulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34,175,90,.55); }
+    70%  { box-shadow: 0 0 0 8px rgba(34,175,90,0); }
+    100% { box-shadow: 0 0 0 0 rgba(34,175,90,0); }
+  }
+  .live-ring { animation: livePulse 1.8s ease-out infinite; }
+  .live-dot  { animation: livePulse 1.8s ease-out infinite; }
 </style>
 </head>
 <body>
@@ -173,68 +181,68 @@
    weekday programming, volume, rest cycling), restyled onto Organic.
    ══════════════════════════════════════════════════════════════ */
 const EX = {
-  bench:{n:'Barbell Bench Press',g:'Chest',lvl:'Beginner',sets:4,reps:'6–8',kg:40,cues:['Pull your shoulder blades down and together, then keep them there.','Lower the bar to mid-chest with elbows about 45° from your body.','Push your feet into the floor as you press up.']},
-  dbpress:{n:'Dumbbell Bench Press',g:'Chest',lvl:'Beginner',sets:3,reps:'8–12',kg:16,cues:['Start with the dumbbells over your shoulders, wrists stacked.','Lower until your elbows are level with your chest.','Press up and slightly together without clanging the weights.']},
-  incline:{n:'Incline Press',g:'Chest',lvl:'Intermediate',sets:3,reps:'8–10',kg:30,cues:['Set the bench to about 30°.','Keep the bar path over your upper chest.','Stop one rep before your form breaks.']},
-  fly:{n:'Cable Fly',g:'Chest',lvl:'Beginner',sets:3,reps:'12–15',kg:12,cues:['Soft bend in the elbows, hold it the whole set.','Bring the handles together in front of your sternum.','Slow on the way back — that is the working half.']},
-  pullup:{n:'Pull-Up',g:'Back',lvl:'Intermediate',sets:4,reps:'5–8',kg:0,cues:['Hang tall, then pull your elbows down to your ribs.','Chest towards the bar, no kicking.','Use a band or the assisted machine if you get fewer than 5.']},
-  row:{n:'Barbell Row',g:'Back',lvl:'Intermediate',sets:4,reps:'8–10',kg:35,cues:['Hinge until your torso is about 45°, back flat.','Pull to your lower ribs, elbows close.','Lower under control — do not drop it.']},
-  lat:{n:'Lat Pulldown',g:'Back',lvl:'Beginner',sets:3,reps:'10–12',kg:35,cues:['Sit tall, slight lean back, chest up.','Pull the bar to your collarbone.','Let the weight stretch you at the top.']},
-  cablerow:{n:'Seated Cable Row',g:'Back',lvl:'Beginner',sets:3,reps:'10–12',kg:40,cues:['Knees soft, spine neutral.','Drive your elbows straight back past your torso.','Do not rock — the back does the work.']},
-  squat:{n:'Back Squat',g:'Legs',lvl:'Intermediate',sets:4,reps:'5–8',kg:50,cues:['Bar on your upper back, feet shoulder-width.','Sit down between your hips, knees tracking over your toes.','Stand up by driving the whole foot into the floor.']},
-  rdl:{n:'Romanian Deadlift',g:'Legs',lvl:'Intermediate',sets:3,reps:'8–10',kg:45,cues:['Push your hips back, bar close to your legs.','Stop when your hamstrings say stop, back still flat.','Squeeze your glutes to stand.']},
-  legpress:{n:'Leg Press',g:'Legs',lvl:'Beginner',sets:3,reps:'10–12',kg:80,cues:['Feet flat, knees in line with your hips.','Lower until your knees reach about 90°.','Never lock out hard at the top.']},
-  lunge:{n:'Walking Lunge',g:'Legs',lvl:'Beginner',sets:3,reps:'10–12',kg:12,cues:['Long step, torso upright.','Back knee to just above the floor.','Push through the front heel.']},
-  ohp:{n:'Overhead Press',g:'Shoulders',lvl:'Intermediate',sets:4,reps:'6–8',kg:25,cues:['Squeeze your glutes and brace before you press.','Bar starts on your collarbone, ends over your ears.','Keep your ribs down — no leaning back.']},
-  latraise:{n:'Lateral Raise',g:'Shoulders',lvl:'Beginner',sets:3,reps:'12–15',kg:7,cues:['Lead with your elbows, not your hands.','Stop at shoulder height.','Light weight, clean reps — this one is not for ego.']},
-  facepull:{n:'Face Pull',g:'Shoulders',lvl:'Beginner',sets:3,reps:'12–15',kg:15,cues:['Rope at eye height.','Pull towards your forehead, hands apart.','Pause for a beat at the back.']},
-  rear:{n:'Rear Delt Fly',g:'Shoulders',lvl:'Beginner',sets:3,reps:'12–15',kg:6,cues:['Hinge forward, arms hanging.','Open out to the sides, thumbs down.','Small range, big squeeze.']},
-  curl:{n:'Barbell Curl',g:'Arms',lvl:'Beginner',sets:3,reps:'8–12',kg:20,cues:['Elbows pinned to your sides.','Curl without swinging your hips.','Lower slowly for three counts.']},
-  hammer:{n:'Hammer Curl',g:'Arms',lvl:'Beginner',sets:3,reps:'10–12',kg:12,cues:['Palms facing each other the whole set.','One arm at a time keeps it honest.','Stop at the top before your shoulder takes over.']},
-  pushdown:{n:'Triceps Pushdown',g:'Arms',lvl:'Beginner',sets:3,reps:'10–15',kg:25,cues:['Elbows locked at your ribs.','Straighten fully, squeeze for a beat.','Only your forearms move.']},
-  dip:{n:'Dip',g:'Arms',lvl:'Intermediate',sets:3,reps:'6–10',kg:0,cues:['Lean slightly forward, shoulders down.','Lower until your elbows hit 90°.','Assisted machine is fine while you build up.']},
-  plank:{n:'Plank',g:'Core',lvl:'Beginner',sets:3,reps:'40 s',kg:0,cues:['Elbows under shoulders, heels pushed back.','Squeeze glutes, tuck your ribs down.','Breathe — do not hold your breath.']},
-  hang:{n:'Hanging Knee Raise',g:'Core',lvl:'Intermediate',sets:3,reps:'10–12',kg:0,cues:['Hang still before the first rep.','Curl your knees up towards your chest.','No swinging on the way down.']},
-  cablecrunch:{n:'Cable Crunch',g:'Core',lvl:'Beginner',sets:3,reps:'12–15',kg:25,cues:['Kneel, rope beside your head.','Crunch your ribs towards your hips.','Hips stay still.']},
-  carry:{n:'Farmer Carry',g:'Core',lvl:'Beginner',sets:3,reps:'30 m',kg:24,cues:['Stand tall, shoulders back.','Walk smooth, no leaning.','Grip is meant to burn.']},
+  bench:{n:'Barbell Bench Press',g:'Chest',lvl:'Beginner',sets:2,reps:'6–8',kg:40,cues:['Pull your shoulder blades down and together, then keep them there.','Lower the bar to mid-chest with elbows about 45° from your body.','Push your feet into the floor as you press up.']},
+  dbpress:{n:'Dumbbell Bench Press',g:'Chest',lvl:'Beginner',sets:2,reps:'8–12',kg:16,cues:['Start with the dumbbells over your shoulders, wrists stacked.','Lower until your elbows are level with your chest.','Press up and slightly together without clanging the weights.']},
+  incline:{n:'Incline Press',g:'Chest',lvl:'Intermediate',sets:2,reps:'8–10',kg:30,cues:['Set the bench to about 30°.','Keep the bar path over your upper chest.','Stop one rep before your form breaks.']},
+  fly:{n:'Cable Fly',g:'Chest',lvl:'Beginner',sets:2,reps:'12–15',kg:12,cues:['Soft bend in the elbows, hold it the whole set.','Bring the handles together in front of your sternum.','Slow on the way back — that is the working half.']},
+  pullup:{n:'Pull-Up',g:'Back',lvl:'Intermediate',sets:2,reps:'5–8',kg:0,cues:['Hang tall, then pull your elbows down to your ribs.','Chest towards the bar, no kicking.','Use a band or the assisted machine if you get fewer than 5.']},
+  row:{n:'Barbell Row',g:'Back',lvl:'Intermediate',sets:2,reps:'8–10',kg:35,cues:['Hinge until your torso is about 45°, back flat.','Pull to your lower ribs, elbows close.','Lower under control — do not drop it.']},
+  lat:{n:'Lat Pulldown',g:'Back',lvl:'Beginner',sets:2,reps:'10–12',kg:35,cues:['Sit tall, slight lean back, chest up.','Pull the bar to your collarbone.','Let the weight stretch you at the top.']},
+  cablerow:{n:'Seated Cable Row',g:'Back',lvl:'Beginner',sets:2,reps:'10–12',kg:40,cues:['Knees soft, spine neutral.','Drive your elbows straight back past your torso.','Do not rock — the back does the work.']},
+  squat:{n:'Back Squat',g:'Legs',lvl:'Intermediate',sets:2,reps:'5–8',kg:50,cues:['Bar on your upper back, feet shoulder-width.','Sit down between your hips, knees tracking over your toes.','Stand up by driving the whole foot into the floor.']},
+  rdl:{n:'Romanian Deadlift',g:'Legs',lvl:'Intermediate',sets:2,reps:'8–10',kg:45,cues:['Push your hips back, bar close to your legs.','Stop when your hamstrings say stop, back still flat.','Squeeze your glutes to stand.']},
+  legpress:{n:'Leg Press',g:'Legs',lvl:'Beginner',sets:2,reps:'10–12',kg:80,cues:['Feet flat, knees in line with your hips.','Lower until your knees reach about 90°.','Never lock out hard at the top.']},
+  lunge:{n:'Walking Lunge',g:'Legs',lvl:'Beginner',sets:2,reps:'10–12',kg:12,cues:['Long step, torso upright.','Back knee to just above the floor.','Push through the front heel.']},
+  ohp:{n:'Overhead Press',g:'Shoulders',lvl:'Intermediate',sets:2,reps:'6–8',kg:25,cues:['Squeeze your glutes and brace before you press.','Bar starts on your collarbone, ends over your ears.','Keep your ribs down — no leaning back.']},
+  latraise:{n:'Lateral Raise',g:'Shoulders',lvl:'Beginner',sets:2,reps:'12–15',kg:7,cues:['Lead with your elbows, not your hands.','Stop at shoulder height.','Light weight, clean reps — this one is not for ego.']},
+  facepull:{n:'Face Pull',g:'Shoulders',lvl:'Beginner',sets:2,reps:'12–15',kg:15,cues:['Rope at eye height.','Pull towards your forehead, hands apart.','Pause for a beat at the back.']},
+  rear:{n:'Rear Delt Fly',g:'Shoulders',lvl:'Beginner',sets:2,reps:'12–15',kg:6,cues:['Hinge forward, arms hanging.','Open out to the sides, thumbs down.','Small range, big squeeze.']},
+  curl:{n:'Barbell Curl',g:'Arms',lvl:'Beginner',sets:2,reps:'8–12',kg:20,cues:['Elbows pinned to your sides.','Curl without swinging your hips.','Lower slowly for three counts.']},
+  hammer:{n:'Hammer Curl',g:'Arms',lvl:'Beginner',sets:2,reps:'10–12',kg:12,cues:['Palms facing each other the whole set.','One arm at a time keeps it honest.','Stop at the top before your shoulder takes over.']},
+  pushdown:{n:'Triceps Pushdown',g:'Arms',lvl:'Beginner',sets:2,reps:'10–15',kg:25,cues:['Elbows locked at your ribs.','Straighten fully, squeeze for a beat.','Only your forearms move.']},
+  dip:{n:'Dip',g:'Arms',lvl:'Intermediate',sets:2,reps:'6–10',kg:0,cues:['Lean slightly forward, shoulders down.','Lower until your elbows hit 90°.','Assisted machine is fine while you build up.']},
+  plank:{n:'Plank',g:'Core',lvl:'Beginner',sets:2,reps:'40 s',kg:0,cues:['Elbows under shoulders, heels pushed back.','Squeeze glutes, tuck your ribs down.','Breathe — do not hold your breath.']},
+  hang:{n:'Hanging Knee Raise',g:'Core',lvl:'Intermediate',sets:2,reps:'10–12',kg:0,cues:['Hang still before the first rep.','Curl your knees up towards your chest.','No swinging on the way down.']},
+  cablecrunch:{n:'Cable Crunch',g:'Core',lvl:'Beginner',sets:2,reps:'12–15',kg:25,cues:['Kneel, rope beside your head.','Crunch your ribs towards your hips.','Hips stay still.']},
+  carry:{n:'Farmer Carry',g:'Core',lvl:'Beginner',sets:2,reps:'30 m',kg:24,cues:['Stand tall, shoulders back.','Walk smooth, no leaning.','Grip is meant to burn.']},
 
   // Chest
-  pushup:{n:'Push-Up',g:'Chest',lvl:'Beginner',sets:3,reps:'10–20',kg:0,cues:['Hands under shoulders, body in one line.','Lower until your chest nearly touches the floor.','Push the floor away, ribs tucked.']},
-  machpress:{n:'Chest Press Machine',g:'Chest',lvl:'Beginner',sets:3,reps:'10–12',kg:35,cues:['Set the seat so the handles sit at mid-chest.','Press without shrugging your shoulders.','Control the weight back, do not let it slam.']},
-  decline:{n:'Decline Bench Press',g:'Chest',lvl:'Intermediate',sets:3,reps:'8–10',kg:40,cues:['Lock your legs in, shoulders pinned back.','Lower the bar to your lower chest.','Press up over your shoulders.']},
-  dbfly:{n:'Dumbbell Fly',g:'Chest',lvl:'Beginner',sets:3,reps:'12–15',kg:10,cues:['Soft elbows, hold the bend all set.','Open your arms wide like a hug.','Squeeze the dumbbells together at the top.']},
+  pushup:{n:'Push-Up',g:'Chest',lvl:'Beginner',sets:2,reps:'10–20',kg:0,cues:['Hands under shoulders, body in one line.','Lower until your chest nearly touches the floor.','Push the floor away, ribs tucked.']},
+  machpress:{n:'Chest Press Machine',g:'Chest',lvl:'Beginner',sets:2,reps:'10–12',kg:35,cues:['Set the seat so the handles sit at mid-chest.','Press without shrugging your shoulders.','Control the weight back, do not let it slam.']},
+  decline:{n:'Decline Bench Press',g:'Chest',lvl:'Intermediate',sets:2,reps:'8–10',kg:40,cues:['Lock your legs in, shoulders pinned back.','Lower the bar to your lower chest.','Press up over your shoulders.']},
+  dbfly:{n:'Dumbbell Fly',g:'Chest',lvl:'Beginner',sets:2,reps:'12–15',kg:10,cues:['Soft elbows, hold the bend all set.','Open your arms wide like a hug.','Squeeze the dumbbells together at the top.']},
 
   // Back
-  deadlift:{n:'Deadlift',g:'Back',lvl:'Intermediate',sets:4,reps:'5–6',kg:70,cues:['Bar over mid-foot, shins close.','Flat back, take the slack out before you pull.','Stand up by driving the floor away.']},
-  tbar:{n:'T-Bar Row',g:'Back',lvl:'Intermediate',sets:3,reps:'8–10',kg:30,cues:['Hinge forward, chest proud.','Pull the handle to your belly.','Lower slow, feel the stretch.']},
-  chinup:{n:'Chin-Up',g:'Back',lvl:'Intermediate',sets:3,reps:'5–8',kg:0,cues:['Palms facing you, hang tall.','Pull your chest to the bar.','Lower all the way down each rep.']},
-  strarm:{n:'Straight-Arm Pulldown',g:'Back',lvl:'Beginner',sets:3,reps:'12–15',kg:20,cues:['Slight lean forward, arms long.','Push the bar down to your thighs.','Feel it in your lats, not your arms.']},
+  deadlift:{n:'Deadlift',g:'Back',lvl:'Intermediate',sets:2,reps:'5–6',kg:70,cues:['Bar over mid-foot, shins close.','Flat back, take the slack out before you pull.','Stand up by driving the floor away.']},
+  tbar:{n:'T-Bar Row',g:'Back',lvl:'Intermediate',sets:2,reps:'8–10',kg:30,cues:['Hinge forward, chest proud.','Pull the handle to your belly.','Lower slow, feel the stretch.']},
+  chinup:{n:'Chin-Up',g:'Back',lvl:'Intermediate',sets:2,reps:'5–8',kg:0,cues:['Palms facing you, hang tall.','Pull your chest to the bar.','Lower all the way down each rep.']},
+  strarm:{n:'Straight-Arm Pulldown',g:'Back',lvl:'Beginner',sets:2,reps:'12–15',kg:20,cues:['Slight lean forward, arms long.','Push the bar down to your thighs.','Feel it in your lats, not your arms.']},
 
   // Legs
-  frontsquat:{n:'Front Squat',g:'Legs',lvl:'Intermediate',sets:3,reps:'6–8',kg:40,cues:['Bar on your front delts, elbows high.','Sit straight down, torso tall.','Drive up through your whole foot.']},
-  legext:{n:'Leg Extension',g:'Legs',lvl:'Beginner',sets:3,reps:'12–15',kg:35,cues:['Pad on your lower shin.','Straighten your knees, squeeze the top.','Lower slow, do not swing.']},
-  legcurl:{n:'Lying Leg Curl',g:'Legs',lvl:'Beginner',sets:3,reps:'10–12',kg:30,cues:['Pad just above your heels.','Curl your heels toward your glutes.','Keep your hips down on the pad.']},
-  calf:{n:'Standing Calf Raise',g:'Legs',lvl:'Beginner',sets:4,reps:'12–15',kg:40,cues:['Balls of your feet on the edge.','Rise up as high as you can.','Stretch down slow at the bottom.']},
-  hipthrust:{n:'Hip Thrust',g:'Legs',lvl:'Beginner',sets:3,reps:'8–12',kg:50,cues:['Upper back on the bench, bar over hips.','Drive your hips up, squeeze your glutes.','Chin tucked, ribs down at the top.']},
+  frontsquat:{n:'Front Squat',g:'Legs',lvl:'Intermediate',sets:2,reps:'6–8',kg:40,cues:['Bar on your front delts, elbows high.','Sit straight down, torso tall.','Drive up through your whole foot.']},
+  legext:{n:'Leg Extension',g:'Legs',lvl:'Beginner',sets:2,reps:'12–15',kg:35,cues:['Pad on your lower shin.','Straighten your knees, squeeze the top.','Lower slow, do not swing.']},
+  legcurl:{n:'Lying Leg Curl',g:'Legs',lvl:'Beginner',sets:2,reps:'10–12',kg:30,cues:['Pad just above your heels.','Curl your heels toward your glutes.','Keep your hips down on the pad.']},
+  calf:{n:'Standing Calf Raise',g:'Legs',lvl:'Beginner',sets:2,reps:'12–15',kg:40,cues:['Balls of your feet on the edge.','Rise up as high as you can.','Stretch down slow at the bottom.']},
+  hipthrust:{n:'Hip Thrust',g:'Legs',lvl:'Beginner',sets:2,reps:'8–12',kg:50,cues:['Upper back on the bench, bar over hips.','Drive your hips up, squeeze your glutes.','Chin tucked, ribs down at the top.']},
 
   // Shoulders
-  arnoldp:{n:'Arnold Press',g:'Shoulders',lvl:'Intermediate',sets:3,reps:'8–10',kg:12,cues:['Start palms facing you at your chest.','Rotate and press overhead in one move.','Reverse it slowly on the way down.']},
-  uprow:{n:'Upright Row',g:'Shoulders',lvl:'Beginner',sets:3,reps:'10–12',kg:25,cues:['Hands just inside shoulder width.','Lead with your elbows to chest height.','Stop if your shoulders pinch.']},
-  cablelr:{n:'Cable Lateral Raise',g:'Shoulders',lvl:'Beginner',sets:3,reps:'12–15',kg:7,cues:['Cable behind you, lead with the elbow.','Raise to shoulder height, no higher.','Slow and controlled, no swinging.']},
-  presmach:{n:'Shoulder Press Machine',g:'Shoulders',lvl:'Beginner',sets:3,reps:'8–12',kg:25,cues:['Seat so the handles start at your shoulders.','Press straight up, ribs down.','Do not lock out hard at the top.']},
+  arnoldp:{n:'Arnold Press',g:'Shoulders',lvl:'Intermediate',sets:2,reps:'8–10',kg:12,cues:['Start palms facing you at your chest.','Rotate and press overhead in one move.','Reverse it slowly on the way down.']},
+  uprow:{n:'Upright Row',g:'Shoulders',lvl:'Beginner',sets:2,reps:'10–12',kg:25,cues:['Hands just inside shoulder width.','Lead with your elbows to chest height.','Stop if your shoulders pinch.']},
+  cablelr:{n:'Cable Lateral Raise',g:'Shoulders',lvl:'Beginner',sets:2,reps:'12–15',kg:7,cues:['Cable behind you, lead with the elbow.','Raise to shoulder height, no higher.','Slow and controlled, no swinging.']},
+  presmach:{n:'Shoulder Press Machine',g:'Shoulders',lvl:'Beginner',sets:2,reps:'8–12',kg:25,cues:['Seat so the handles start at your shoulders.','Press straight up, ribs down.','Do not lock out hard at the top.']},
 
   // Arms
-  preacher:{n:'Preacher Curl',g:'Arms',lvl:'Beginner',sets:3,reps:'10–12',kg:15,cues:['Armpits over the top of the pad.','Curl up and squeeze at the top.','Lower fully, feel the stretch.']},
-  skull:{n:'Skull Crusher',g:'Arms',lvl:'Intermediate',sets:3,reps:'10–12',kg:20,cues:['Elbows point at the ceiling, keep them fixed.','Lower the bar toward your forehead.','Straighten your arms, only the forearms move.']},
-  concentration:{n:'Concentration Curl',g:'Arms',lvl:'Beginner',sets:3,reps:'10–12',kg:10,cues:['Elbow braced on your inner thigh.','Curl slow, no swinging.','Squeeze hard at the top.']},
-  ohext:{n:'Overhead Triceps Extension',g:'Arms',lvl:'Beginner',sets:3,reps:'10–15',kg:15,cues:['Weight overhead, elbows by your ears.','Lower behind your head.','Straighten up, keep your elbows in.']},
+  preacher:{n:'Preacher Curl',g:'Arms',lvl:'Beginner',sets:2,reps:'10–12',kg:15,cues:['Armpits over the top of the pad.','Curl up and squeeze at the top.','Lower fully, feel the stretch.']},
+  skull:{n:'Skull Crusher',g:'Arms',lvl:'Intermediate',sets:2,reps:'10–12',kg:20,cues:['Elbows point at the ceiling, keep them fixed.','Lower the bar toward your forehead.','Straighten your arms, only the forearms move.']},
+  concentration:{n:'Concentration Curl',g:'Arms',lvl:'Beginner',sets:2,reps:'10–12',kg:10,cues:['Elbow braced on your inner thigh.','Curl slow, no swinging.','Squeeze hard at the top.']},
+  ohext:{n:'Overhead Triceps Extension',g:'Arms',lvl:'Beginner',sets:2,reps:'10–15',kg:15,cues:['Weight overhead, elbows by your ears.','Lower behind your head.','Straighten up, keep your elbows in.']},
 
   // Core
-  crunch:{n:'Crunch',g:'Core',lvl:'Beginner',sets:3,reps:'15–20',kg:0,cues:['Lower back stays on the floor.','Curl your ribs toward your hips.','No pulling on your neck.']},
-  russian:{n:'Russian Twist',g:'Core',lvl:'Beginner',sets:3,reps:'20',kg:8,cues:['Lean back, feet up if you can.','Rotate side to side under control.','Move from your waist, not your arms.']},
-  sideplank:{n:'Side Plank',g:'Core',lvl:'Beginner',sets:3,reps:'30 s',kg:0,cues:['Elbow under your shoulder.','Lift your hips into a straight line.','Do both sides, breathe steady.']},
-  deadbug:{n:'Dead Bug',g:'Core',lvl:'Beginner',sets:3,reps:'10',kg:0,cues:['Lower back pressed flat the whole time.','Extend the opposite arm and leg slowly.','Return, then switch sides.']},
-  abwheel:{n:'Ab Wheel Rollout',g:'Core',lvl:'Intermediate',sets:3,reps:'8–12',kg:0,cues:['Start on your knees, ribs tucked.','Roll out only as far as you can control.','Pull back with your abs, not your arms.']}
+  crunch:{n:'Crunch',g:'Core',lvl:'Beginner',sets:2,reps:'15–20',kg:0,cues:['Lower back stays on the floor.','Curl your ribs toward your hips.','No pulling on your neck.']},
+  russian:{n:'Russian Twist',g:'Core',lvl:'Beginner',sets:2,reps:'20',kg:8,cues:['Lean back, feet up if you can.','Rotate side to side under control.','Move from your waist, not your arms.']},
+  sideplank:{n:'Side Plank',g:'Core',lvl:'Beginner',sets:2,reps:'30 s',kg:0,cues:['Elbow under your shoulder.','Lift your hips into a straight line.','Do both sides, breathe steady.']},
+  deadbug:{n:'Dead Bug',g:'Core',lvl:'Beginner',sets:2,reps:'10',kg:0,cues:['Lower back pressed flat the whole time.','Extend the opposite arm and leg slowly.','Return, then switch sides.']},
+  abwheel:{n:'Ab Wheel Rollout',g:'Core',lvl:'Intermediate',sets:2,reps:'8–12',kg:0,cues:['Start on your knees, ribs tucked.','Roll out only as far as you can control.','Pull back with your abs, not your arms.']}
 };
 
 const PLANS = {
@@ -345,8 +353,38 @@ const DEMO_LOG = (function(){
   return out;
 })();
 
+/* ══════════════════════════════════════════════════════════════
+   Social (demo) — seeded friends + activity feed.
+   Shapes mirror a real API response so the UI never changes when the
+   backend lands: only the Social.* funcs below get swapped from
+   "return the seed" to "fetch('/api/...')". See Social at the bottom.
+   ══════════════════════════════════════════════════════════════ */
+const _ago = (function(){ const p = n => String(n).padStart(2,'0'); return off => { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-off); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }; })();
+const FRIENDS = [
+  {id:'u_maria', name:'Maria K.',  initials:'MK', accent:'#b23b2e', level:'Intermediate', planName:'Upper / Lower', streak:8, thisWeek:4, weekGoal:5, week:clone(PLANS.ul.week)},
+  {id:'u_jonas', name:'Jonas R.',  initials:'JR', accent:'#3a6ea5', level:'Advanced',     planName:'Arnold Split',  streak:14, thisWeek:5, weekGoal:6, week:clone(PLANS.arnold.week)},
+  {id:'u_aino',  name:'Aino V.',   initials:'AV', accent:'#7a3f8f', level:'Beginner',     planName:'Full Body 3×',  streak:3,  thisWeek:2, weekGoal:3, week:clone(PLANS.full3.week)},
+  {id:'u_sami',  name:'Sami L.',   initials:'SL', accent:'#2f9e7a', level:'Intermediate', planName:'Push Pull Legs', streak:21, thisWeek:5, weekGoal:6, week:clone(PLANS.ppl.week)},
+  {id:'u_elli',  name:'Elli T.',   initials:'ET', accent:'#c8912a', level:'Beginner',     planName:'Bro Split',     streak:1,  thisWeek:1, weekGoal:5, week:clone(PLANS.bro.week)}
+];
+// Activity feed — one entry per finished session, newest first. Same shape as S.log + userId.
+const FEED = [
+  {id:'a1', userId:'u_sami',  date:_ago(0), name:'Push', vol:5820, mins:54, sets:[{id:'bench',g:'Chest',kg:80,reps:6},{id:'ohp',g:'Shoulders',kg:45,reps:8},{id:'incline',g:'Chest',kg:60,reps:8},{id:'pushdown',g:'Arms',kg:30,reps:12}]},
+  {id:'a2', userId:'u_jonas', date:_ago(0), name:'Chest/Back', vol:7410, mins:68, photo:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMzIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyZjZkNDciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxZjNkMmIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjcwIiB5PSIxNTAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI3MCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIxMDAiIHk9IjEzMCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIxMjYiIHk9IjE3OCIgd2lkdGg9IjIyOCIgaGVpZ2h0PSIxNCIgcng9IjciIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIzNTQiIHk9IjEzMCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIzODAiIHk9IjE1MCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjcwIiByeD0iOCIgZmlsbD0iI2U5ZTJkMCIvPjx0ZXh0IHg9IjMwIiB5PSI2MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiPlBVU0ggREFZPC90ZXh0Pjx0ZXh0IHg9IjMwIiB5PSI5MiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNyI+bmV3IGJlbmNoIFBSPC90ZXh0Pjwvc3ZnPg==', sets:[{id:'bench',g:'Chest',kg:95,reps:5},{id:'row',g:'Back',kg:80,reps:8},{id:'incline',g:'Chest',kg:70,reps:8},{id:'lat',g:'Back',kg:65,reps:10}]},
+  {id:'a3', userId:'u_maria', date:_ago(1), name:'Upper', vol:4260, mins:47, sets:[{id:'bench',g:'Chest',kg:52,reps:8},{id:'row',g:'Back',kg:45,reps:10},{id:'ohp',g:'Shoulders',kg:30,reps:10},{id:'curl',g:'Arms',kg:22,reps:12}]},
+  {id:'a4', userId:'u_aino',  date:_ago(1), name:'Full A', vol:2980, mins:41, sets:[{id:'squat',g:'Legs',kg:50,reps:8},{id:'bench',g:'Chest',kg:35,reps:10},{id:'row',g:'Back',kg:35,reps:10}]},
+  {id:'a5', userId:'u_sami',  date:_ago(2), name:'Legs', vol:6900, mins:58, sets:[{id:'squat',g:'Legs',kg:110,reps:6},{id:'rdl',g:'Legs',kg:90,reps:8},{id:'legpress',g:'Legs',kg:160,reps:10}]},
+  {id:'a6', userId:'u_jonas', date:_ago(2), name:'Legs', vol:8100, mins:63, sets:[{id:'squat',g:'Legs',kg:140,reps:5},{id:'rdl',g:'Legs',kg:110,reps:8},{id:'lunge',g:'Legs',kg:24,reps:12}]},
+  {id:'a7', userId:'u_maria', date:_ago(3), name:'Lower', vol:5100, mins:49, sets:[{id:'squat',g:'Legs',kg:70,reps:8},{id:'rdl',g:'Legs',kg:60,reps:10},{id:'legpress',g:'Legs',kg:120,reps:10}]},
+  {id:'a8', userId:'u_elli',  date:_ago(3), name:'Chest', vol:2100, mins:38, sets:[{id:'bench',g:'Chest',kg:30,reps:10},{id:'incline',g:'Chest',kg:24,reps:12},{id:'fly',g:'Chest',kg:10,reps:15}]}
+];
+
 const S = {
   tab:'today', overlay:null, planId:'ppl',
+  social:null, friendProfile:null, friendPlan:null, editProfile:false,
+  uname: load('uname', 'Elmeri'),
+  pfp: load('pfp', null),            // profile photo as a data URL, or null → initial
+  unameAt: load('unameAt', 0),       // ms timestamp of the last username change (once/week limit)
   week: clone(PLANS.ppl.week),
   day:0, group:'Chest', dragId:null, dragFrom:null, over:false, dayPick:null,
   sheet:null, sheetFrom:null, progEx:'bench', w:null, dayDetail:null, dayFrom:null, slapDay:null, planOpen:null, drawerOpen:true, exPick:null,
@@ -354,7 +392,8 @@ const S = {
   log: load('log', DEMO_LOG),         // real logged sessions: {date,name,sets:[{g,kg,reps}],vol,mins}
   dark: load('dark', false),
   unit: load('unit', 'kg'),
-  accent: load('accent', 'forest')
+  accent: load('accent', 'forest'),
+  rest: load('rest', REST_SECONDS)
 };
 
 // Completion stickers — thin line-art icons with an OPAQUE WHITE fill (so nothing shows through),
@@ -426,11 +465,55 @@ function applyPrefs(){
     localStorage.setItem('setti.dark', JSON.stringify(!!S.dark));
     localStorage.setItem('setti.unit', JSON.stringify(S.unit));
     localStorage.setItem('setti.accent', JSON.stringify(S.accent));
+    localStorage.setItem('setti.rest', JSON.stringify(S.rest));
+    localStorage.setItem('setti.uname', JSON.stringify(S.uname));
+    localStorage.setItem('setti.pfp', JSON.stringify(S.pfp));
+    localStorage.setItem('setti.unameAt', JSON.stringify(S.unameAt));
   } catch(e){}
 }
-function setState(patch){ Object.assign(S, patch); if ('dark' in patch || 'unit' in patch || 'accent' in patch) applyPrefs(); if ('log' in patch){ try { localStorage.setItem('setti.log', JSON.stringify(S.log)); } catch(e){} } render(); }
-function rest(){ return REST_SECONDS; }
+function setState(patch){ Object.assign(S, patch); if ('dark' in patch || 'unit' in patch || 'accent' in patch || 'rest' in patch || 'uname' in patch || 'pfp' in patch || 'unameAt' in patch) applyPrefs(); if ('log' in patch){ try { localStorage.setItem('setti.log', JSON.stringify(S.log)); } catch(e){} } render(); }
+function rest(){ return S.rest; }
 function firstTrain(){ const i = S.week.findIndex(d => d.ex.length); return i < 0 ? 0 : i; }
+// Today's weekday as a Monday-first index (0=Mon … 6=Sun) — the actual day, not the first training day.
+function todayIdx(){ return (new Date().getDay()+6)%7; }
+
+/* ── Social data seam ──
+   The ONLY place the UI touches friend data. Demo returns the seed arrays;
+   to go live, swap each body for a fetch() — the views never change.
+   e.g.  friends(){ return fetch('/api/friends').then(r => r.json()); }
+
+   PRESENCE = who is *currently mid-workout*. That's what drives the green "live"
+   ring. Demo seeds a couple of ids; on a real backend, presence() polls (or opens
+   a socket to) an endpoint the server keeps fresh, and setPresence() is called by
+   this client whenever YOU start/finish a workout so friends see you go live too:
+     presence(){    return fetch('/api/presence').then(r => r.json()); }        // [userId,…] mid-workout
+     setPresence(on){ return fetch('/api/presence', {method:'POST', body:JSON.stringify({active:on})}); } */
+const _LIVE_NOW = ['u_jonas','u_sami'];   // demo: friends currently in a workout
+const Social = {
+  friends(){ return Promise.resolve(clone(FRIENDS)); },
+  feed(){ return Promise.resolve(clone(FEED)); },
+  profile(id){ return Promise.resolve(clone(FRIENDS.find(f => f.id === id) || null)); },
+  sessionsFor(id){ return Promise.resolve(clone(FEED.filter(a => a.userId === id))); },
+  presence(){ return Promise.resolve(_LIVE_NOW.slice()); },       // ids mid-workout right now
+  setPresence(active){ if (active) { if (!_LIVE_NOW.includes('me')) _LIVE_NOW.push('me'); } else { const i = _LIVE_NOW.indexOf('me'); if (i>=0) _LIVE_NOW.splice(i,1); } return Promise.resolve(); }  // demo no-op-ish; real: POST /api/presence
+};
+// Fetch friends + feed + presence once, then cache on S.social. Called when the Friends tab opens.
+let _socialLoading = false;
+function loadSocial(force){
+  if ((S.social || _socialLoading) && !force) return;
+  _socialLoading = true;
+  Promise.all([Social.friends(), Social.feed(), Social.presence()]).then(([friends, feed, presence]) => { _socialLoading = false; setState({social:{friends, feed, presence}}); });
+}
+function friendById(id){ return (S.social && S.social.friends.find(f => f.id === id)) || FRIENDS.find(f => f.id === id) || null; }
+// A friend is "live" when the presence source says they're mid-workout.
+function isLive(fr){ return !!(S.social && S.social.presence && S.social.presence.indexOf(fr.id) >= 0); }
+// "Today" / "2d ago" from a YYYY-MM-DD date, relative to now.
+function timeAgo(dateStr){
+  const d = parseYmd(dateStr); d.setHours(0,0,0,0);
+  const t = new Date(); t.setHours(0,0,0,0);
+  const days = Math.round((t - d)/86400000);
+  return days <= 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+}
 // ── real activity tracking ──
 function ymd(d){ return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
 function parseYmd(s){ return new Date(s + 'T00:00:00'); }
@@ -449,6 +532,12 @@ function estimate(day){
   return {min: Math.round(past.reduce((a,b) => a+b, 0) / past.length), src: past.length > 1 ? 'your average' : 'last time'};
 }
 function usePlan(id){ setState({planId:id, week:clone(PLANS[id].week), day:0, dayPick:null}); }
+// Start a blank plan from scratch (7 rest days) and drop straight into the builder.
+function createPlan(){
+  PLANS.custom = {name:'My Plan', level:'Custom', days:'', blurb:'Your own plan, built from scratch.',
+    week:Array.from({length:7}, () => ({name:'Rest', ex:[]}))};
+  setState({planId:'custom', week:clone(PLANS.custom.week), day:0, dayPick:null, exPick:null, group:null, overlay:'builder'});
+}
 // Reorder the week: move the day at `from` into position `to` (insert reorder). Rest days move with it.
 function moveDay(from, to){
   if (from === to || from == null || to == null) return;
@@ -458,6 +547,12 @@ function moveDay(from, to){
   const patch = {week, dayPick:null};
   if (S.overlay === 'builder') patch.day = to;   // keep the builder editing the same day
   setState(patch);
+}
+// Assign the current builder day as a rest day (clears its exercises).
+function setRestDay(){
+  const week = clone(S.week);
+  week[S.day] = {name:'Rest', ex:[]};
+  setState({week, exPick:null, group:null});
 }
 // Tap a day to pick it up, tap another to drop it there.
 function tapDay(i){
@@ -486,11 +581,54 @@ function moveEx(from, to){
   arr.splice(to, 0, it);
   setState({week, exPick: null});
 }
-// Tap-to-reorder: tap a handle to pick an exercise up, tap another to drop it there.
-function tapEx(i){
-  if (S.exPick == null) setState({exPick:i});
-  else if (S.exPick === i) setState({exPick:null});
-  else moveEx(S.exPick, i);
+// Press-and-drag reorder: hold a grip and drag the slot up/down. Live-shifts the
+// other cards to open a gap, commits with moveEx on release. Pointer events cover
+// mouse + touch; the grip sets touch-action:none so a vertical drag doesn't scroll.
+function startExDrag(e, from){
+  if (e.button != null && e.button !== 0) return;      // left button / primary touch only
+  const card = e.currentTarget.closest('[data-slot]');
+  if (!card) return;
+  e.preventDefault();
+  const container = card.parentNode;
+  const cards = Array.from(container.querySelectorAll('[data-slot]'));
+  const n = cards.length;
+  const step = card.getBoundingClientRect().height + 8;  // card height + 8px marginBottom
+  const startY = e.clientY;
+  let to = from;
+  scrubbing = true;                                      // freeze rest re-render while dragging
+  card.style.transition = 'box-shadow .12s, transform .04s';
+  card.style.zIndex = '20';
+  card.style.position = 'relative';
+  card.style.boxShadow = '0 12px 26px rgba(0,0,0,.24)';
+  card.style.transform = 'scale(1.025)';
+  const shiftCards = () => cards.forEach((c, idx) => {
+    if (idx === from) return;
+    let s = 0;
+    if (from < to && idx > from && idx <= to) s = -step;
+    else if (from > to && idx < from && idx >= to) s = step;
+    c.style.transition = 'transform .16s';
+    c.style.transform = s ? 'translateY(' + s + 'px)' : 'none';
+  });
+  const onMove = (ev) => {
+    const dy = ev.clientY - startY;
+    card.style.transform = 'translateY(' + dy + 'px) scale(1.025)';
+    let t = Math.max(0, Math.min(n - 1, from + Math.round(dy / step)));
+    if (t !== to){ to = t; shiftCards(); }
+  };
+  const onUp = () => {
+    document.removeEventListener('pointermove', onMove);
+    document.removeEventListener('pointerup', onUp);
+    scrubbing = false;
+    if (to === from){ setState({}); return; }            // no move → repaint to clear inline styles
+    moveEx(from, to);
+  };
+  document.addEventListener('pointermove', onMove);
+  document.addEventListener('pointerup', onUp);
+}
+// Adjust an exercise's set count from the builder bubble (clamped 1–10).
+function setSets(id, d){
+  EX[id].sets = Math.max(1, Math.min(10, EX[id].sets + d));
+  setState({});
 }
 function removeExById(id){
   const week = clone(S.week);
@@ -501,10 +639,11 @@ function removeExById(id){
 }
 function toggleEx(id){ S.week[S.day].ex.includes(id) ? removeExById(id) : addEx(id); }
 function startWorkout(){
-  const day = S.week[firstTrain()];
+  const day = S.week[todayIdx()];
   const ordered = day.ex.slice().sort((a,b) => GROUPS.indexOf(EX[a].g) - GROUPS.indexOf(EX[b].g));
   const queue = ordered.map(id => ({id, sets:EX[id].sets, done:[]}));
   if (!queue.length) return;
+  Social.setPresence(true);   // go live — server broadcasts that you're mid-workout
   setState({overlay:'workout', w:{queue, ei:0, si:0, kg:EX[queue[0].id].kg, reps:parseInt(EX[queue[0].id].reps) || 10, resting:false, restEnd:0, start:Date.now(), done:false, last:''}});
 }
 function logSet(){
@@ -612,7 +751,8 @@ function spinField(opts){
 }
 function saveSession(){
   const w = S.w;
-  const day = S.week[firstTrain()];
+  Social.setPresence(false);   // workout done — clear your live status
+  const day = S.week[todayIdx()];
   const hist = clone(S.hist);
   let log = S.log;
   let slapDay = null;   // set to the finished day so the strip sticker slaps in on the next render
@@ -624,7 +764,7 @@ function saveSession(){
     if (sets.length){
       const vol = sets.reduce((a,x) => a + x.kg*x.reps, 0);
       const today = ymd(new Date());
-      log = [...(S.log||[]), {date:today, name:day.name, sets, vol, mins}];
+      log = [...(S.log||[]), {date:today, name:day.name, sets, vol, mins, photo:w.photo || null}];
       slapDay = today;
     }
   }
@@ -643,10 +783,11 @@ const primaryActive = {background:'var(--color-accent-700)'};
    Views
    ══════════════════════════════════════════════════════════════ */
 function viewToday(){
-  const ti = firstTrain();
+  const ti = todayIdx();
   const today = S.week[ti];
   const plan = PLANS[S.planId];
   const est = estimate(today);
+  const restToday = today.ex.length === 0;
 
   const weekFlags = doneThisWeek();
   const monDate = weekStart(new Date());
@@ -663,14 +804,16 @@ function viewToday(){
       const dy  = [4, -5, 2, -4, -3, 5, -2][i];
       const scl = [1.06, 0.96, 1.10, 1.00, 0.92, 1.08, 0.98][i];
       const marker = isRest
-        ? null
+        ? h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'15px',letterSpacing:'.04em',color:'var(--color-neutral-700)',opacity:'.5'}}, 'Rest')
         : done
         ? (() => { const node = stickerNode(ymd(dayDate), 40, {position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) rotate('+rot+'deg) scale('+scl+')',filter:stickerFilter}); node.id = 'strip-sticker-'+ymd(dayDate); return node; })()
         : h('div', {style:{width:'10px',height:'10px',borderRadius:'999px',border:'2px solid var(--color-neutral-300)'}});
       const cellBg = isRest ? 'color-mix(in srgb, var(--color-neutral-900) 14%, var(--color-surface))'
-        : isTi ? 'color-mix(in srgb, var(--color-accent) 9%, transparent)' : 'transparent';
-      return h('div', {style:{flex:'1',display:'flex',flexDirection:'column',alignItems:'center',gap:'9px',padding:'12px 0 14px',cursor:done?'pointer':'default',borderRight:(i<6?'1px solid var(--color-divider)':'none'),background:cellBg}, onClick:done?((ev) => setState({dayDetail:ymd(dayDate), dayFrom:{x:ev.clientX, y:ev.clientY}})):null},
-        h('div', {style:{fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:isTi?'var(--color-accent-700)':'var(--color-neutral-600)'}}, lbl),
+        : isTi ? 'color-mix(in srgb, var(--color-accent) 15%, transparent)' : 'transparent';
+      return h('div', {style:{flex:'1',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px',padding:'10px 0 14px',cursor:done?'pointer':'default',borderRight:(i<6?'1px solid var(--color-divider)':'none'),borderTop:(isTi?'3px solid var(--color-accent)':'3px solid transparent'),background:cellBg}, onClick:done?((ev) => setState({dayDetail:ymd(dayDate), dayFrom:{x:ev.clientX, y:ev.clientY}})):null},
+        isTi
+          ? h('div', {style:{fontSize:'10px',letterSpacing:'.06em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-bg)',background:'var(--color-accent)',borderRadius:'999px',padding:'2px 8px'}}, lbl)
+          : h('div', {style:{fontSize:'10px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)'}}, lbl),
         h('div', {style:{position:'relative',width:'100%',height:'42px',display:'flex',alignItems:'center',justifyContent:'center'}}, marker)
       );
     })
@@ -678,12 +821,6 @@ function viewToday(){
   const weekStrip = h('div', {style:{marginBottom:'22px'}},
     weekBar,
     h('div', {style:{fontSize:'11px',color:'var(--color-neutral-500)',fontWeight:'600',textAlign:'center',marginTop:'8px'}}, 'Tap to inspect')
-  );
-
-  const chips = h('div', {style:{display:'flex',gap:'6px',flexWrap:'wrap'}},
-    h('span', {style:{background:'var(--color-bg)',borderRadius:'999px',padding:'5px 11px',fontSize:'11px',fontWeight:'700',letterSpacing:'.06em',textTransform:'uppercase',color:'var(--color-neutral-800)'}}, plan.name),
-    h('span', {style:{background:'var(--color-bg)',borderRadius:'999px',padding:'5px 11px',fontSize:'11px',fontWeight:'700',letterSpacing:'.06em',textTransform:'uppercase',color:'var(--color-neutral-800)'}}, today.ex.length + ' exercises · ~' + est.min + ' min'),
-    h('span', {style:{background:'transparent',border:'1px solid var(--color-divider)',borderRadius:'999px',padding:'5px 11px',fontSize:'11px',fontWeight:'700',letterSpacing:'.06em',textTransform:'uppercase',color:'var(--color-neutral-700)'}}, est.src)
   );
 
   // group same-muscle exercises together (stable), so the list isn't shuffled by group
@@ -694,8 +831,7 @@ function viewToday(){
       h('div', {style:{flex:'1',minWidth:'0'}},
         h('div', {style:{fontSize:'15px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, EX[id].n),
         h('div', {style:{display:'flex',alignItems:'center',gap:'7px',marginTop:'2px'}},
-          h('span', {style:{fontSize:'10px',fontWeight:'700',letterSpacing:'.07em',textTransform:'uppercase',background:g[0],color:g[1],borderRadius:'999px',padding:'2px 8px'}}, EX[id].g),
-          h('span', {style:{fontSize:'12px',color:'var(--color-neutral-600)'}}, EX[id].sets + ' × ' + EX[id].reps)
+          h('span', {style:{fontSize:'10px',fontWeight:'700',letterSpacing:'.07em',textTransform:'uppercase',background:g[0],color:g[1],borderRadius:'999px',padding:'2px 8px'}}, EX[id].g)
         )
       )
     );
@@ -703,36 +839,28 @@ function viewToday(){
 
   const cardHeader = h('div', {style:{background:'var(--color-accent)',color:'var(--color-bg)',padding:'16px 18px 15px'}},
     h('div', {style:{fontSize:'12px',letterSpacing:'.12em',textTransform:'uppercase',fontWeight:'700',opacity:'.85'}}, DAY_FULL[ti]),
-    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',letterSpacing:'-.02em',lineHeight:'1.02',marginTop:'2px'}}, today.name + ' day')
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',letterSpacing:'-.02em',lineHeight:'1.02',marginTop:'2px'}}, restToday ? 'Rest day' : today.name + ' day'),
+    restToday ? null : h('div', {style:{fontSize:'12px',fontWeight:'600',opacity:'.85',marginTop:'6px'}}, '~' + est.min + ' min')
   );
 
   const card = h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-lg)',boxShadow:'var(--shadow-md)',overflow:'hidden',marginBottom:'16px'}},
     cardHeader,
-    h('div', {style:{padding:'16px 18px 0'}}, chips),
-    h('div', {style:{padding:'18px 18px 20px'}},
-      ...exRows,
-      h('button', {style:primaryBtn({marginTop:'18px',padding:'16px',fontSize:'17px',letterSpacing:'.01em'}), hover:primaryHover, active:primaryActive, onClick:startWorkout}, 'Start workout'),
-      h('button', {style:{width:'100%',marginTop:'8px',background:'transparent',border:'1px solid var(--color-divider)',cursor:'pointer',borderRadius:'999px',padding:'13px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({overlay:'builder', day:ti})}, 'Swap exercises')
-    )
-  );
-
-  const weekDone = weekFlags.filter(Boolean).length;
-  const weekGoal = S.week.filter(d => d.ex.length).length;
-  const stats = h('div', {style:{display:'flex',gap:'12px'}},
-    h('div', {style:{flex:'1',background:'var(--color-accent-2-200)',borderRadius:'var(--radius-md)',padding:'16px'}},
-      h('div', {style:{fontWeight:'700',fontSize:'32px',lineHeight:'1',letterSpacing:'-.02em',fontVariantNumeric:'tabular-nums',color:'var(--color-accent-2-800)'}}, weekDone, h('span',{style:{fontSize:'17px',color:'var(--color-accent-2-700)'}}, '/'+weekGoal)),
-      h('div', {style:{fontSize:'11px',letterSpacing:'.08em',textTransform:'uppercase',color:'var(--color-accent-2-700)',fontWeight:'700',marginTop:'6px'}}, 'This week')
-    ),
-    h('div', {style:{flex:'1',background:'var(--color-neutral-200)',borderRadius:'var(--radius-md)',padding:'16px'}},
-      h('div', {style:{fontWeight:'700',fontSize:'32px',lineHeight:'1',letterSpacing:'-.02em',fontVariantNumeric:'tabular-nums'}}, '4 260'),
-      h('div', {style:{fontSize:'11px',letterSpacing:'.08em',textTransform:'uppercase',color:'var(--color-neutral-700)',fontWeight:'700',marginTop:'6px'}}, 'Kg last session')
-    )
+    restToday
+      ? h('div', {style:{padding:'22px 18px 24px'}},
+          h('div', {style:{fontSize:'14px',color:'var(--color-neutral-700)',lineHeight:'1.5',marginBottom:'16px'}}, 'No workout scheduled today. Rest up and recover.'),
+          h('button', {style:{width:'100%',background:'transparent',border:'1px solid var(--color-divider)',cursor:'pointer',borderRadius:'999px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'15px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({overlay:'builder', day:ti})}, 'Add a workout')
+        )
+      : h('div', {style:{padding:'18px 18px 20px'}},
+          ...exRows,
+          h('button', {style:primaryBtn({marginTop:'18px',padding:'16px',fontSize:'17px',letterSpacing:'.01em'}), hover:primaryHover, active:primaryActive, onClick:startWorkout}, 'Start workout'),
+          h('button', {style:{width:'100%',marginTop:'8px',background:'transparent',border:'1px solid var(--color-divider)',cursor:'pointer',borderRadius:'999px',padding:'13px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({overlay:'builder', day:ti})}, 'Swap exercises')
+        )
   );
 
   return h('div', {style:{padding:'6px 22px 152px'}},
     weekStrip,
     h('div', {style:{fontSize:'12px',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--color-accent-700)',fontWeight:'700',margin:'0 2px 8px'}}, 'Today'),
-    card, stats
+    card
   );
 }
 
@@ -755,7 +883,7 @@ function viewPlans(){
           return h('div', {style:{position:'relative',display:'flex',alignItems:'center',justifyContent:'space-between',gap:'10px',padding:'8px 0',borderTop:(newGroup?'1px solid rgba(255,255,255,.18)':'none')}},
             h('div', {style:{position:'absolute',left:'-16px',top:'50%',transform:'translateY(-50%)',width:'6px',height:'6px',borderRadius:'999px',background:'rgba(255,255,255,.75)'}}),
             h('div', {style:{flex:'1',minWidth:'0',fontSize:'14px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, EX[id].n),
-            h('div', {style:{flex:'none',fontSize:'11px',fontWeight:'700',opacity:'.95',background:'rgba(255,255,255,.16)',borderRadius:'999px',padding:'3px 10px'}}, EX[id].sets + ' × ' + EX[id].reps)
+            h('div', {style:{flex:'none',fontSize:'11px',fontWeight:'700',opacity:'.95',background:'rgba(255,255,255,.16)',borderRadius:'999px',padding:'3px 10px'}}, EX[id].sets + ' sets')
           );
         })
       )
@@ -769,34 +897,32 @@ function viewPlans(){
 
   const activeCard = h('div', {style:{background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px',boxShadow:'0 14px 30px -6px color-mix(in srgb, var(--color-accent) 55%, transparent), 0 4px 10px rgba(0,0,0,.18)',marginBottom:'22px'}},
     h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',opacity:'.8',fontWeight:'700'}}, 'Active plan'),
-    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'27px',margin:'4px 0 2px'}}, plan.name),
-    h('div', {style:{fontSize:'13px',opacity:'.9',marginBottom:'16px'}}, plan.days + ' · ' + plan.level),
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'27px',margin:'4px 0 16px'}}, plan.name),
     h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',opacity:'.7',marginBottom:'2px'}}, 'Your week'),
     weekWell,
     h('button', {style:{width:'100%',marginTop:'16px',border:'none',cursor:'pointer',background:'var(--color-bg)',color:'var(--color-accent-800)',borderRadius:'999px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'0 3px 8px rgba(0,0,0,.18)'}, hover:{background:'var(--color-accent-100)'}, onClick:() => setState({overlay:'builder', day:firstTrain(), dayPick:null})}, 'Customise plan')
   );
 
   const changeBtn = h('button', {style:{width:'100%',border:'1px solid var(--color-divider)',cursor:'pointer',background:'var(--color-surface)',color:'var(--color-text)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:() => setState({overlay:'plans'})}, 'Change plan');
+  const createBtn = h('button', {style:{width:'100%',marginTop:'10px',border:'none',cursor:'pointer',background:'var(--color-text)',color:'var(--color-bg)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 85%, #fff)'}, onClick:createPlan}, 'Create plan');
 
   return h('div', {style:{padding:'6px 22px 152px'}},
     h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Your plan'),
     activeCard,
-    changeBtn
+    changeBtn,
+    createBtn
   );
 }
 
 // Bottom sheet: pick a different ready-made plan. Opened from Plans → "Change plan".
 function viewPlanPicker(){
   const presets = Object.keys(PLANS).map(id => {
-    const p = PLANS[id], tag = lvlTag(p.level);
+    const p = PLANS[id];
     const inUse = id === S.planId;
     return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'16px 16px 14px',marginBottom:'12px',boxShadow:'var(--shadow-sm)',border:'2px solid '+(inUse?'var(--color-accent)':'transparent')}},
-      h('div', {style:{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'12px'}},
-        h('div', {style:{flex:'1'}},
-          h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'19px'}}, p.name),
-          h('div', {style:{fontSize:'12px',color:'var(--color-neutral-700)',marginTop:'3px'}}, p.blurb)
-        ),
-        h('span', {style:{flex:'none',background:tag[0],color:tag[1],borderRadius:'999px',padding:'4px 10px',fontSize:'10px',fontWeight:'700',letterSpacing:'.06em',textTransform:'uppercase'}}, p.level)
+      h('div', {style:{flex:'1'}},
+        h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'19px'}}, p.name),
+        h('div', {style:{fontSize:'12px',color:'var(--color-neutral-700)',marginTop:'3px'}}, p.blurb)
       ),
       h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'10px',marginTop:'14px'}},
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, p.days),
@@ -813,6 +939,176 @@ function viewPlanPicker(){
   );
   return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'flex-end',zIndex:'80'},
       onClick:() => setState({overlay:null})}, panel);
+}
+
+// Your own avatar: profile photo (data URL) if set, else the accent initial circle.
+function selfAvatar(size){
+  if (S.pfp) return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'center/cover no-repeat url('+S.pfp+')',backgroundSize:'cover'}});
+  return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'var(--color-accent)',color:'var(--color-bg)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-heading)',fontSize:Math.round(size*0.42)+'px'}}, (S.uname||'?').slice(0,1).toUpperCase());
+}
+
+/* ── Friends (social) ── */
+// Round avatar with initials, tinted to the friend's accent.
+function avatar(fr, size){
+  return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:fr.accent,color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-heading)',fontSize:Math.round(size*0.4)+'px',letterSpacing:'.02em'}}, fr.initials);
+}
+function viewFriends(){
+  if (!S.social){ loadSocial(); return h('div', {style:{padding:'70px 22px'}},
+    h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Friends'),
+    h('div', {style:{fontSize:'14px',color:'var(--color-neutral-600)'}}, 'Loading…')); }
+
+  const friends = S.social.friends;
+  // Sessions where you attached a photo become shared posts (userId 'me') — friends see them in the feed.
+  const meFeed = (S.log||[]).filter(r => r.sets && r.sets.length && r.photo).map(r => ({id:'me_'+r.date, userId:'me', date:r.date, name:r.name.replace(/ day$/,''), vol:r.vol, mins:r.mins, sets:r.sets, photo:r.photo}));
+  const feed = [...meFeed, ...S.social.feed].sort((a,b) => parseYmd(b.date) - parseYmd(a.date));
+
+  // Friend strip — tap an avatar to open their profile.
+  const strip = h('div', {class:'sx', style:{display:'flex',gap:'14px',overflowX:'auto',padding:'2px 2px 8px',marginBottom:'18px'}},
+    friends.map(fr => { const live = isLive(fr); return h('button', {style:{flex:'none',display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',width:'64px',border:'none',background:'transparent',cursor:'pointer',padding:'0'}, onClick:() => setState({friendProfile:fr.id})},
+      h('div', {style:{position:'relative'}},
+        // Live (mid-workout) → pulsing green ring around the avatar.
+        live
+          ? h('div', {class:'live-ring', style:{borderRadius:'999px',padding:'3px',background:'#22af5a'}}, h('div', {style:{borderRadius:'999px',padding:'2px',background:'var(--color-bg)'}}, avatar(fr, 48)))
+          : avatar(fr, 54),
+        live
+          ? h('div', {class:'live-dot', style:{position:'absolute',right:'0',bottom:'0',width:'15px',height:'15px',borderRadius:'999px',background:'#22af5a',border:'2px solid var(--color-bg)'}})
+          : (fr.thisWeek >= fr.weekGoal ? h('div', {style:{position:'absolute',right:'-2px',bottom:'-2px',width:'20px',height:'20px',borderRadius:'999px',background:'var(--color-accent)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',border:'2px solid var(--color-bg)'}}, '✓') : null)
+      ),
+      h('div', {style:{fontSize:'11px',fontWeight:'600',color:'var(--color-neutral-700)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis',maxWidth:'64px'}}, fr.name.split(' ')[0])
+    ); })
+  );
+
+  // Activity feed — a card per finished session.
+  const feedCards = feed.map(a => {
+    const isMe = a.userId === 'me';
+    const fr = isMe ? null : (friendById(a.userId) || {name:'?',initials:'?',accent:'#888'});
+    const who = isMe ? (S.uname + ' (You)') : fr.name;
+    const avatarNode = isMe ? selfAvatar(40) : avatar(fr, 40);
+    const open = isMe ? () => setState({dayDetail:a.date}) : () => setState({friendProfile:a.userId});
+    const header = h('div', {style:{display:'flex',alignItems:'center',gap:'11px',marginBottom:'10px'}},
+      avatarNode,
+      h('div', {style:{flex:'1',minWidth:'0',fontSize:'14px',fontWeight:'700',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, who),
+      h('div', {style:{flex:'none',fontSize:'11px',color:'var(--color-neutral-500)',fontWeight:'600'}}, timeAgo(a.date))
+    );
+    const cta = (label) => h('button', {style:{width:'100%',border:'1px solid var(--color-divider)',cursor:'pointer',background:'transparent',color:'var(--color-text)',borderRadius:'999px',padding:'11px',fontFamily:'var(--font-heading)',fontSize:'14px'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:open}, label);
+
+    if (a.photo){
+      // Photo post — big image, workout name overlaid, tap "See workout" for the detail.
+      return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
+        header,
+        h('div', {style:{position:'relative',height:'220px',borderRadius:'12px',overflow:'hidden',marginBottom:'12px',backgroundImage:'url('+a.photo+')',backgroundSize:'cover',backgroundPosition:'center'}},
+          h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',height:'88px',background:'linear-gradient(transparent, rgba(0,0,0,.72))'}}),
+          h('div', {style:{position:'absolute',left:'14px',bottom:'12px',right:'14px'}},
+            h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',color:'#fff',lineHeight:'1.05'}}, a.name),
+            h('div', {style:{fontSize:'11px',color:'rgba(255,255,255,.85)',fontWeight:'600',marginTop:'2px'}}, a.mins + ' min · ' + Math.round(a.vol) + ' kg')
+          )
+        ),
+        cta('See workout')
+      );
+    }
+
+    // No photo — short preview (name + first 2 lifts) with an Expand.
+    const preview = a.sets.slice(0,2).map(s => {
+      const gc = GROUP_COLOR[s.g] || GROUP_COLOR[GROUPS[0]];
+      return h('div', {style:{display:'flex',alignItems:'center',gap:'8px',padding:'6px 0'}},
+        h('div', {style:{width:'4px',height:'16px',flex:'none',borderRadius:'999px',background:gc[2]}}),
+        h('div', {style:{flex:'1',minWidth:'0',fontSize:'13px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, EX[s.id] ? EX[s.id].n : s.id),
+        h('div', {style:{flex:'none',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-neutral-700)'}}, (s.kg ? s.kg + 'kg' : 'Body') + ' × ' + s.reps)
+      );
+    });
+    const more = a.sets.length - 2;
+    return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
+      header,
+      h('div', {style:{background:'var(--color-bg)',borderRadius:'10px',padding:'4px 12px',marginBottom:'10px'}},
+        h('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',padding:'8px 0 6px',borderBottom:'1px solid var(--color-divider)',marginBottom:'2px'}},
+          h('span', {style:{fontFamily:'var(--font-heading)',fontSize:'15px'}}, a.name),
+          h('span', {style:{fontSize:'11px',color:'var(--color-neutral-600)',fontWeight:'600'}}, a.mins + ' min · ' + Math.round(a.vol) + ' kg')
+        ),
+        ...preview,
+        more > 0 ? h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',padding:'6px 0 2px'}}, '+' + more + ' more exercise' + (more>1?'s':'')) : null
+      ),
+      cta('Expand')
+    );
+  });
+
+  return h('div', {style:{padding:'6px 22px 152px'}},
+    h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Friends'),
+    strip,
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'12px'}}, 'Recent activity'),
+    ...feedCards
+  );
+}
+// Bottom sheet: a friend's profile — plan, stats, recent sessions.
+function viewFriendProfile(){
+  if (!S.friendProfile) return null;
+  const fr = friendById(S.friendProfile);
+  if (!fr) return null;
+  const sessions = (S.social ? S.social.feed : FEED).filter(a => a.userId === fr.id);
+
+  const firstName = fr.name.split(' ')[0];
+  const last = sessions[0];
+
+  // Focus: the workout they just completed — same look as the week-strip day-detail card.
+  const setRows = last ? last.sets.map((s,i) => {
+    const g = GROUP_COLOR[s.g] || GROUP_COLOR[GROUPS[0]];
+    const name = (EX[s.id] && EX[s.id].n) || s.id;
+    return h('div', {style:{display:'flex',alignItems:'center',gap:'12px',padding:'10px 0',borderBottom:(i<last.sets.length-1?'1px solid var(--color-divider)':'none')}},
+      h('div', {style:{width:'26px',height:'26px',flex:'none',borderRadius:'999px',background:g[0],color:g[1],display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:'700'}}, i+1),
+      h('div', {style:{flex:'1',minWidth:'0',fontSize:'15px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, name),
+      h('div', {style:{flex:'none',fontFamily:'var(--font-heading)',fontSize:'17px'}}, (s.kg ? s.kg + ' kg' : 'Body') + ' × ' + s.reps)
+    );
+  }) : [];
+  const workoutCard = h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'16px 18px',boxShadow:'var(--shadow-sm)',marginBottom:'20px'}},
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-accent-700)',marginBottom:'6px'}}, last ? parseYmd(last.date).toLocaleString('en-US',{month:'short',day:'numeric'}) : 'No workouts yet'),
+    last ? h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',marginBottom:'2px'}}, last.name) : null,
+    last ? h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',marginBottom:'8px'}}, last.mins + ' min · ' + Math.round(last.vol) + ' kg') : null,
+    last && last.photo ? h('div', {style:{height:'170px',borderRadius:'var(--radius-md)',margin:'4px 0 6px',backgroundImage:'url('+last.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}) : null,
+    ...setRows
+  );
+
+  const panel = h('div', {class:'sx', style:{width:'100%',maxHeight:'86%',overflowY:'auto',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px'},
+      onClick:(ev) => ev.stopPropagation()},
+    h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 18px'}}),
+    h('div', {style:{display:'flex',alignItems:'center',gap:'14px',marginBottom:'18px'}},
+      h('div', {style:{position:'relative',flex:'none'}},
+        avatar(fr, 62),
+        h('div', {style:{position:'absolute',right:'-6px',bottom:'-4px',display:'flex',alignItems:'center',gap:'2px',background:'var(--color-surface)',border:'2px solid var(--color-bg)',borderRadius:'999px',padding:'2px 7px 2px 5px',fontFamily:'var(--font-heading)',fontSize:'13px',boxShadow:'var(--shadow-sm)'}}, '🔥', fr.streak)
+      ),
+      h('div', {style:{flex:'1',minWidth:'0'}},
+        h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',lineHeight:'1.05'}}, fr.name)
+      ),
+      h('button', {style:{flex:'none',border:'1px solid var(--color-divider)',cursor:'pointer',background:'transparent',color:'var(--color-text)',borderRadius:'999px',padding:'9px 15px',fontFamily:'var(--font-heading)',fontSize:'13px'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({friendPlan:fr.id})}, 'See plan')
+    ),
+    workoutCard
+  );
+  return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'flex-end',zIndex:'80'},
+      onClick:() => setState({friendProfile:null})}, panel);
+}
+// Sheet: a friend's weekly plan, opened by "See plan" on their profile.
+function viewFriendPlan(){
+  if (!S.friendPlan) return null;
+  const fr = friendById(S.friendPlan);
+  if (!fr) return null;
+  const firstName = fr.name.split(' ')[0];
+  const weekWell = h('div', {style:{background:'var(--color-surface)',borderRadius:'12px',padding:'4px 14px',boxShadow:'var(--shadow-sm)'}},
+    fr.week.map((d,i) => {
+      const rest = d.ex.length === 0;
+      return h('div', {style:{display:'flex',alignItems:'center',gap:'12px',padding:'11px 0',borderBottom:(i<fr.week.length-1?'1px solid var(--color-divider)':'none')}},
+        h('div', {style:{width:'34px',fontSize:'11px',letterSpacing:'.06em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)'}}, DAY_LBL[i]),
+        h('div', {style:{flex:'1',fontSize:'15px',fontWeight:'600',color:(rest?'var(--color-neutral-500)':'var(--color-text)')}}, rest ? 'Rest' : d.name),
+        rest ? null : h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)'}}, d.ex.length + ' ex')
+      );
+    })
+  );
+  const panel = h('div', {class:'sx', style:{width:'100%',maxHeight:'86%',overflowY:'auto',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px'},
+      onClick:(ev) => ev.stopPropagation()},
+    h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 18px'}}),
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)',marginBottom:'4px'}}, firstName + '’s plan'),
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',lineHeight:'1.05',marginBottom:'18px'}}, fr.planName),
+    weekWell
+  );
+  return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'flex-end',zIndex:'82'},
+      onClick:() => setState({friendPlan:null})}, panel);
 }
 
 function viewProgress(){
@@ -852,42 +1148,38 @@ function viewProgress(){
     monthGrid
   );
 
-  // 1RM chart — real estimated 1RM per session from the log (Epley), demo fallback until 2+ sessions
+  // Most improved — biggest est. 1RM gain (earliest → latest session) per exercise from the log.
   const e1rm = x => Math.round(x.kg * (1 + x.reps/30));
-  const sess = (S.log||[])
-    .filter(r => r.sets.some(x => x.id === S.progEx))
-    .map(r => ({date:r.date, v: Math.max(...r.sets.filter(x => x.id === S.progEx).map(e1rm))}));
-  const realChart = sess.length >= 2;
-  const s = realChart ? sess.map(x => x.v) : (SERIES[S.progEx] || SERIES.bench);
-  const mn = Math.min(...s) - 4, mx = Math.max(...s) + 4;
-  const pts = s.map((y,i) => [i*(320/(s.length-1)), 120 - ((y-mn)/(mx-mn))*105 + 5]);
-  const chartPts = pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
-  const chartArea = 'M0,125 ' + pts.map(p => 'L' + p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ') + ' L320,125 Z';
-  const lastX = pts[pts.length-1][0].toFixed(1), lastY = pts[pts.length-1][1].toFixed(1);
-
-  const chipDefs = ['bench','squat','ohp','row'];
-  const chartChips = h('div', {class:'sx', style:{display:'flex',gap:'7px',overflowX:'auto',marginBottom:'16px',paddingBottom:'2px'}},
-    chipDefs.map(id => {
-      const active = S.progEx === id;
-      return h('button', {style:{flex:'none',cursor:'pointer',border:'1px solid '+(active?'var(--color-accent)':'var(--color-divider)'),background:(active?'var(--color-accent)':'transparent'),color:(active?'var(--color-bg)':'var(--color-text)'),borderRadius:'999px',padding:'7px 13px',fontSize:'12px',fontWeight:'700',fontFamily:'var(--font-body)'}, onClick:() => setState({progEx:id})}, EX[id].n.replace('Barbell ','').replace('Overhead ','OH '));
-    })
-  );
-  const chartSvg = svg({viewBox:'0 0 320 140', style:'width:100%;height:auto;overflow:visible'},
-    '<line x1="0" y1="10" x2="320" y2="10" stroke="var(--color-neutral-300)" stroke-width="1"></line>'+
-    '<line x1="0" y1="60" x2="320" y2="60" stroke="var(--color-neutral-300)" stroke-width="1"></line>'+
-    '<line x1="0" y1="110" x2="320" y2="110" stroke="var(--color-neutral-300)" stroke-width="1"></line>'+
-    '<path d="'+chartArea+'" fill="var(--color-accent-200)"></path>'+
-    '<polyline points="'+chartPts+'" fill="none" stroke="var(--color-accent)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></polyline>'+
-    '<circle cx="'+lastX+'" cy="'+lastY+'" r="5.5" fill="var(--color-accent)" stroke="var(--color-surface)" stroke-width="2.5"></circle>'
-  );
+  const byEx = {};
+  (S.log||[]).forEach(r => {
+    const best = {};
+    r.sets.forEach(x => { const v = e1rm(x); if (best[x.id] == null || v > best[x.id]) best[x.id] = v; });
+    Object.keys(best).forEach(id => (byEx[id] = byEx[id] || []).push({date:r.date, v:best[id]}));
+  });
+  let improved = Object.keys(byEx).map(id => {
+    const a = byEx[id].slice().sort((p,q) => parseYmd(p.date) - parseYmd(q.date));
+    return {id, from:a[0].v, to:a[a.length-1].v, delta:a[a.length-1].v - a[0].v, n:a.length};
+  }).filter(o => o.n >= 2 && o.delta > 0);
+  if (!improved.length){   // demo fallback from the seeded series
+    improved = ['bench','squat','ohp','row'].map(id => { const s = SERIES[id] || SERIES.bench; return {id, from:s[0], to:s[s.length-1], delta:s[s.length-1]-s[0], n:s.length}; })
+      .filter(o => o.delta > 0);
+  }
+  improved.sort((a,b) => b.delta - a.delta);
+  const top3 = improved.slice(0,3);
+  const medal = ['var(--color-accent-2-600)','var(--color-neutral-500)','var(--color-accent-400)'];
   const chartCard = h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'18px',marginBottom:'14px',boxShadow:'var(--shadow-sm)'}},
-    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'18px',marginBottom:'2px'}}, 'Estimated 1RM'),
-    h('div', {style:{fontSize:'12px',color:'var(--color-neutral-700)',marginBottom:'12px'}}, ((s[s.length-1]-s[0])>=0?'+':'') + (s[s.length-1]-s[0]) + ' kg over ' + (realChart ? sess.length + ' session' + (sess.length>1?'s':'') : '10 weeks')),
-    chartChips, chartSvg,
-    h('div', {style:{display:'flex',justifyContent:'space-between',marginTop:'8px',fontSize:'11px',color:'var(--color-neutral-600)'}},
-      h('span', {}, (realChart ? parseYmd(sess[0].date).toLocaleString('en-US',{month:'short',day:'numeric'}) : 'Mar') + ' · ' + s[0] + ' kg'),
-      h('span', {style:{fontWeight:'700',color:'var(--color-accent-700)'}}, 'Now · ' + s[s.length-1] + ' kg')
-    )
+    h('div', {style:{display:'flex',alignItems:'baseline',justifyContent:'space-between',marginBottom:'14px'}},
+      h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'18px'}}, 'Most improved'),
+      h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)'}}, 'Est. 1RM')
+    ),
+    top3.length ? top3.map((o,i) => h('div', {style:{display:'flex',alignItems:'center',gap:'12px',padding:'10px 0',borderBottom:(i<top3.length-1?'1px solid var(--color-divider)':'none')}},
+      h('div', {style:{width:'26px',height:'26px',flex:'none',borderRadius:'999px',background:medal[i],color:'var(--color-bg)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'12px',fontWeight:'700'}}, i+1),
+      h('div', {style:{flex:'1',minWidth:'0'}},
+        h('div', {style:{fontSize:'15px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, EX[o.id] ? EX[o.id].n : o.id),
+        h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',marginTop:'2px'}}, o.from + ' → ' + o.to + ' kg')
+      ),
+      h('div', {style:{flex:'none',fontFamily:'var(--font-heading)',fontSize:'19px',color:'var(--color-accent-700)'}}, '+' + o.delta + ' kg')
+    )) : h('div', {style:{fontSize:'14px',color:'var(--color-neutral-600)',padding:'6px 0'}}, 'Log a couple of sessions to see your gains.')
   );
 
   // muscle balance — real logged sets over the last 30 days (falls back to plan estimate if nothing logged yet)
@@ -937,27 +1229,33 @@ function viewBuilder(){
   const dayEx = dayObj.ex;
   const slots = dayObj.ex.map((id,i) => {
     const gc = GROUP_COLOR[EX[id].g];
-    const picked = S.exPick === i;
-    const moving = S.exPick != null;
-    return h('div', {style:{display:'flex',alignItems:'center',gap:'11px',background:'var(--color-surface)',borderRadius:'14px',padding:'11px',marginBottom:'8px',boxShadow:(picked?'0 0 0 2px var(--color-accent)':'var(--shadow-sm)'),transform:(picked?'scale(1.015)':'none'),transition:'transform .12s, box-shadow .12s'}},
-      // Grip = tap to pick up, tap another row's grip to drop it there.
-      h('button', {title:'Reorder', style:{width:'30px',height:'40px',flex:'none',border:'none',background:'transparent',cursor:'pointer',color:(picked?'var(--color-accent)':(moving?'var(--color-accent-600)':'var(--color-neutral-500)')),fontSize:'16px',lineHeight:'1',letterSpacing:'1px',padding:'0'}, onClick:() => tapEx(i)}, '⣿'),
+    return h('div', {'data-slot':i, style:{position:'relative',display:'flex',alignItems:'center',gap:'11px',background:'var(--color-surface)',borderRadius:'14px',padding:'13px 42px 13px 11px',marginBottom:'8px',boxShadow:'var(--shadow-sm)',transition:'transform .12s, box-shadow .12s'}},
+      // Grip = press and drag the card up/down to reorder.
+      h('button', {title:'Drag to reorder', style:{width:'30px',height:'40px',flex:'none',border:'none',background:'transparent',cursor:'grab',touchAction:'none',color:'var(--color-neutral-500)',fontSize:'16px',lineHeight:'1',letterSpacing:'1px',padding:'0'}, onPointerdown:(e) => startExDrag(e, i)}, '⣿'),
       h('div', {style:{flex:'1',minWidth:'0'}},
         h('span', {style:{display:'inline-block',fontSize:'9px',fontWeight:'800',letterSpacing:'.06em',textTransform:'uppercase',background:gc[0],color:gc[1],borderRadius:'6px',padding:'2px 7px',marginBottom:'5px'}}, EX[id].g),
         h('div', {style:{fontSize:'17px',fontWeight:'700',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, EX[id].n)
       ),
-      h('button', {style:{width:'30px',height:'30px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',fontSize:'12px',fontWeight:'700',color:'var(--color-neutral-700)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({sheet:id, sheetFrom:'slot'})}, 'i'),
-      h('button', {style:{width:'30px',height:'30px',flex:'none',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:'15px',color:'var(--color-neutral-600)'}, hover:{color:'var(--color-accent-700)'}, onClick:() => removeEx(i)}, '✕')
+      // Sets bubble — vertical: + on top, count, − on bottom.
+      h('div', {style:{flex:'none',display:'flex',flexDirection:'column',alignItems:'center',gap:'1px',background:'var(--color-bg)',borderRadius:'999px',padding:'3px 2px'}},
+        h('button', {title:'More sets', style:{width:'26px',height:'22px',flex:'none',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:'16px',lineHeight:'1',color:'var(--color-neutral-700)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 8%, transparent)'}, onClick:() => setSets(id,1)}, '+'),
+        h('div', {style:{lineHeight:'1',textAlign:'center'}},
+          h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'17px'}}, EX[id].sets),
+          h('div', {style:{fontSize:'6px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)'}}, 'sets')
+        ),
+        h('button', {title:'Fewer sets', style:{width:'26px',height:'22px',flex:'none',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:'18px',lineHeight:'1',color:'var(--color-neutral-700)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 8%, transparent)'}, onClick:() => setSets(id,-1)}, '−')
+      ),
+      // Info + remove — pinned to the card's right corners.
+      h('button', {title:'Details', style:{position:'absolute',top:'6px',right:'8px',width:'24px',height:'24px',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'var(--color-surface)',cursor:'pointer',fontSize:'11px',fontWeight:'700',color:'var(--color-neutral-700)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({sheet:id, sheetFrom:'slot'})}, 'i'),
+      h('button', {title:'Remove', style:{position:'absolute',bottom:'6px',right:'8px',width:'24px',height:'24px',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:'14px',color:'var(--color-neutral-600)',padding:'0'}, hover:{color:'var(--color-accent-700)'}, onClick:() => removeEx(i)}, '✕')
     );
   });
 
   const dropZone = h('div', {style:{border:'2px dashed '+(S.over?'var(--color-accent)':'var(--color-divider)'),background:(S.over?'var(--color-accent-100)':'transparent'),borderRadius:'var(--radius-md)',padding:'12px 7px',minHeight:'180px'}},
-    h('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:'10px',padding:'0 4px'}},
-      h('span', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)'}}, DAY_LBL[S.day] + ' · ' + (dayObj.ex.length ? dayObj.name : 'Rest')),
-      h('span', {style:{fontSize:'11px',color:(S.exPick!=null?'var(--color-accent-700)':'var(--color-neutral-600)'),fontWeight:(S.exPick!=null?'700':'400')}}, S.exPick!=null ? 'Tap a grip to move it there' : dayObj.ex.length + ' exercises · tap ⣿ to reorder')
+    h('div', {style:{display:'flex',justifyContent:'flex-end',alignItems:'baseline',marginBottom:'10px',padding:'0 4px'}},
+      h('span', {style:{fontSize:'11px',color:'var(--color-neutral-600)'}}, dayObj.ex.length + ' exercises · drag ⣿ to reorder')
     ),
-    ...slots,
-    !dayObj.ex.length && h('div', {style:{textAlign:'center',padding:'26px 20px',color:'var(--color-neutral-600)',fontSize:'13px'}}, 'Rest day — drag an exercise here to train instead.')
+    ...slots
   );
 
   const dropWrap = h('div', {class:'sx', style:{flex:'1',overflowY:'auto',padding:'0 10px 8px'},
@@ -991,7 +1289,7 @@ function viewBuilder(){
     const col = GROUP_COLOR[g];
     const header = h('button', {onClick:() => setState({group: open ? null : g}),
       style:{width:'100%',display:'flex',alignItems:'center',gap:'11px',cursor:'pointer',border:'none',background:'transparent',padding:'12px 4px',fontFamily:'var(--font-body)',color:'var(--color-text)',borderBottom:(open?'none':'1px solid var(--color-divider)')}},
-      h('div', {style:{width:'10px',height:'10px',flex:'none',borderRadius:'999px',background:col[2]}}),
+      h('div', {style:{width:'4px',height:'20px',flex:'none',borderRadius:'999px',background:col[2]}}),
       h('div', {style:{flex:'1',textAlign:'left',fontSize:'16px',fontWeight:'700'}}, g),
       inCount ? h('span', {style:{fontSize:'11px',fontWeight:'700',background:col[0],color:col[1],borderRadius:'999px',padding:'2px 9px'}}, inCount + ' added') : null,
       h('span', {style:{fontSize:'12px',color:'var(--color-neutral-600)'}}, ids.length),
@@ -1002,10 +1300,10 @@ function viewBuilder(){
   });
 
   const drawerOpen = S.drawerOpen;
-  const drawer = h('div', {style:{flexShrink:'0',background:'var(--color-surface)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',boxShadow:'var(--shadow-lg)',paddingBottom:'26px',height:(drawerOpen?'340px':'56px'),display:'flex',flexDirection:'column',overflow:'hidden',transition:'height .28s cubic-bezier(.4,0,.2,1)'}},
+  const drawer = h('div', {style:{flexShrink:'0',background:'var(--color-surface)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',boxShadow:'var(--shadow-lg)',paddingBottom:'26px',marginBottom:(drawerOpen?'0':'14px'),height:(drawerOpen?'340px':'70px'),display:'flex',flexDirection:'column',overflow:'hidden',transition:'height .28s cubic-bezier(.4,0,.2,1), margin-bottom .28s'}},
     // Grip handle — tap to retract the drawer to the bottom (or pull it back up).
-    h('div', {style:{padding:'12px 20px 8px',cursor:'pointer',flexShrink:'0'}, onClick:() => setState({drawerOpen:!drawerOpen})},
-      h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 10px'}}),
+    h('div', {style:{padding:'14px 20px 10px',cursor:'pointer',flexShrink:'0'}, onClick:() => setState({drawerOpen:!drawerOpen})},
+      h('div', {style:{width:'56px',height:'6px',borderRadius:'999px',background:'var(--color-neutral-500)',margin:'0 auto 12px'}}),
       h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
         h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)'}}, 'Add by muscle group'),
         h('div', {style:{fontSize:'15px',color:'var(--color-neutral-500)',transition:'transform .28s',transform:drawerOpen?'rotate(0deg)':'rotate(180deg)'}}, '▾')
@@ -1014,22 +1312,34 @@ function viewBuilder(){
     h('div', {class:'sx', style:{flex:'1',overflowY:'auto',padding:'6px 18px 0'}}, ...sections)
   );
 
-  const atStart = S.day === 0, atEnd = S.day === S.week.length-1;
-  const mvBtn = (lbl, dis, fn) => h('button', {style:{width:'36px',height:'36px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:dis?'default':'pointer',opacity:dis?'.3':'1',fontSize:'14px',color:'var(--color-text)'}, hover:dis?null:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:dis?null:fn}, lbl);
+  const isRest = dayObj.ex.length === 0;
   const moveBar = h('div', {style:{display:'flex',flexShrink:'0',alignItems:'center',gap:'8px',padding:'0 18px 10px'}},
-    h('span', {style:{flex:'1',minWidth:'0',fontSize:'12px',color:'var(--color-neutral-700)',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, 'Move ' + DAY_FULL[S.day] + ' · ' + (dayObj.ex.length ? dayObj.name : 'Rest')),
-    mvBtn('◀', atStart, () => moveDay(S.day, S.day-1)),
-    mvBtn('▶', atEnd, () => moveDay(S.day, S.day+1))
+    h('span', {style:{flex:'1',minWidth:'0',fontSize:'12px',color:'var(--color-neutral-700)',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, DAY_FULL[S.day] + ' · ' + (isRest ? 'Rest' : dayObj.name)),
+    h('button', {title:'Assign this day as a rest day', style:{flex:'none',display:'flex',alignItems:'center',gap:'6px',borderRadius:'999px',padding:'8px 14px',cursor:isRest?'default':'pointer',fontFamily:'var(--font-heading)',fontSize:'13px',
+        border:(isRest?'none':'1px solid var(--color-divider)'),
+        background:(isRest?'var(--color-text)':'transparent'),
+        color:(isRest?'var(--color-bg)':'var(--color-text)')},
+      hover:isRest?null:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:isRest?null:setRestDay},
+      isRest ? 'Rest day ✓' : 'Set as rest day')
   );
 
   return h('div', {style:{position:'absolute',inset:'0',background:'var(--color-bg)',display:'flex',flexDirection:'column',zIndex:'70'}},
     h('div', {style:{padding:'58px 18px 12px',display:'flex',alignItems:'center',gap:'10px'}},
       h('button', {style:{width:'38px',height:'38px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',fontSize:'17px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({overlay:null, w:null})}, '←'),
       h('div', {style:{flex:'1',minWidth:'0'}},
-        h('div', {style:{fontSize:'10px',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--color-neutral-600)',fontWeight:'700'}}, 'Customise'),
-        h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'20px',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, plan.name)
+        h('div', {style:{fontSize:'10px',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--color-neutral-600)',fontWeight:'700',marginBottom:'4px'}}, 'Customise'),
+        // Editable plan name — bubble + pen so it reads as tappable. Updates model live, repaints on blur.
+        h('div', {style:{display:'inline-flex',alignItems:'center',gap:'6px',maxWidth:'100%',background:'color-mix(in srgb, var(--color-text) 5%, transparent)',border:'1px solid var(--color-divider)',borderRadius:'10px',padding:'5px 9px'}},
+          h('input', {value:plan.name, placeholder:'Plan name', maxlength:'28', size:String(Math.max(6, plan.name.length)),
+            onInput:(e) => { PLANS[S.planId].name = e.target.value; },
+            onKeydown:(e) => { if (e.key === 'Enter') e.target.blur(); },
+            onBlur:() => setState({}),
+            style:{border:'none',background:'transparent',color:'var(--color-text)',fontFamily:'var(--font-heading)',fontWeight:'700',fontSize:'19px',padding:'0',outline:'none',minWidth:'0',maxWidth:'190px'}}),
+          svg({width:'14',height:'14',viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round',style:'flex:none;color:var(--color-neutral-600)'},
+            '<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/>')
+        )
       ),
-      h('button', {style:{flex:'none',border:'none',cursor:'pointer',background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'999px',padding:'10px 18px',fontFamily:'var(--font-heading)',fontSize:'14px'}, hover:{background:'var(--color-accent-600)'}, onClick:() => setState({overlay:null, w:null})}, 'Done')
+      h('button', {style:{flex:'none',border:'none',cursor:'pointer',background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'999px',padding:'10px 18px',fontFamily:'var(--font-heading)',fontSize:'14px'}, hover:{background:'var(--color-accent-600)'}, onClick:() => setState({overlay:null, w:null})}, 'Save')
     ),
     dayTabs, moveBar, dropWrap, drawer
   );
@@ -1066,7 +1376,7 @@ function viewWorkout(){
       h('div', {style:{fontSize:'14px',fontWeight:'600'}}, EX[q.id].n),
       h('div', {style:{fontSize:'12px',color:'var(--color-neutral-700)',marginTop:'2px'}}, q.done.map(x => x.kg + uLbl + ' × ' + x.reps).join('   '))
     ));
-    const day = S.week[firstTrain()];
+    const day = S.week[todayIdx()];
     body = h('div', {style:{flex:'1',display:'flex',flexDirection:'column',padding:'26px 22px 34px'}},
       h('div', {style:{fontSize:'11px',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--color-accent-700)',fontWeight:'700'}}, 'Session complete'),
       h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',margin:'6px 0 18px',letterSpacing:'-.02em'}}, day.name + ' day done'),
@@ -1082,6 +1392,15 @@ function viewWorkout(){
           h('div', {style:{fontSize:'10px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginTop:'5px'}}, 'Duration'))
       ),
       h('div', {class:'sx', style:{flex:'1',overflowY:'auto',background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'14px 16px'}}, ...summary),
+      // Attach a photo to remember the session — shows in your day-detail and the friends feed.
+      (() => {
+        const photoInput = h('input', {type:'file', accept:'image/*', style:{display:'none'}, onChange:(e) => { const f = e.target.files && e.target.files[0]; if (f) readPhoto(f, url => setState({w:{...S.w, photo:url}})); }});
+        return w.photo
+          ? h('div', {style:{position:'relative',marginTop:'14px'}},
+              h('div', {style:{height:'160px',borderRadius:'var(--radius-md)',backgroundImage:'url('+w.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}),
+              h('button', {title:'Remove photo', style:{position:'absolute',top:'8px',right:'8px',width:'30px',height:'30px',borderRadius:'999px',border:'none',background:'rgba(0,0,0,.55)',color:'#fff',cursor:'pointer',fontSize:'15px'}, onClick:() => setState({w:{...S.w, photo:null}})}, '✕'))
+          : h('button', {style:{width:'100%',marginTop:'14px',border:'1px dashed var(--color-neutral-400)',background:'transparent',cursor:'pointer',borderRadius:'var(--radius-md)',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 5%, transparent)'}, onClick:() => photoInput.click()}, '📷  Add a photo', photoInput);
+      })(),
       h('button', {style:primaryBtn({marginTop:'16px',padding:'18px',fontSize:'17px'}), hover:primaryHover, onClick:saveSession}, 'Save session')
     );
   } else if (w.resting){
@@ -1194,11 +1513,12 @@ function viewDayDetail(){
         h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'21px'}}, sess.name),
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, Math.round(sess.vol) + ' kg · ' + sess.mins + ' min')
       ),
+      sess.photo ? h('div', {style:{height:'170px',borderRadius:'var(--radius-md)',marginBottom:'10px',backgroundImage:'url('+sess.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}) : null,
       h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'4px 16px',boxShadow:'var(--shadow-sm)'}}, ...setRows)
     );
   }) : [h('div', {style:{fontSize:'14px',color:'var(--color-neutral-600)',padding:'8px 0 20px'}}, 'Nothing logged this day.')];
 
-  const panel = h('div', {id:'daySheet', class:'sx', style:{width:'86%',maxWidth:'340px',maxHeight:'78%',overflowY:'auto',background:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px 22px 24px',boxShadow:'0 18px 50px rgba(0,0,0,.4)'},
+  const panel = h('div', {id:'daySheet', class:'sx', style:{width:'100%',maxHeight:'78%',overflowY:'auto',background:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px 22px 24px',boxShadow:'0 18px 50px rgba(0,0,0,.4)'},
       onClick:(ev) => ev.stopPropagation()},
     h('div', {style:{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:'10px',marginBottom:'16px'}},
       h('h3', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',margin:'0',marginLeft:'34px',lineHeight:'1.05'}}, heading),
@@ -1207,7 +1527,7 @@ function viewDayDetail(){
     ...body
   );
   // Wrap the panel so the corner sticker can spill past its edge (panel itself clips with overflowY:auto).
-  const wrapped = h('div', {style:{position:'relative',display:'flex'},
+  const wrapped = h('div', {style:{position:'relative',display:'flex',width:'86%',maxWidth:'340px'},
       onClick:(ev) => ev.stopPropagation()},
     panel,
     // Slapped-on sticker: tilted, die-cut rim, hangs off the top-left corner.
@@ -1240,6 +1560,24 @@ function settingsRow(label, sub, control){
     control
   );
 }
+// Rest-timer editor: separate minute (±1) and second (±5) steppers.
+// Seconds wrap 0↔55 within the current minute so they don't spill into minutes.
+function restStepper(){
+  const rmin = Math.floor(S.rest/60), rsec = S.rest%60;
+  const setRest = v => setState({rest:Math.max(5, Math.min(600, v))});
+  const btn = (lbl, fn) => h('button', {style:{width:'26px',height:'26px',flex:'none',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:(lbl==='−'?'17px':'15px'),lineHeight:'1',color:'var(--color-neutral-700)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 8%, transparent)'}, onClick:fn}, lbl);
+  const unit = (val, minus, plus, lbl) => h('div', {style:{display:'flex',flexDirection:'column',alignItems:'center',gap:'2px'}},
+    h('div', {style:{display:'flex',alignItems:'center',gap:'1px',background:'var(--color-bg)',borderRadius:'999px',padding:'3px'}},
+      btn('−', minus),
+      h('div', {style:{minWidth:'26px',textAlign:'center',fontFamily:'var(--font-heading)',fontSize:'16px'}}, val),
+      btn('+', plus)),
+    h('div', {style:{fontSize:'8px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)'}}, lbl)
+  );
+  return h('div', {style:{flex:'none',display:'flex',alignItems:'center',gap:'8px'}},
+    unit(rmin, () => setRest(S.rest-60), () => setRest(S.rest+60), 'min'),
+    unit(String(rsec).padStart(2,'0'), () => setRest(rmin*60 + (rsec+55)%60), () => setRest(rmin*60 + (rsec+5)%60), 'sec')
+  );
+}
 function settingsCard(rows){
   const kids = rows.map((r,i) => { if (i === rows.length-1) r.style.borderBottom = 'none'; return r; });
   return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',overflow:'hidden',boxShadow:'var(--shadow-sm)',marginBottom:'18px'}}, ...kids);
@@ -1247,25 +1585,14 @@ function settingsCard(rows){
 
 function viewSettings(){
   const email = 'lehtisenelmeri@gmail.com';
-  const name = 'Elmeri';
-  const plan = PLANS[S.planId];
-  const doneCount = doneThisWeek().filter(Boolean).length;
 
   const profile = h('div', {style:{display:'flex',alignItems:'center',gap:'16px',background:'var(--color-surface)',borderRadius:'var(--radius-lg)',padding:'20px',boxShadow:'var(--shadow-md)',marginBottom:'22px'}},
-    h('div', {style:{width:'62px',height:'62px',flex:'none',borderRadius:'999px',background:'var(--color-accent)',color:'var(--color-bg)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-heading)',fontSize:'26px'}}, name.slice(0,1)),
+    selfAvatar(62),
     h('div', {style:{flex:'1',minWidth:'0'}},
-      h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'22px'}}, name),
+      h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'22px',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, S.uname),
       h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, email)
     ),
-    h('button', {style:{flex:'none',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',borderRadius:'999px',padding:'8px 14px',fontFamily:'var(--font-heading)',fontSize:'13px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}}, 'Edit')
-  );
-
-  const miniStats = h('div', {style:{display:'flex',gap:'10px',marginBottom:'24px'}},
-    [['5','Week streak'],[String(doneCount),'This week'],[plan.name,'Plan']].map(([n,l]) =>
-      h('div', {style:{flex:'1',background:'var(--color-neutral-200)',borderRadius:'var(--radius-md)',padding:'14px'}},
-        h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'18px',lineHeight:'1.05',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, n),
-        h('div', {style:{fontSize:'10px',letterSpacing:'.06em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)',marginTop:'6px'}}, l)
-      ))
+    h('button', {style:{flex:'none',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',borderRadius:'999px',padding:'8px 14px',fontFamily:'var(--font-heading)',fontSize:'13px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({editProfile:true})}, 'Edit')
   );
 
   const sectionLbl = (t) => h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-accent-700)',margin:'0 4px 8px'}}, t);
@@ -1282,7 +1609,7 @@ function viewSettings(){
     settingsRow('Accent colour', accentName, swatches),
     settingsRow('Dark mode', S.dark ? 'On — warm dark theme' : 'Off — light theme', toggle(S.dark, () => setState({dark:!S.dark}))),
     settingsRow('Units', 'Weights shown in ' + (S.unit === 'kg' ? 'kilograms' : 'pounds'), segmented([{val:'kg',label:'kg'},{val:'lb',label:'lb'}], S.unit, (u) => setState({unit:u}))),
-    settingsRow('Rest timer', 'Default ' + REST_SECONDS + ' seconds between sets', h('div', {style:{fontSize:'14px',fontWeight:'700',color:'var(--color-neutral-600)'}}, REST_SECONDS + 's'))
+    settingsRow('Rest timer', 'Between sets', restStepper())
   ]);
 
   const account = settingsCard([
@@ -1295,12 +1622,138 @@ function viewSettings(){
 
   return h('div', {style:{padding:'6px 22px 152px'}},
     h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Settings'),
-    profile, miniStats,
+    profile,
     sectionLbl('General'), general,
     sectionLbl('Account'), account,
     reset,
     h('div', {style:{textAlign:'center',fontSize:'11px',color:'var(--color-neutral-500)',marginTop:'18px'}}, 'Setti · v1.0')
   );
+}
+
+// Read a picked image file, downscale to ≤256px, hand back a JPEG data URL.
+function readPhoto(file, cb){
+  const r = new FileReader();
+  r.onload = () => {
+    const img = new Image();
+    img.onload = () => {
+      const max = 256, scale = Math.min(1, max/Math.max(img.width, img.height));
+      const w = Math.round(img.width*scale), hgt = Math.round(img.height*scale);
+      const c = document.createElement('canvas'); c.width = w; c.height = hgt;
+      c.getContext('2d').drawImage(img, 0, 0, w, hgt);
+      cb(c.toDataURL('image/jpeg', 0.85));
+    };
+    img.src = r.result;
+  };
+  r.readAsDataURL(file);
+}
+// Edit-profile sheet: change photo anytime; username only once every 7 days.
+function viewEditProfile(){
+  if (!S.editProfile) return null;
+  const WEEK = 7*86400000, now = Date.now();
+  const locked = S.unameAt && (now - S.unameAt) < WEEK;
+  const daysLeft = Math.ceil((WEEK - (now - S.unameAt))/86400000);
+
+  const fileInput = h('input', {type:'file', accept:'image/*', style:{display:'none'},
+    onChange:(e) => { const f = e.target.files && e.target.files[0]; if (f) readPhoto(f, url => setState({pfp:url})); }});
+  let nameInput = h('input', {value:S.uname, maxlength:'20', disabled:locked||undefined,
+    style:{width:'100%',border:'1px solid var(--color-divider)',borderRadius:'12px',background:(locked?'var(--color-neutral-200)':'var(--color-bg)'),color:(locked?'var(--color-neutral-600)':'var(--color-text)'),fontFamily:'var(--font-heading)',fontSize:'18px',padding:'12px 14px',outline:'none'}});
+
+  const save = () => {
+    const v = (nameInput.value || '').trim();
+    const patch = {editProfile:false};
+    if (!locked && v && v !== S.uname){ patch.uname = v; patch.unameAt = now; }
+    setState(patch);
+  };
+
+  const panel = h('div', {class:'sx', style:{width:'100%',maxHeight:'86%',overflowY:'auto',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px'},
+      onClick:(ev) => ev.stopPropagation()},
+    h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 18px'}}),
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',marginBottom:'20px'}}, 'Edit profile'),
+
+    // Photo — editable anytime.
+    h('div', {style:{display:'flex',alignItems:'center',gap:'16px',marginBottom:'24px'}},
+      selfAvatar(72),
+      h('div', {style:{flex:'1',display:'flex',flexDirection:'column',gap:'8px'}},
+        h('button', {style:{border:'none',cursor:'pointer',background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'999px',padding:'10px 14px',fontFamily:'var(--font-heading)',fontSize:'13px'}, hover:{background:'var(--color-accent-600)'}, onClick:() => fileInput.click()}, S.pfp ? 'Change photo' : 'Upload photo'),
+        S.pfp ? h('button', {style:{border:'1px solid var(--color-divider)',cursor:'pointer',background:'transparent',color:'var(--color-text)',borderRadius:'999px',padding:'10px 14px',fontFamily:'var(--font-heading)',fontSize:'13px'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({pfp:null})}, 'Remove photo') : null
+      ),
+      fileInput
+    ),
+
+    // Username — once a week.
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'8px'}}, 'Username'),
+    nameInput,
+    h('div', {style:{fontSize:'12px',color:(locked?'var(--color-accent-700)':'var(--color-neutral-600)'),marginTop:'8px'}},
+      locked ? 'You can change your username again in ' + daysLeft + ' day' + (daysLeft>1?'s':'') + '.' : 'You can change your username once a week.'),
+
+    h('button', {style:{width:'100%',marginTop:'24px',border:'none',cursor:'pointer',background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'999px',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'16px'}, hover:{background:'var(--color-accent-600)'}, onClick:save}, 'Save'),
+    h('button', {style:{width:'100%',marginTop:'8px',border:'none',cursor:'pointer',background:'transparent',color:'var(--color-neutral-600)',borderRadius:'999px',padding:'12px',fontFamily:'var(--font-heading)',fontSize:'14px'}, onClick:() => setState({editProfile:false})}, 'Cancel')
+  );
+  return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'flex-end',zIndex:'85'},
+      onClick:() => setState({editProfile:false})}, panel);
+}
+
+// Main tab order (matches the tab bar). Drives the swipe pager.
+const TAB_ORDER = ['progress','plans','today','friends','settings'];
+function viewFor(tab){
+  return tab === 'plans' ? viewPlans() : tab === 'friends' ? viewFriends() : tab === 'progress' ? viewProgress() : tab === 'settings' ? viewSettings() : viewToday();
+}
+const _scrollByTab = {};   // remember each tab's vertical scroll across re-renders
+
+// Snapchat-style pager: three panels (prev · current · next) on a flex track offset to
+// show the middle. A horizontal drag moves the track with the finger; release snaps to a
+// neighbour (then commits the tab) or springs back. Vertical drags fall through to scroll.
+function buildPager(){
+  const ci = Math.max(0, TAB_ORDER.indexOf(S.tab));
+  const prevTab = ci > 0 ? TAB_ORDER[ci-1] : null;
+  const nextTab = ci < TAB_ORDER.length-1 ? TAB_ORDER[ci+1] : null;
+  const panel = (tab) => h('div', {class:'sx', style:{flex:'0 0 100%',height:'100%',overflowY:'auto',overflowX:'hidden'}}, tab ? viewFor(tab) : null);
+  const pPrev = panel(prevTab), pCur = panel(S.tab), pNext = panel(nextTab);
+  const track = h('div', {style:{display:'flex',height:'100%',transform:'translateX(-100%)',willChange:'transform'}}, pPrev, pCur, pNext);
+  const viewport = h('div', {style:{flex:'1',position:'relative',overflow:'hidden',touchAction:'pan-y'}}, track);
+
+  // restore scroll positions
+  [[prevTab,pPrev],[S.tab,pCur],[nextTab,pNext]].forEach(([t,p]) => { if (t) p.scrollTop = _scrollByTab[t] || 0; });
+  pCur.addEventListener('scroll', () => { _scrollByTab[S.tab] = pCur.scrollTop; });
+  phone._scroll = pCur;
+
+  let sx = 0, sy = 0, axis = null, down = false, w = 0, committing = false;
+  viewport.addEventListener('pointerdown', (e) => {
+    if (committing || S.overlay || S.sheet || S.dayDetail || S.friendProfile) return;
+    // let an inner horizontal scroller (friend strip, chips) keep the gesture
+    for (let n = e.target; n && n !== viewport; n = n.parentElement){
+      if (n !== pPrev && n !== pCur && n !== pNext && n.scrollWidth > n.clientWidth + 4 && /auto|scroll/.test(getComputedStyle(n).overflowX)) return;
+    }
+    down = true; axis = null; sx = e.clientX; sy = e.clientY; w = viewport.clientWidth || 1;
+    track.style.transition = 'none';
+  });
+  viewport.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const dx = e.clientX - sx, dy = e.clientY - sy;
+    if (axis === null){
+      if (Math.abs(dx) > 7 || Math.abs(dy) > 7){ axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; if (axis === 'x'){ try { viewport.setPointerCapture(e.pointerId); } catch(_){} } }
+    }
+    if (axis !== 'x') return;
+    e.preventDefault();
+    let d = dx;
+    if ((d > 0 && !prevTab) || (d < 0 && !nextTab)) d *= 0.28;   // rubber-band at the ends
+    track.style.transform = 'translateX(calc(-100% + ' + d + 'px))';
+  });
+  const finish = (e) => {
+    if (!down) return; down = false;
+    if (axis !== 'x') return;
+    const dx = e.clientX - sx;
+    const thr = Math.min(85, w * 0.26);
+    let target = null, to = '-100%';
+    if (dx <= -thr && nextTab){ target = nextTab; to = '-200%'; }
+    else if (dx >= thr && prevTab){ target = prevTab; to = '0%'; }
+    track.style.transition = 'transform .26s cubic-bezier(.22,.61,.36,1)';
+    track.style.transform = 'translateX(' + to + ')';
+    if (target){ committing = true; setTimeout(() => { setState({tab:target, overlay:null}); if (target === 'friends') loadSocial(); }, 250); }
+  };
+  viewport.addEventListener('pointerup', finish);
+  viewport.addEventListener('pointercancel', () => { if (down){ down = false; track.style.transition = 'transform .2s'; track.style.transform = 'translateX(-100%)'; } });
+  return viewport;
 }
 
 /* ── chrome: header, tab bar ── */
@@ -1318,30 +1771,24 @@ function statusBar(){
   );
 }
 function header(){
-  return h('div', {style:{padding:'60px 22px 10px',display:'flex',alignItems:'center',justifyContent:'space-between'}},
-    h('div', {}),
-    h('div', {style:{display:'flex',alignItems:'center',gap:'6px',background:'var(--color-accent-200)',color:'var(--color-accent-800)',borderRadius:'999px',padding:'6px 12px 6px 10px',fontSize:'13px',fontWeight:'700'}},
-      svg({width:'15',height:'15',viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'2.75','stroke-linecap':'round','stroke-linejoin':'round'},
-        '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5Z"/>'),
-      h('span', {}, '5 week streak')
-    )
-  );
+  return h('div', {style:{padding:'60px 22px 4px'}});
 }
 const TAB_ICONS = {
   today: '<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/>',
   plans: '<path d="M4 9v6M7 7.5v9M17 7.5v9M20 9v6M7 12h10"/>',
   progress: '<path d="M4 18l5-5 3.5 3.5L20 8"/><path d="M15.5 8H20v4.5"/>',
+  friends: '<circle cx="9" cy="8" r="3.2"/><path d="M3.5 20c0-3.3 2.5-5.5 5.5-5.5s5.5 2.2 5.5 5.5"/><path d="M16 5.2a3.2 3.2 0 0 1 0 6.1"/><path d="M17.5 14.7c2 .7 3.5 2.6 3.5 5.3"/>',
   settings: '<circle cx="12" cy="12" r="3.4"/><path d="M12 3v2.4M12 18.6V21M4.4 4.4l1.7 1.7M17.9 17.9l1.7 1.7M3 12h2.4M18.6 12H21M4.4 19.6l1.7-1.7M17.9 6.1l1.7-1.7"/>'
 };
 function tabIcon(id){
   return svg({width:'23',height:'23',viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round'}, TAB_ICONS[id]);
 }
 function tabBar(){
-  const tabs = [['today','Today'],['plans','Plans'],['progress','Progress'],['settings','Settings']];
+  const tabs = [['progress','Progress'],['plans','Plans'],['today','Today'],['friends','Friends'],['settings','Settings']];
   return h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',paddingBottom:'24px',background:'var(--color-bg)',borderTop:'1px solid var(--color-divider)',display:'flex',zIndex:'30'}},
     tabs.map(([id,name]) => {
       const on = S.tab === id;
-      return h('button', {style:{flex:'1',cursor:'pointer',border:'none',background:'transparent',color:(on?'var(--color-accent)':'var(--color-neutral-600)'),padding:'10px 0 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',fontFamily:'var(--font-body)',fontSize:'11px',fontWeight:'700',letterSpacing:'.02em'}, onClick:() => setState({tab:id, overlay:null})},
+      return h('button', {style:{flex:'1',cursor:'pointer',border:'none',background:'transparent',color:(on?'var(--color-accent)':'var(--color-neutral-600)'),padding:'10px 0 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',fontFamily:'var(--font-body)',fontSize:'11px',fontWeight:'700',letterSpacing:'.02em'}, onClick:() => { setState({tab:id, overlay:null}); if (id === 'friends') loadSocial(); }},
         tabIcon(id),
         h('span', {}, name),
         h('div', {style:{width:'26px',height:'3px',borderRadius:'999px',marginTop:'2px',background:(on?'var(--color-accent)':'transparent')}})
@@ -1355,21 +1802,20 @@ function tabBar(){
    ══════════════════════════════════════════════════════════════ */
 const phone = document.getElementById('phone');
 function render(){
-  let scroll = null;
-  if (phone._scroll) scroll = phone._scroll.scrollTop;
-
-  const content = S.tab === 'plans' ? viewPlans() : S.tab === 'progress' ? viewProgress() : S.tab === 'settings' ? viewSettings() : viewToday();
-  const scrollArea = h('div', {class:'sx', style:{flex:'1',overflowY:'auto',overflowX:'hidden'}}, content);
+  const pager = buildPager();
 
   const app = h('div', {style:{height:'100%',display:'flex',flexDirection:'column',background:'var(--color-bg)',fontFamily:'var(--font-body)',color:'var(--color-text)',position:'relative',overflow:'hidden'}},
     header(),
-    scrollArea,
+    pager,
     tabBar(),
     S.overlay === 'builder' && viewBuilder(),
     S.overlay === 'workout' && viewWorkout(),
     S.overlay === 'plans' && viewPlanPicker(),
     viewSheet(),
-    viewDayDetail()
+    viewDayDetail(),
+    viewFriendProfile(),
+    viewFriendPlan(),
+    viewEditProfile()
   );
 
   phone.innerHTML = '';
@@ -1379,8 +1825,6 @@ function render(){
     app,
     h('div', {class:'homebar'}, h('div', {}))
   );
-  phone._scroll = scrollArea;
-  if (scroll != null) scrollArea.scrollTop = scroll;
 
   // The tapped day grows fast and "jumps" into the middle of the screen, blooming into the card.
   if (S.dayDetail && S.dayFrom){
