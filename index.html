@@ -153,9 +153,10 @@
   body.dark .phone { box-shadow: 0 40px 80px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.06); }
 
   @media (max-width: 640px) {
-    body { padding: 0; background: var(--color-bg); }
+    html, body { height: 100%; }
+    body { padding: 0; background: var(--color-bg); display: block; }
     .phone {
-      width: 100vw; height: 100vh; max-height: none;
+      width: 100vw; height: 100vh; height: 100dvh; max-height: none;
       border-radius: 0; box-shadow: none;
     }
     .island { display: none; }
@@ -168,6 +169,14 @@
   }
   .live-ring { animation: livePulse 1.8s ease-out infinite; }
   .live-dot  { animation: livePulse 1.8s ease-out infinite; }
+  /* week-strip completion stamp: solid check drops into the holster on finish */
+  @keyframes stampIn {
+    0%   { opacity: 0; transform: translateY(-10px) scale(1.9); }
+    26%  { opacity: 1; transform: translateY(0) scale(.84); }   /* impact squash */
+    42%  { transform: scale(1.1); }
+    62%  { transform: scale(.97); }
+    100% { opacity: 1; transform: scale(1); }
+  }
 </style>
 </head>
 <body>
@@ -393,7 +402,8 @@ const S = {
   dark: load('dark', false),
   unit: load('unit', 'kg'),
   accent: load('accent', 'forest'),
-  rest: load('rest', REST_SECONDS)
+  rest: load('rest', REST_SECONDS),
+  mark: load('mark', 'check')          // completed-day marker: 'check' | 'bowtie'
 };
 
 // Completion stickers — thin line-art icons with an OPAQUE WHITE fill (so nothing shows through),
@@ -445,6 +455,29 @@ function stickerNode(dateStr, size, extraStyle){
   Object.assign(el.style, {color:stickerInkForDate(dateStr), pointerEvents:'none', display:'block'}, extraStyle || {});
   return el;
 }
+// ── completed-day marker: accent check, or pink bowtie (Settings toggle) ──
+const MARK_PINK = '#e0669e';
+function _markInk(){ return S.mark === 'bowtie' ? MARK_PINK : 'var(--color-accent)'; }
+// filled/stroked icon inner for a 0 0 24 24 box; ink = stroke(check)/fill(bowtie) colour.
+function _markGlyph(ink){
+  return S.mark === 'bowtie'
+    ? '<path fill="'+ink+'" d="M3 8.3 L11 12 L3 15.7 Z"/><path fill="'+ink+'" d="M21 8.3 L13 12 L21 15.7 Z"/><rect fill="'+ink+'" x="10.2" y="9.4" width="3.6" height="5.2" rx="1.3"/>'
+    : '<path fill="none" stroke="'+ink+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+}
+// Done marker: solid coloured circle with a white glyph.
+function doneMark(size, extraStyle){
+  const gi = Math.round(size * 0.56);
+  const node = h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:_markInk(),display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, '+_markInk()+' 45%, transparent)'}, extraStyle || {})},
+    svg({viewBox:'0 0 24 24',width:gi,height:gi}, _markGlyph('#fff')));
+  return node;
+}
+// Empty "holster": faint dashed ring + ghost glyph, shown on scheduled-but-not-done days.
+function holsterMark(size){
+  const gi = Math.round(size * 0.5);
+  const ghost = 'color-mix(in srgb, '+_markInk()+' 45%, transparent)';
+  return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',border:'2px dashed color-mix(in srgb, '+_markInk()+' 42%, transparent)',display:'flex',alignItems:'center',justifyContent:'center'}},
+    svg({viewBox:'0 0 24 24',width:gi,height:gi}, _markGlyph(ghost)));
+}
 // White die-cut rim + drop shadow — the "slapped-on peel-and-stick" look, shared by week strip, calendar, day sheet.
 const STICKER_RIM = '#fff';
 const STICKER_FILTER = 'drop-shadow(1.4px 0 0 '+STICKER_RIM+') drop-shadow(-1.4px 0 0 '+STICKER_RIM+') drop-shadow(0 1.4px 0 '+STICKER_RIM+') drop-shadow(0 -1.4px 0 '+STICKER_RIM+') drop-shadow(1px 1px 0 '+STICKER_RIM+') drop-shadow(-1px -1px 0 '+STICKER_RIM+') drop-shadow(1px -1px 0 '+STICKER_RIM+') drop-shadow(-1px 1px 0 '+STICKER_RIM+') drop-shadow(0 3px 3px rgba(0,0,0,.32))';
@@ -466,12 +499,13 @@ function applyPrefs(){
     localStorage.setItem('setti.unit', JSON.stringify(S.unit));
     localStorage.setItem('setti.accent', JSON.stringify(S.accent));
     localStorage.setItem('setti.rest', JSON.stringify(S.rest));
+    localStorage.setItem('setti.mark', JSON.stringify(S.mark));
     localStorage.setItem('setti.uname', JSON.stringify(S.uname));
     localStorage.setItem('setti.pfp', JSON.stringify(S.pfp));
     localStorage.setItem('setti.unameAt', JSON.stringify(S.unameAt));
   } catch(e){}
 }
-function setState(patch){ Object.assign(S, patch); if ('dark' in patch || 'unit' in patch || 'accent' in patch || 'rest' in patch || 'uname' in patch || 'pfp' in patch || 'unameAt' in patch) applyPrefs(); if ('log' in patch){ try { localStorage.setItem('setti.log', JSON.stringify(S.log)); } catch(e){} } render(); }
+function setState(patch){ Object.assign(S, patch); if ('dark' in patch || 'unit' in patch || 'accent' in patch || 'rest' in patch || 'mark' in patch || 'uname' in patch || 'pfp' in patch || 'unameAt' in patch) applyPrefs(); if ('log' in patch){ try { localStorage.setItem('setti.log', JSON.stringify(S.log)); } catch(e){} } render(); }
 function rest(){ return S.rest; }
 function firstTrain(){ const i = S.week.findIndex(d => d.ex.length); return i < 0 ? 0 : i; }
 // Today's weekday as a Monday-first index (0=Mon … 6=Sun) — the actual day, not the first training day.
@@ -803,11 +837,12 @@ function viewToday(){
       const dx  = [-4, 5, -6, 3, 6, -3, 4][i];
       const dy  = [4, -5, 2, -4, -3, 5, -2][i];
       const scl = [1.06, 0.96, 1.10, 1.00, 0.92, 1.08, 0.98][i];
+      // Completed → stamped marker (id lets the finish hook animate it); scheduled-not-done → holster; rest → 'Rest'.
       const marker = isRest
         ? h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'15px',letterSpacing:'.04em',color:'var(--color-neutral-700)',opacity:'.5'}}, 'Rest')
         : done
-        ? (() => { const node = stickerNode(ymd(dayDate), 40, {position:'absolute',left:'50%',top:'50%',transform:'translate(-50%,-50%) translate('+dx+'px,'+dy+'px) rotate('+rot+'deg) scale('+scl+')',filter:stickerFilter}); node.id = 'strip-sticker-'+ymd(dayDate); return node; })()
-        : h('div', {style:{width:'10px',height:'10px',borderRadius:'999px',border:'2px solid var(--color-neutral-300)'}});
+        ? (() => { const node = doneMark(30); node.id = 'strip-sticker-'+ymd(dayDate); return node; })()
+        : holsterMark(30);
       const cellBg = isRest ? 'color-mix(in srgb, var(--color-neutral-900) 14%, var(--color-surface))'
         : isTi ? 'color-mix(in srgb, var(--color-accent) 15%, transparent)' : 'transparent';
       return h('div', {style:{flex:'1',display:'flex',flexDirection:'column',alignItems:'center',gap:'8px',padding:'10px 0 14px',cursor:done?'pointer':'default',borderRight:(i<6?'1px solid var(--color-divider)':'none'),borderTop:(isTi?'3px solid var(--color-accent)':'3px solid transparent'),background:cellBg}, onClick:done?((ev) => setState({dayDetail:ymd(dayDate), dayFrom:{x:ev.clientX, y:ev.clientY}})):null},
@@ -1136,7 +1171,7 @@ function viewProgress(){
       color: done ? 'var(--color-bg)' : isRest ? 'var(--color-neutral-600)' : 'var(--color-neutral-700)',
       border: '2px solid ' + (isToday ? 'var(--color-accent)' : 'transparent')}, onClick:done?((ev) => setState({dayDetail:dateStr, dayFrom:{x:ev.clientX, y:ev.clientY}})):null},
       String(d),
-      done ? stickerNode(dateStr, 20, {position:'absolute',top:'-8px',right:'-8px',transform:'rotate('+([-17,14,-10,18,-13,11,-20][d%7])+'deg)',filter:STICKER_FILTER_SM,zIndex:'2'}) : null));
+      done ? doneMark(18, {position:'absolute',top:'-7px',right:'-7px',border:'2px solid var(--color-bg)',zIndex:'2'}) : null));
   }
   const monthGrid = h('div', {style:{display:'grid',gridTemplateColumns:'repeat(7,1fr)',gap:'6px'}}, ...cells);
   const consistency = h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'18px',marginBottom:'14px',boxShadow:'var(--shadow-sm)'}},
@@ -1526,12 +1561,12 @@ function viewDayDetail(){
     ),
     ...body
   );
-  // Wrap the panel so the corner sticker can spill past its edge (panel itself clips with overflowY:auto).
+  // Wrap the panel so the corner marker can spill past its edge (panel itself clips with overflowY:auto).
   const wrapped = h('div', {style:{position:'relative',display:'flex',width:'86%',maxWidth:'340px'},
       onClick:(ev) => ev.stopPropagation()},
     panel,
-    // Slapped-on sticker: tilted, die-cut rim, hangs off the top-left corner.
-    stickerNode(S.dayDetail, 62, {position:'absolute',top:'-24px',left:'-22px',transform:'rotate(-17deg)',filter:STICKER_FILTER,zIndex:'2'})
+    // Completion marker hangs off the top-left corner.
+    doneMark(52, {position:'absolute',top:'-18px',left:'-16px',border:'3px solid var(--color-bg)',zIndex:'2'})
   );
   return h('div', {id:'daySheetBackdrop', style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:'80'},
       onClick:() => setState({dayDetail:null})}, wrapped);
@@ -1609,7 +1644,8 @@ function viewSettings(){
     settingsRow('Accent colour', accentName, swatches),
     settingsRow('Dark mode', S.dark ? 'On — warm dark theme' : 'Off — light theme', toggle(S.dark, () => setState({dark:!S.dark}))),
     settingsRow('Units', 'Weights shown in ' + (S.unit === 'kg' ? 'kilograms' : 'pounds'), segmented([{val:'kg',label:'kg'},{val:'lb',label:'lb'}], S.unit, (u) => setState({unit:u}))),
-    settingsRow('Rest timer', 'Between sets', restStepper())
+    settingsRow('Rest timer', 'Between sets', restStepper()),
+    settingsRow('Done marker', S.mark === 'bowtie' ? 'Pink bowtie on finished days' : 'Check on finished days', segmented([{val:'check',label:'Check'},{val:'bowtie',label:'Bowtie'}], S.mark, (m) => setState({mark:m})))
   ]);
 
   const account = settingsCard([
@@ -1843,17 +1879,17 @@ function render(){
     S.dayFrom = null;   // don't replay on later re-renders while the card stays open
   }
 
-  // Just-finished workout: the day's sticker slaps onto the week strip (drops in big → smacks → settles).
+  // Just-finished workout: the check stamps into that day's holster (drops in big → smacks → settles).
   if (S.slapDay){
     const el = document.getElementById('strip-sticker-'+S.slapDay);
     if (el){
-      const base = el.style.transform;   // final transform (centre + jitter + rotate + scale)
       el.animate([
-        {transform: base+' scale(1.9)', opacity:0, offset:0},
-        {transform: base+' scale(.82)', opacity:1, offset:.32},   // impact squash
-        {transform: base+' scale(1.1)', offset:.6},
-        {transform: base+' scale(1)',  offset:1}
-      ], {duration:460, easing:'cubic-bezier(.3,1.2,.5,1)'});
+        {transform:'translateY(-10px) scale(1.9)', opacity:0, offset:0},
+        {transform:'translateY(0) scale(.84)',     opacity:1, offset:.30},   // impact squash
+        {transform:'scale(1.1)', offset:.5},
+        {transform:'scale(.97)', offset:.7},
+        {transform:'scale(1)',   offset:1}
+      ], {duration:520, easing:'cubic-bezier(.3,1.2,.5,1)'});
     }
     S.slapDay = null;
   }
