@@ -1538,7 +1538,7 @@ function viewWorkout(){
 
   const topBar = h('div', {style:{padding:'58px 22px 6px',display:'flex',alignItems:'center',gap:'12px'}},
     h('button', {style:{width:'38px',height:'38px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',fontSize:'15px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({overlay:null, w:null})}, '✕'),
-    h('div', {style:{flex:'1',fontSize:'12px',color:'var(--color-neutral-700)',fontWeight:'600'}}, wClock),
+    h('div', {id:'wClock', style:{flex:'1',fontSize:'12px',color:'var(--color-neutral-700)',fontWeight:'600'}}, wClock),
     h('div', {style:{fontSize:'12px',fontWeight:'700',color:'var(--color-accent-700)'}}, Math.round(vol) + ' ' + uLbl)
   );
 
@@ -1612,13 +1612,29 @@ function viewWorkout(){
       h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--color-neutral-600)',fontWeight:'700'}}, setLabel),
       h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'32px',margin:'6px 0 4px',letterSpacing:'-.02em'}}, ex.n),
       h('div', {style:{fontSize:'13px',color:'var(--color-neutral-700)'}}, 'Target ' + ex.reps + ' reps · rest ' + rest() + 's'),
-      h('div', {style:{marginTop:'auto',display:'flex',flexDirection:'column',gap:'16px'}},
-        h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-lg)',padding:'18px',display:'flex',justifyContent:'center'}},
-          spinField({value:w.kg, label:S.unit + ' · tap to edit', min:0, max:(S.unit==='lb'?600:300), step:0.25, onPick:v => setState({w:{...S.w, kg:v}})})),
-        h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-lg)',padding:'18px',display:'flex',justifyContent:'center'}},
-          spinField({value:w.reps, label:'reps · tap to edit', min:1, max:50, step:1, onPick:v => setState({w:{...S.w, reps:Math.round(v)}})})),
-        h('button', {style:primaryBtn({padding:'19px',fontSize:'19px'}), hover:primaryHover, active:primaryActive, onClick:logSet}, 'Log set')
-      )
+      (() => {
+        const stepBtn = (glyph, fn) => h('button', {style:{width:'56px',height:'56px',flex:'none',borderRadius:'999px',border:'none',background:'var(--color-bg)',cursor:'pointer',fontSize:'28px',lineHeight:'1',color:'var(--color-text)',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:fn}, glyph);
+        return h('div', {style:{marginTop:'auto',display:'flex',flexDirection:'column',gap:'14px'}},
+          // Weight — type it in.
+          h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-lg)',padding:'14px 20px',display:'flex',alignItems:'baseline',justifyContent:'center',gap:'10px'}},
+            h('input', {type:'text', inputmode:'decimal', value:String(w.kg),
+              onFocus:(e) => e.target.select(),
+              onInput:(e) => { const v = parseFloat((e.target.value||'').replace(',', '.')); if (!isNaN(v)) S.w.kg = v; },
+              style:{width:'150px',textAlign:'right',border:'none',background:'transparent',fontFamily:'var(--font-heading)',fontWeight:'700',fontSize:'46px',color:'var(--color-text)',outline:'none',padding:'0'}}),
+            h('span', {style:{fontFamily:'var(--font-heading)',fontSize:'22px',color:'var(--color-neutral-700)'}}, S.unit)
+          ),
+          // Reps — small +/- steps.
+          h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-lg)',padding:'12px 18px',display:'flex',alignItems:'center',justifyContent:'center',gap:'22px'}},
+            stepBtn('−', () => setState({w:{...S.w, reps:Math.max(1, S.w.reps-1)}})),
+            h('div', {style:{textAlign:'center',minWidth:'64px'}},
+              h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'46px',lineHeight:'1'}}, w.reps),
+              h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)',marginTop:'2px'}}, 'reps')
+            ),
+            stepBtn('+', () => setState({w:{...S.w, reps:Math.min(50, S.w.reps+1)}}))
+          ),
+          h('button', {style:primaryBtn({padding:'19px',fontSize:'19px'}), hover:primaryHover, active:primaryActive, onClick:logSet}, 'Log set')
+        );
+      })()
     );
   }
 
@@ -1826,7 +1842,7 @@ function pickPhotoFallback(){
 function openCamera(){
   const md = navigator.mediaDevices;
   if (!md || !md.getUserMedia){ pickPhotoFallback(); return; }
-  let stream = null, track = null, hwZoom = false, zoom = 1;
+  let stream = null, track = null, hwZoom = false, zoom = 1, facing = 'user';   // open to selfie mode
 
   const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'cover',transformOrigin:'center center'}});
   video.muted = true; video.playsInline = true;
@@ -1834,8 +1850,9 @@ function openCamera(){
 
   const iconBtn = (glyph, extra) => h('button', {style:Object.assign({width:'44px',height:'44px',flex:'none',borderRadius:'999px',border:'none',background:'rgba(255,255,255,.16)',color:'#fff',cursor:'pointer',fontSize:'18px',display:'flex',alignItems:'center',justifyContent:'center'}, extra||{})}, glyph);
   const closeBtn = iconBtn('✕');
+  const flipBtn = iconBtn('⟳');
   const flashBtn = iconBtn('⚡');
-  const topBar = h('div', {style:{position:'absolute',top:'0',left:'0',right:'0',display:'flex',justifyContent:'space-between',padding:'46px 20px 0',zIndex:'2'}}, closeBtn, flashBtn);
+  const topBar = h('div', {style:{position:'absolute',top:'0',left:'0',right:'0',display:'flex',justifyContent:'space-between',padding:'46px 20px 0',zIndex:'2'}}, closeBtn, h('div', {style:{display:'flex',gap:'12px'}}, flipBtn, flashBtn));
 
   const zoomInput = h('input', {type:'range', min:'1', max:'4', step:'0.1', value:'1', style:{width:'70%',accentColor:'#fff'}});
   const shutter = h('button', {style:{width:'74px',height:'74px',flex:'none',borderRadius:'999px',border:'5px solid #fff',background:'rgba(255,255,255,.35)',cursor:'pointer'}});
@@ -1844,8 +1861,12 @@ function openCamera(){
   const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, video, flashPop, topBar, bottomBar);
   document.body.appendChild(overlay);
 
-  const applyZoom = () => { if (hwZoom){ try { track.applyConstraints({advanced:[{zoom:zoom}]}); } catch(_){} video.style.transform = 'none'; } else { video.style.transform = 'scale('+zoom+')'; } };
-  zoomInput.addEventListener('input', (e) => { zoom = parseFloat(e.target.value) || 1; applyZoom(); });
+  const applyView = () => {   // combine zoom + selfie mirror on the preview
+    const mx = facing === 'user' ? -1 : 1;
+    if (hwZoom){ try { track.applyConstraints({advanced:[{zoom:zoom}]}); } catch(_){} video.style.transform = 'scaleX('+mx+')'; }
+    else video.style.transform = 'scale('+(mx*zoom)+','+zoom+')';
+  };
+  zoomInput.addEventListener('input', (e) => { zoom = parseFloat(e.target.value) || 1; applyView(); });
 
   let torchOn = false;
   flashBtn.addEventListener('click', () => { if (!track) return; torchOn = !torchOn; try { track.applyConstraints({advanced:[{torch:torchOn}]}); } catch(_){} flashBtn.style.background = torchOn ? '#fff' : 'rgba(255,255,255,.16)'; flashBtn.style.color = torchOn ? '#000' : '#fff'; });
@@ -1860,7 +1881,9 @@ function openCamera(){
     if (!hwZoom && zoom > 1){ sw = vw/zoom; sh = vh/zoom; sx = (vw-sw)/2; sy = (vh-sh)/2; }
     const scale = Math.min(1, 1080/sw), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
-    const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high'; cx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
+    const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high';
+    if (facing === 'user'){ cx.translate(cw, 0); cx.scale(-1, 1); }   // match the mirrored selfie preview
+    cx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
     const url = c.toDataURL('image/jpeg', 0.85);
     flashPop.style.opacity = '0.9'; setTimeout(() => { flashPop.style.opacity = '0'; }, 180);
     showPreview(url);
@@ -1878,14 +1901,21 @@ function openCamera(){
     use.addEventListener('click', () => { cleanup(); setState({w:{...S.w, photo:url}}); });
   }
 
-  md.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1920}, height:{ideal:1080}}, audio:false})
-    .then(s => {
-      stream = s; video.srcObject = s; track = s.getVideoTracks()[0];
-      const caps = track.getCapabilities ? track.getCapabilities() : {};
-      if (caps.zoom){ hwZoom = true; zoomInput.min = caps.zoom.min; zoomInput.max = caps.zoom.max; zoomInput.step = caps.zoom.step || 0.1; zoom = caps.zoom.min || 1; zoomInput.value = String(zoom); }
-      if (!caps.torch){ flashBtn.style.display = 'none'; }
-    })
-    .catch(() => { cleanup(); pickPhotoFallback(); });
+  function startStream(firstTime){
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    hwZoom = false; zoom = 1; zoomInput.min = '1'; zoomInput.max = '4'; zoomInput.step = '0.1'; zoomInput.value = '1';
+    md.getUserMedia({video:{facingMode:{ideal:facing}, width:{ideal:1920}, height:{ideal:1080}}, audio:false})
+      .then(s => {
+        stream = s; video.srcObject = s; track = s.getVideoTracks()[0];
+        const caps = track.getCapabilities ? track.getCapabilities() : {};
+        if (caps.zoom){ hwZoom = true; zoomInput.min = caps.zoom.min; zoomInput.max = caps.zoom.max; zoomInput.step = caps.zoom.step || 0.1; zoom = caps.zoom.min || 1; zoomInput.value = String(zoom); }
+        flashBtn.style.display = caps.torch ? '' : 'none';   // torch only on the back camera usually
+        applyView();
+      })
+      .catch(() => { if (firstTime){ cleanup(); pickPhotoFallback(); } });
+  }
+  flipBtn.addEventListener('click', () => { facing = facing === 'user' ? 'environment' : 'user'; startStream(false); });
+  startStream(true);
 }
 // Edit-profile sheet: change photo anytime; username only once every 7 days.
 function viewEditProfile(){
@@ -2096,8 +2126,13 @@ function render(){
   }
 }
 
-// Rest timer / elapsed clock tick — repaint while a workout is live.
-setInterval(() => { const w = S.w; if (w && (w.resting || !w.done) && !scrubbing) render(); }, 250);
+// Rest timer / elapsed clock tick. During REST, repaint for the countdown ring; during
+// active logging, only patch the elapsed-clock text so constant re-renders don't eat taps.
+setInterval(() => {
+  const w = S.w; if (!w || scrubbing) return;
+  if (w.resting){ render(); return; }
+  if (!w.done){ const el = document.getElementById('wClock'); if (el){ const e = Math.floor((Date.now() - w.start)/1000); el.textContent = Math.floor(e/60) + ':' + String(e%60).padStart(2,'0') + ' elapsed'; } }
+}, 250);
 
 applyPrefs();
 render();
