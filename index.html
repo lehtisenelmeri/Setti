@@ -1654,7 +1654,7 @@ function viewWorkout(){
       h('div', {style:{display:'flex',flexWrap:'wrap',gap:'6px'}},
         q.done.map(x => h('span', {style:{background:'var(--color-bg)',borderRadius:'999px',padding:'5px 11px',fontFamily:'var(--font-heading)',fontSize:'13px',color:'var(--color-text)',boxShadow:'var(--shadow-sm)'}}, x.secs ? fmtDur(x.secs) : (x.kg ? x.kg + uLbl : 'Body') + ' × ' + x.reps)))
     ));
-    body = h('div', {style:{flex:'1',display:'flex',flexDirection:'column',padding:'26px 22px 34px'}},
+    body = h('div', {class:'sx', style:{flex:'1',display:'flex',flexDirection:'column',padding:'26px 22px 34px',overflowY:'auto'}},
       h('div', {style:{fontSize:'11px',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--color-accent-700)',fontWeight:'700'}}, 'Session complete'),
       h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',margin:'6px 0 18px',letterSpacing:'-.02em'}}, title + ' done'),
       h('div', {style:{display:'flex',gap:'10px',marginBottom:'16px'}},
@@ -1668,7 +1668,7 @@ function viewWorkout(){
           h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'26px',lineHeight:'1'}}, Math.floor(elapsed/60) + 'm'),
           h('div', {style:{fontSize:'10px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginTop:'5px'}}, 'Duration'))
       ),
-      h('div', {class:'sx', style:{flex:'1',overflowY:'auto',background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'14px 16px'}}, ...summary),
+      h('div', {style:{flex:'none',background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'14px 16px'}}, ...summary),
       // Attach a photo — opens the in-app camera; shows in your day-detail and the friends feed.
       w.photo
         ? h('div', {style:{position:'relative',marginTop:'14px'}},
