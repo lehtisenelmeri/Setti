@@ -41,7 +41,7 @@
      the numbered mapping below resolve against the SAME element — a var() in a
      :root-declared property would resolve the seed on :root, ignoring the swap. */
   body {
-    --a1:#fff2eb; --a2:#ffe1d0; --a3:#ffc6a5; --a4:#f6a06b; --a5:#d67f48; --a6:#b2622d; --a7:#8c491a; --a8:#643312; --a9:#402310; --a-base:#c67139;
+    --a1:#fbeee2; --a2:#f4dcc3; --a3:#e9bd94; --a4:#d99a63; --a5:#c67c43; --a6:#ab6130; --a7:#874a25; --a8:#5f3419; --a9:#3c2210; --a-base:#bb6733;
     --b1:#f0fae1; --b2:#e1eecc; --b3:#ccdbb2; --b4:#aebf92; --b5:#8fa073; --b6:#728157; --b7:#56633f; --b8:#3d472b; --b9:#272e1b; --b-base:#7a8a5e;
 
     --color-accent: var(--a-base);
@@ -109,17 +109,18 @@
 
   /* ── accent palettes — each swaps the seed ramps only ── */
   body.pal-forest {
-    --a1:#eef6e6; --a2:#d7ecc6; --a3:#b6dc9c; --a4:#8fc56d; --a5:#6bac48; --a6:#528d34; --a7:#3f6c28; --a8:#2b4a1d; --a9:#1c3113; --a-base:#5a9440;
+    --a1:#eaf4e0; --a2:#d2e8bf; --a3:#aed392; --a4:#83b95e; --a5:#5e9d3c; --a6:#4a8330; --a7:#396626; --a8:#26471a; --a9:#182f11; --a-base:#4e8a34;
     /* teal secondary — cool, no orange */
     --b1:#e3f4f1; --b2:#c2e7e0; --b3:#93d3c8; --b4:#5cb8aa; --b5:#329888; --b6:#217a6d; --b7:#1a5d53; --b8:#14413a; --b9:#0d2b26; --b-base:#329888;
   }
   body.pal-ocean {
-    --a1:#e7f1f8; --a2:#c6e1ef; --a3:#95c8e2; --a4:#5ba9cf; --a5:#3089b6; --a6:#206d97; --a7:#195374; --a8:#143c51; --a9:#0e2836; --a-base:#2f88b4;
+    --a1:#e6f1f8; --a2:#c4e1ef; --a3:#90c7e1; --a4:#55a4c9; --a5:#2f86ac; --a6:#226c8f; --a7:#1a5270; --a8:#133b50; --a9:#0d2835; --a-base:#2b7fa2;
     /* plum secondary — cool, no orange */
     --b1:#f3ecf6; --b2:#e3d3ea; --b3:#ccb0d9; --b4:#ad86c1; --b5:#8f63a6; --b6:#734b88; --b7:#583a68; --b8:#3d2848; --b9:#281a2f; --b-base:#8f63a6;
   }
   body.pal-pink {
-    --a1:#ffe6f0; --a2:#ffcfe1; --a3:#ffabc9; --a4:#f57ba8; --a5:#e85691; --a6:#d13c78; --a7:#a72d60; --a8:#7c2247; --a9:#4f1530; --a-base:#e0669e;
+    /* deeper rose base so big accent bands read rich, not neon-flat */
+    --a1:#fdeaf1; --a2:#f9d2e0; --a3:#f0adc7; --a4:#e07fa6; --a5:#cf5b8a; --a6:#bd4278; --a7:#9c3160; --a8:#722348; --a9:#48162e; --a-base:#cf5488;
     /* teal secondary — cool contrast to the pink */
     --b1:#e3f4f1; --b2:#c2e7e0; --b3:#93d3c8; --b4:#5cb8aa; --b5:#329888; --b6:#217a6d; --b7:#1a5d53; --b8:#14413a; --b9:#0d2b26; --b-base:#329888;
   }
