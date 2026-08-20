@@ -395,11 +395,11 @@ const DEMO_LOG = (function(){
    ══════════════════════════════════════════════════════════════ */
 const _ago = (function(){ const p = n => String(n).padStart(2,'0'); return off => { const d = new Date(); d.setHours(0,0,0,0); d.setDate(d.getDate()-off); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }; })();
 const FRIENDS = [
-  {id:'u_maria', name:'Maria K.',  initials:'MK', accent:'#b23b2e', level:'Intermediate', planName:'Upper / Lower', streak:8, thisWeek:4, weekGoal:5, week:clone(PLANS.ul.week)},
-  {id:'u_jonas', name:'Jonas R.',  initials:'JR', accent:'#3a6ea5', level:'Advanced',     planName:'Arnold Split',  streak:14, thisWeek:5, weekGoal:6, week:clone(PLANS.arnold.week)},
-  {id:'u_aino',  name:'Aino V.',   initials:'AV', accent:'#7a3f8f', level:'Beginner',     planName:'Full Body 3×',  streak:3,  thisWeek:2, weekGoal:3, week:clone(PLANS.full3.week)},
-  {id:'u_sami',  name:'Sami L.',   initials:'SL', accent:'#2f9e7a', level:'Intermediate', planName:'Push Pull Legs', streak:21, thisWeek:5, weekGoal:6, week:clone(PLANS.ppl.week)},
-  {id:'u_elli',  name:'Elli T.',   initials:'ET', accent:'#c8912a', level:'Beginner',     planName:'Bro Split',     streak:1,  thisWeek:1, weekGoal:5, week:clone(PLANS.bro.week)}
+  {id:'u_maria', name:'Magdaleena', initials:'MA', accent:'#b23b2e', level:'Intermediate', planName:'Upper / Lower', streak:8, thisWeek:4, weekGoal:5, week:clone(PLANS.ul.week)},
+  {id:'u_jonas', name:'Jallu',      initials:'JA', accent:'#3a6ea5', level:'Advanced',     planName:'Arnold Split',  streak:14, thisWeek:5, weekGoal:6, week:clone(PLANS.arnold.week)},
+  {id:'u_aino',  name:'Kuivane',    initials:'KU', accent:'#7a3f8f', level:'Beginner',     planName:'Full Body 3×',  streak:3,  thisWeek:2, weekGoal:3, week:clone(PLANS.full3.week)},
+  {id:'u_sami',  name:'AraBoy',     initials:'AB', accent:'#2f9e7a', level:'Intermediate', planName:'Push Pull Legs', streak:21, thisWeek:5, weekGoal:6, week:clone(PLANS.ppl.week)},
+  {id:'u_elli',  name:'Lörttö',     initials:'LÖ', accent:'#c8912a', level:'Beginner',     planName:'Bro Split',     streak:1,  thisWeek:1, weekGoal:5, week:clone(PLANS.bro.week)}
 ];
 // Activity feed — one entry per finished session, newest first. Same shape as S.log + userId.
 const FEED = [
@@ -426,7 +426,13 @@ const S = {
   day:0, group:'Chest', dragId:null, dragFrom:null, over:false, dayPick:null,
   sheet:null, sheetFrom:null, progEx:'bench', w:null, dayDetail:null, dayFrom:null, slapDay:null, planOpen:null, drawerOpen:true, exPick:null,
   hist: clone(HISTORY),
-  log: load('log', DEMO_LOG),         // real logged sessions: {date,name,sets:[{g,kg,reps}],vol,mins}
+  log: (function(){                   // real logged sessions; ensure a couple demo days show this week
+    const stored = load('log', null);
+    const base = (Array.isArray(stored) && stored.length) ? stored : DEMO_LOG;
+    const ws = weekStart(new Date()), we = new Date(ws); we.setDate(ws.getDate()+7);
+    const hasThisWeek = base.some(r => { const d = parseYmd(r.date); return d >= ws && d < we; });
+    return hasThisWeek ? base : base.concat(DEMO_LOG);
+  })(),
   dark: load('dark', false),
   unit: load('unit', 'kg'),
   accent: (function(){ const a = load('accent', 'forest'); return a === 'graphite' ? 'pink' : a === 'clay' ? 'forest' : a; })(),
@@ -1137,7 +1143,7 @@ function viewFriends(){
   // Friend strip — tap an avatar to open their profile.
   const strip = h('div', {class:'sx', style:{display:'flex',gap:'14px',overflowX:'auto',padding:'2px 2px 8px',marginBottom:'18px'}},
     friends.map(fr => { const live = isLive(fr); return h('button', {style:{flex:'none',display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',width:'64px',border:'none',background:'transparent',cursor:'pointer',padding:'0'}, onClick:() => setState({friendProfile:fr.id})},
-      h('div', {style:{position:'relative'}},
+      h('div', {style:{position:'relative',height:'58px',display:'flex',alignItems:'center',justifyContent:'center'}},
         // Live (mid-workout) → pulsing green ring around the avatar.
         live
           ? h('div', {class:'live-ring', style:{borderRadius:'999px',padding:'3px',background:'#22af5a'}}, h('div', {style:{borderRadius:'999px',padding:'2px',background:'var(--color-bg)'}}, avatar(fr, 48)))
@@ -1209,7 +1215,7 @@ function viewFriends(){
 
   const incoming = S.invites.filter(v => { const me = myEntry(v); return me && (me.status === 'pending' || me.status === 'suggested'); });
   const outgoing = S.invites.filter(v => v.host === 'me');
-  const smallBtn = (label, primary, fn) => h('button', {style:{flex:'1',cursor:'pointer',borderRadius:'999px',padding:'9px',fontFamily:'var(--font-heading)',fontSize:'13px',border:primary?'none':'1px solid var(--color-divider)',background:primary?'var(--color-accent)':'transparent',color:primary?'var(--color-bg)':'var(--color-text)'}, hover:primary?{background:'var(--color-accent-600)'}:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:fn}, label);
+  const smallBtn = (label, primary, fn) => h('button', {style:{flex:'1',cursor:'pointer',borderRadius:'999px',padding:'12px 6px',fontFamily:'var(--font-heading)',fontSize:'15px',border:primary?'none':'1px solid var(--color-divider)',background:primary?'var(--color-accent)':'transparent',color:primary?'var(--color-bg)':'var(--color-text)'}, hover:primary?{background:'var(--color-accent-600)'}:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:fn}, label);
   // Stacked avatars for the people already going (host + accepted invitees).
   const avatarStack = (ids, size) => h('div', {style:{display:'flex',flex:'none'}},
     ids.map((id,i) => { const fr = friendById(id) || {initials:'?',accent:'#888'}; return h('div', {style:{marginLeft:(i?(-size*0.35)+'px':'0'),borderRadius:'999px',border:'2px solid var(--color-surface)'}}, avatar(fr, size)); })
@@ -1412,9 +1418,9 @@ function viewProgress(){
     h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
       h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'18px'}}, 'Consistency'),
       h('div', {style:{display:'flex',alignItems:'center',gap:'8px'}},
-        h('button', {title:'Previous month', style:{width:'28px',height:'28px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',fontSize:'14px',color:'var(--color-text)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({calMonth:calOff-1})}, '‹'),
+        h('button', {title:'Previous month', style:{width:'38px',height:'38px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',fontSize:'20px',lineHeight:'1',color:'var(--color-text)',padding:'0'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({calMonth:calOff-1})}, '‹'),
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',minWidth:'92px',textAlign:'center',fontWeight:'600'}}, monthName + ' ' + y),
-        h('button', {title:'Next month', style:{width:'28px',height:'28px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:isCurrentMonth?'default':'pointer',opacity:isCurrentMonth?'.35':'1',fontSize:'14px',color:'var(--color-text)',padding:'0'}, hover:isCurrentMonth?null:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:isCurrentMonth?null:() => setState({calMonth:calOff+1})}, '›')
+        h('button', {title:'Next month', style:{width:'38px',height:'38px',flex:'none',borderRadius:'999px',border:'1px solid var(--color-divider)',background:'transparent',cursor:isCurrentMonth?'default':'pointer',opacity:isCurrentMonth?'.35':'1',fontSize:'20px',lineHeight:'1',color:'var(--color-text)',padding:'0'}, hover:isCurrentMonth?null:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:isCurrentMonth?null:() => setState({calMonth:calOff+1})}, '›')
       )
     ),
     dowHead,
@@ -2188,7 +2194,7 @@ function buildPager(){
     if (!down) return;
     const dx = e.clientX - sx, dy = e.clientY - sy;
     if (axis === null){
-      if (Math.abs(dx) > 7 || Math.abs(dy) > 7){ axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; if (axis === 'x'){ try { viewport.setPointerCapture(e.pointerId); } catch(_){} } }
+      if (Math.abs(dx) > 12 || Math.abs(dy) > 10){ axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y'; }   // no pointer capture — lets a tap fall through to the cell
     }
     if (axis !== 'x') return;
     e.preventDefault();
