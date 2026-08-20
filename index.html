@@ -948,8 +948,8 @@ function viewToday(){
   );
 
   return h('div', {style:{padding:'6px 22px 152px'}},
+    h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Today'),
     weekStrip,
-    h('div', {style:{fontSize:'12px',letterSpacing:'.14em',textTransform:'uppercase',color:'var(--color-accent-700)',fontWeight:'700',margin:'0 2px 8px'}}, 'Today'),
     card
   );
 }
