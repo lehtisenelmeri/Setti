@@ -457,15 +457,24 @@ function stickerNode(dateStr, size, extraStyle){
 }
 // ── completed-day marker: accent check, or a cute pink bow (Settings toggle) ──
 const BOW_PINK = '#f4a7c0', BOW_LINE = '#7c4a44';
-// Cute bow: two loops + knot + two tails, in a 0 0 100 92 box. fill/line/lw tunable.
-function bowSvg(size, fill, line, lw){
-  return svg({viewBox:'0 0 100 92', width:size, height:size, style:'overflow:visible;display:block'},
-    '<g fill="'+fill+'" stroke="'+line+'" stroke-width="'+lw+'" stroke-linejoin="round" stroke-linecap="round">'
-    + '<path d="M45 50 C39 62 30 76 23 90 L32 85 L37 93 L48 54 Z"/>'      // left tail (wide splay)
-    + '<path d="M55 50 C61 62 70 76 77 90 L68 85 L63 93 L52 54 Z"/>'      // right tail (wide splay)
-    + '<path d="M45 33 C24 19 9 25 9 41 C9 57 24 63 45 49 Z"/>'           // left loop
-    + '<path d="M55 33 C76 19 91 25 91 41 C91 57 76 63 55 49 Z"/>'        // right loop
-    + '<rect x="41" y="29" width="18" height="23" rx="8"/>'               // knot
+// Cute bow (loops + creases + oval knot + splayed notched tails), 0 0 100 96 box.
+function bowSvg(size, opt){
+  opt = opt || {};
+  const fill = opt.fill || BOW_PINK, line = opt.line || BOW_LINE, lw = opt.lw || 5;
+  const dash = opt.dashed ? ' stroke-dasharray="5 5"' : '';
+  const hl = opt.solid ? '<ellipse cx="26" cy="30" rx="8" ry="4.5" fill="#ffd6e4" stroke="none" transform="rotate(-24 26 30)"/>' : '';
+  return svg({viewBox:'0 0 100 96', width:size, height:size, style:'overflow:visible;display:block'},
+    '<g fill="'+fill+'" stroke="'+line+'" stroke-width="'+lw+'" stroke-linejoin="round" stroke-linecap="round"'+dash+'>'
+    + '<path d="M45 52 C39 64 30 78 23 93 L32 88 L37 96 L48 56 Z"/>'          // left tail
+    + '<path d="M55 52 C61 64 70 78 77 93 L68 88 L63 96 L52 56 Z"/>'          // right tail
+    + '<path d="M45 34 C26 16 8 20 7 33 C6 43 6 47 8 57 C11 70 28 64 45 50 Z"/>'   // left loop
+    + '<path d="M55 34 C74 16 92 20 93 33 C94 43 94 47 92 57 C89 70 72 64 55 50 Z"/>' // right loop
+    + hl
+    + '<path fill="none" d="M43 39 C36 38 31 40 28 41"/>'   // creases (ribbon folding into knot)
+    + '<path fill="none" d="M43 47 C36 48 31 47 28 46"/>'
+    + '<path fill="none" d="M57 39 C64 38 69 40 72 41"/>'
+    + '<path fill="none" d="M57 47 C64 48 69 47 72 46"/>'
+    + '<ellipse cx="50" cy="43" rx="10" ry="13"/>'          // knot
     + '</g>'
   );
 }
@@ -475,7 +484,7 @@ function _posOnly(s){ const o = {}; if (s) ['position','top','left','right','bot
 function doneMark(size, extraStyle){
   if (S.mark === 'bowtie'){
     return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center'}, _posOnly(extraStyle))},
-      bowSvg(Math.round(size*1.28), BOW_PINK, BOW_LINE, 5));
+      bowSvg(Math.round(size*1.34), {solid:true}));
   }
   const gi = Math.round(size * 0.56);
   return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'var(--color-accent)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, var(--color-accent) 45%, transparent)'}, extraStyle || {})},
@@ -484,9 +493,9 @@ function doneMark(size, extraStyle){
 // Empty "holster": faint ghost of the mark, shown on scheduled-but-not-done days.
 function holsterMark(size){
   if (S.mark === 'bowtie'){
-    // base outline reads as a clear bow, waiting to be filled in
+    // base outline = a dotted bow, waiting to be filled in
     return h('div', {style:{width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center',opacity:'.6'}},
-      bowSvg(Math.round(size*1.28), 'none', 'color-mix(in srgb, '+BOW_LINE+' 70%, transparent)', 5));
+      bowSvg(Math.round(size*1.34), {fill:'none', line:'color-mix(in srgb, '+BOW_LINE+' 75%, transparent)', lw:4, dashed:true}));
   }
   const gi = Math.round(size * 0.5), ghost = 'color-mix(in srgb, var(--color-accent) 45%, transparent)';
   return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',border:'2px dashed color-mix(in srgb, var(--color-accent) 42%, transparent)',display:'flex',alignItems:'center',justifyContent:'center'}},
