@@ -391,6 +391,9 @@ const FEED = [
 const S = {
   tab:'today', overlay:null, planId:'ppl',
   social:null, friendProfile:null, friendPlan:null, editProfile:false,
+  // Gym invites (demo). id, fromId, toId('me' = you), time ('now' | 'HH:MM'), status.
+  invites: [{id:'inv_seed', fromId:'u_sami', toId:'me', time:'now', status:'pending'}],
+  invitePanel:false, inviteFriend:null, inviteWhen:'now', suggestFor:null,
   uname: load('uname', 'Elmeri'),
   pfp: load('pfp', null),            // profile photo as a data URL, or null → initial
   unameAt: load('unameAt', 0),       // ms timestamp of the last username change (once/week limit)
@@ -564,6 +567,17 @@ function loadSocial(force){
 function friendById(id){ return (S.social && S.social.friends.find(f => f.id === id)) || FRIENDS.find(f => f.id === id) || null; }
 // A friend is "live" when the presence source says they're mid-workout.
 function isLive(fr){ return !!(S.social && S.social.presence && S.social.presence.indexOf(fr.id) >= 0); }
+
+// ── Gym invites (demo). Real backend: POST /api/invites, poll for incoming/updates. ──
+function inviteWhenLabel(t){ return t === 'now' ? 'Now' : t; }
+function sendInvite(friendId, when){
+  if (!friendId) return;
+  const inv = {id:'inv_'+Date.now(), fromId:'me', toId:friendId, time:when || 'now', status:'pending'};
+  setState({invites:[inv, ...S.invites], invitePanel:false, inviteFriend:null, inviteWhen:'now'});
+}
+function setInviteStatus(id, status, extra){
+  setState({invites:S.invites.map(v => v.id === id ? Object.assign({}, v, {status}, extra || {}) : v), suggestFor:null});
+}
 // "Today" / "2d ago" from a YYYY-MM-DD date, relative to now.
 function timeAgo(dateStr){
   const d = parseYmd(dateStr); d.setHours(0,0,0,0);
@@ -1091,12 +1105,92 @@ function viewFriends(){
     );
   });
 
+  // ── Gym invites ──
+  const inviteBtn = h('button', {style:{width:'100%',border:'none',cursor:'pointer',background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'999px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'15px',marginBottom:'18px',boxShadow:'0 3px 8px color-mix(in srgb, var(--color-accent) 40%, transparent)'}, hover:{background:'var(--color-accent-600)'}, onClick:() => setState({invitePanel:true, inviteFriend:null, inviteWhen:'now'})}, '💪  Invite to the gym');
+
+  const incoming = S.invites.filter(v => v.toId === 'me' && (v.status === 'pending' || v.status === 'suggested'));
+  const outgoing = S.invites.filter(v => v.fromId === 'me' && v.status !== 'accepted');
+  const smallBtn = (label, primary, fn) => h('button', {style:{flex:'1',cursor:'pointer',borderRadius:'999px',padding:'9px',fontFamily:'var(--font-heading)',fontSize:'13px',border:primary?'none':'1px solid var(--color-divider)',background:primary?'var(--color-accent)':'transparent',color:primary?'var(--color-bg)':'var(--color-text)'}, hover:primary?{background:'var(--color-accent-600)'}:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:fn}, label);
+
+  const incomingCards = incoming.map(v => {
+    const fr = friendById(v.fromId) || {name:'?',initials:'?',accent:'#888'};
+    const suggesting = S.suggestFor === v.id;
+    return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'10px'}},
+      h('div', {style:{display:'flex',alignItems:'center',gap:'11px',marginBottom:'12px'}},
+        avatar(fr, 40),
+        h('div', {style:{flex:'1',minWidth:'0'}},
+          h('div', {style:{fontSize:'14px',fontWeight:'700'}}, fr.name.split(' ')[0] + ' invited you to the gym'),
+          h('div', {style:{fontSize:'12px',color:'var(--color-accent-700)',fontWeight:'700',marginTop:'2px'}}, inviteWhenLabel(v.time))
+        )
+      ),
+      suggesting
+        ? (() => { const t = h('input', {type:'time', value:(v.time!=='now'?v.time:'18:00'), style:{border:'1px solid var(--color-divider)',borderRadius:'10px',background:'var(--color-bg)',color:'var(--color-text)',fontFamily:'var(--font-heading)',fontSize:'15px',padding:'9px 12px'}});
+            return h('div', {style:{display:'flex',gap:'8px'}}, t, smallBtn('Send', true, () => setInviteStatus(v.id, 'suggested', {time:t.value||v.time, suggestedBy:'me'})), smallBtn('Cancel', false, () => setState({suggestFor:null}))); })()
+        : h('div', {style:{display:'flex',gap:'8px'}},
+            smallBtn('Accept', true, () => setInviteStatus(v.id, 'accepted')),
+            smallBtn('Decline', false, () => setInviteStatus(v.id, 'declined')),
+            smallBtn('Suggest time', false, () => setState({suggestFor:v.id}))
+          )
+    );
+  });
+
+  const outgoingCards = outgoing.map(v => {
+    const fr = friendById(v.toId) || {name:'?',initials:'?',accent:'#888'};
+    const label = v.status === 'declined' ? 'Declined' : v.status === 'suggested' ? ('Suggested ' + inviteWhenLabel(v.time)) : 'Pending';
+    return h('div', {style:{display:'flex',alignItems:'center',gap:'11px',background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'12px 14px',marginBottom:'10px'}},
+      avatar(fr, 34),
+      h('div', {style:{flex:'1',minWidth:'0'}},
+        h('div', {style:{fontSize:'13px',fontWeight:'700'}}, 'You invited ' + fr.name.split(' ')[0] + ' · ' + inviteWhenLabel(v.time)),
+        h('div', {style:{fontSize:'11px',color:(v.status==='declined'?'var(--color-accent-700)':'var(--color-neutral-600)'),fontWeight:'600',marginTop:'1px'}}, label)
+      ),
+      h('button', {title:'Dismiss', style:{flex:'none',width:'26px',height:'26px',borderRadius:'999px',border:'none',background:'transparent',cursor:'pointer',fontSize:'13px',color:'var(--color-neutral-600)'}, onClick:() => setState({invites:S.invites.filter(x => x.id !== v.id)})}, '✕')
+    );
+  });
+
+  const invitesLbl = (incoming.length || outgoing.length)
+    ? h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'12px'}}, 'Gym invites')
+    : null;
+
   return h('div', {style:{padding:'6px 22px 152px'}},
     h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Friends'),
     strip,
-    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'12px'}}, 'Recent activity'),
+    inviteBtn,
+    invitesLbl, ...incomingCards, ...outgoingCards,
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'12px',marginTop:(incoming.length||outgoing.length)?'6px':'0'}}, 'Recent activity'),
     ...feedCards
   );
+}
+// Bottom sheet: compose a gym invite — pick a friend, choose Now or a time.
+function viewInviteCompose(){
+  if (!S.invitePanel) return null;
+  const friends = (S.social && S.social.friends) || FRIENDS;
+  const chips = h('div', {class:'sx', style:{display:'flex',gap:'12px',overflowX:'auto',padding:'2px 2px 8px',marginBottom:'18px'}},
+    friends.map(fr => { const sel = S.inviteFriend === fr.id; return h('button', {style:{flex:'none',display:'flex',flexDirection:'column',alignItems:'center',gap:'6px',width:'64px',border:'none',background:'transparent',cursor:'pointer',padding:'0'}, onClick:() => setState({inviteFriend:fr.id})},
+      h('div', {style:{borderRadius:'999px',padding:'3px',background:sel?'var(--color-accent)':'transparent'}}, avatar(fr, sel?46:52)),
+      h('div', {style:{fontSize:'11px',fontWeight:(sel?'700':'600'),color:sel?'var(--color-accent-700)':'var(--color-neutral-700)'}}, fr.name.split(' ')[0])
+    ); })
+  );
+  const timeInput = h('input', {type:'time', value:(S.inviteWhen!=='now'?S.inviteWhen:'18:00'), style:{border:'1px solid var(--color-divider)',borderRadius:'12px',background:'var(--color-bg)',color:'var(--color-text)',fontFamily:'var(--font-heading)',fontSize:'17px',padding:'11px 14px'},
+    onInput:(e) => { S.inviteWhen = e.target.value || '18:00'; }, onFocus:() => { if (S.inviteWhen === 'now'){ S.inviteWhen = timeInput.value || '18:00'; render(); } }});
+  const whenNow = S.inviteWhen === 'now';
+  const whenRow = h('div', {style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'22px'}},
+    h('button', {style:{flex:'none',cursor:'pointer',borderRadius:'999px',padding:'11px 20px',fontFamily:'var(--font-heading)',fontSize:'15px',border:whenNow?'none':'1px solid var(--color-divider)',background:whenNow?'var(--color-accent)':'transparent',color:whenNow?'var(--color-bg)':'var(--color-text)'}, onClick:() => setState({inviteWhen:'now'})}, 'Now'),
+    h('span', {style:{fontSize:'12px',color:'var(--color-neutral-600)'}}, 'or'),
+    timeInput
+  );
+  const panel = h('div', {class:'sx', style:{width:'100%',maxHeight:'86%',overflowY:'auto',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px'},
+      onClick:(ev) => ev.stopPropagation()},
+    h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 18px'}}),
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',marginBottom:'16px'}}, 'Invite to the gym'),
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'10px'}}, 'Who'),
+    chips,
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'10px'}}, 'When'),
+    whenRow,
+    h('button', {style:Object.assign(primaryBtn({padding:'16px',fontSize:'16px'}), {opacity:S.inviteFriend?'1':'.5'}), hover:S.inviteFriend?primaryHover:null, onClick:() => { if (S.inviteFriend) sendInvite(S.inviteFriend, S.inviteWhen); }}, 'Send invite'),
+    h('button', {style:{width:'100%',marginTop:'8px',border:'none',cursor:'pointer',background:'transparent',color:'var(--color-neutral-600)',borderRadius:'999px',padding:'12px',fontFamily:'var(--font-heading)',fontSize:'14px'}, onClick:() => setState({invitePanel:false})}, 'Cancel')
+  );
+  return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'flex-end',zIndex:'82'},
+      onClick:() => setState({invitePanel:false})}, panel);
 }
 // Bottom sheet: a friend's profile — plan, stats, recent sessions.
 function viewFriendProfile(){
@@ -1944,6 +2038,7 @@ function render(){
     viewDayDetail(),
     viewFriendProfile(),
     viewFriendPlan(),
+    viewInviteCompose(),
     viewEditProfile()
   );
 
