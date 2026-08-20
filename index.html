@@ -1018,7 +1018,8 @@ function viewFriends(){
   const friends = S.social.friends;
   // Sessions where you attached a photo become shared posts (userId 'me') — friends see them in the feed.
   const meFeed = (S.log||[]).filter(r => r.sets && r.sets.length && r.photo).map(r => ({id:'me_'+r.date, userId:'me', date:r.date, name:r.name.replace(/ day$/,''), vol:r.vol, mins:r.mins, sets:r.sets, photo:r.photo}));
-  const feed = [...meFeed, ...S.social.feed].sort((a,b) => parseYmd(b.date) - parseYmd(a.date));
+  const _cut = new Date(); _cut.setHours(0,0,0,0); _cut.setDate(_cut.getDate()-4);   // posts expire after 4 days
+  const feed = [...meFeed, ...S.social.feed].filter(a => parseYmd(a.date) >= _cut).sort((a,b) => parseYmd(b.date) - parseYmd(a.date));
 
   // Friend strip — tap an avatar to open their profile.
   const strip = h('div', {class:'sx', style:{display:'flex',gap:'14px',overflowX:'auto',padding:'2px 2px 8px',marginBottom:'18px'}},
