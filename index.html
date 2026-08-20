@@ -1079,15 +1079,15 @@ function viewFriends(){
     const more = a.sets.length - 2;
     return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
       header,
-      h('div', {style:{background:'var(--color-bg)',borderRadius:'10px',padding:'4px 12px',marginBottom:'10px'}},
+      h('div', {style:{background:'var(--color-bg)',borderRadius:'10px',padding:'4px 12px 12px'}},
         h('div', {style:{padding:'10px 0 8px',borderBottom:'1px solid var(--color-divider)',marginBottom:'2px'}},
           h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',lineHeight:'1.05'}}, a.name),
           h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',fontWeight:'600',marginTop:'2px'}}, a.mins + ' min · ' + Math.round(a.vol) + ' kg')
         ),
         ...preview,
-        more > 0 ? h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',padding:'6px 0 2px'}}, '+' + more + ' more exercise' + (more>1?'s':'')) : null
-      ),
-      cta('Expand')
+        more > 0 ? h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',padding:'6px 0 2px'}}, '+' + more + ' more exercise' + (more>1?'s':'')) : null,
+        h('div', {style:{marginTop:'10px'}}, cta('Expand'))
+      )
     );
   });
 
