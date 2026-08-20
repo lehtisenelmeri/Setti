@@ -2038,10 +2038,10 @@ function openCamera(){
   if (!md || !md.getUserMedia){ pickPhotoFallback(); return; }
   let stream = null, track = null, hwZoom = false, zoom = 1, facing = 'user';   // open to selfie mode
 
-  const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'cover',transformOrigin:'center center'}});
+  const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'contain',transformOrigin:'center center'}});
   video.muted = true; video.playsInline = true;
-  // 3:4 (portrait "4:3") frame — the visible + captured area (flex-centred in the overlay).
-  const frame = h('div', {style:{position:'relative',width:'100%',aspectRatio:'3 / 4',flexShrink:'0',overflow:'hidden',background:'#000'}}, video);
+  // Whole-frame preview — nothing cropped; captures exactly what you see.
+  const frame = h('div', {style:{position:'absolute',inset:'0',overflow:'hidden',background:'#000'}}, video);
   const flashPop = h('div', {style:{position:'absolute',inset:'0',background:'#fff',opacity:'0',pointerEvents:'none',transition:'opacity .18s'}});
 
   const iconBtn = (glyph, extra) => h('button', {style:Object.assign({width:'44px',height:'44px',flex:'none',borderRadius:'999px',border:'none',background:'rgba(255,255,255,.16)',color:'#fff',cursor:'pointer',fontSize:'18px',display:'flex',alignItems:'center',justifyContent:'center'}, extra||{})}, glyph);
@@ -2057,7 +2057,7 @@ function openCamera(){
   const shutter = h('button', {style:{width:'74px',height:'74px',flex:'none',borderRadius:'999px',border:'5px solid #fff',background:'rgba(255,255,255,.35)',cursor:'pointer'}});
   const bottomBar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',flexDirection:'column',alignItems:'center',gap:'18px',padding:'0 20px 42px',zIndex:'2'}}, zoomRow, shutter);
 
-  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300',display:'flex',alignItems:'center',justifyContent:'center'}}, frame, flashPop, topBar, bottomBar);
+  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, frame, flashPop, topBar, bottomBar);
   document.body.appendChild(overlay);
 
   const effZoom = () => Math.max(1, zoom);   // digital zoom can't go below 1
@@ -2078,11 +2078,9 @@ function openCamera(){
   const capture = () => {
     if (!video.videoWidth) return;
     const vw = video.videoWidth, vh = video.videoHeight;
-    const fr = frame.getBoundingClientRect(), fAsp = fr.width / fr.height;   // the exact visible frame
-    // object-fit:cover mapping — grab exactly the part of the sensor the preview shows
-    let bw, bh; if (vw/vh > fAsp){ bh = vh; bw = vh*fAsp; } else { bw = vw; bh = vw/fAsp; }
-    const eff = hwZoom ? 1 : effZoom();                                 // extra digital zoom (crop)
-    const sw = bw/eff, sh = bh/eff, sx = (vw-sw)/2, sy = (vh-sh)/2;
+    // The preview shows the whole frame (object-fit:contain), so capture the whole frame — only digital zoom crops.
+    const eff = hwZoom ? 1 : effZoom();
+    const sw = vw/eff, sh = vh/eff, sx = (vw-sw)/2, sy = (vh-sh)/2;
     const scale = Math.min(1, 1080/Math.max(sw, sh)), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
     const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high';
