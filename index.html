@@ -492,7 +492,7 @@ function doneMark(size, extraStyle){
       bowSvg(Math.round(size*1.34), {solid:true}));
   }
   const gi = Math.round(size * 0.56);
-  return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'var(--color-accent)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, var(--color-accent) 45%, transparent)'}, extraStyle || {})},
+  return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'linear-gradient(145deg, var(--color-accent-400), var(--color-accent-600))',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, var(--color-accent) 45%, transparent)'}, extraStyle || {})},
     svg({viewBox:'0 0 24 24',width:gi,height:gi}, '<path fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>'));
 }
 // Empty "holster": faint ghost of the mark, shown on scheduled-but-not-done days.
@@ -916,7 +916,7 @@ function viewToday(){
     );
   });
 
-  const cardHeader = h('div', {style:{background:'var(--color-accent)',color:'var(--color-bg)',padding:'16px 18px 15px'}},
+  const cardHeader = h('div', {style:{background:'linear-gradient(150deg, var(--color-accent-400), var(--color-accent-700))',color:'var(--color-bg)',padding:'16px 18px 15px'}},
     h('div', {style:{fontSize:'12px',letterSpacing:'.12em',textTransform:'uppercase',fontWeight:'700',opacity:'.85'}}, DAY_FULL[ti]),
     h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',letterSpacing:'-.02em',lineHeight:'1.02',marginTop:'2px'}}, restToday ? 'Rest day' : today.name + ' day'),
     restToday ? null : h('div', {style:{fontSize:'12px',fontWeight:'600',opacity:'.85',marginTop:'6px'}}, '~' + est.min + ' min')
@@ -974,7 +974,7 @@ function viewPlans(){
     ...splitRows
   );
 
-  const activeCard = h('div', {style:{background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px',boxShadow:'0 14px 30px -6px color-mix(in srgb, var(--color-accent) 55%, transparent), 0 4px 10px rgba(0,0,0,.18)',marginBottom:'22px'}},
+  const activeCard = h('div', {style:{background:'linear-gradient(150deg, var(--color-accent-400), var(--color-accent-700))',color:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px',boxShadow:'0 14px 30px -6px color-mix(in srgb, var(--color-accent) 55%, transparent), 0 4px 10px rgba(0,0,0,.18)',marginBottom:'22px'}},
     h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',opacity:'.8',fontWeight:'700'}}, 'Active split'),
     h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'27px',margin:'4px 0 16px'}}, plan.name),
     h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',opacity:'.7',marginBottom:'2px'}}, 'Your week'),
