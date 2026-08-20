@@ -1014,16 +1014,17 @@ function viewPlanPicker(){
         h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'19px'}}, p.name),
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-700)',marginTop:'3px'}}, p.blurb)
       ),
-      h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'10px',marginTop:'14px'}},
-        h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, p.days),
-        h('button', {style:{border:(inUse?'1px solid var(--color-divider)':'none'),background:(inUse?'transparent':'var(--color-accent)'),color:(inUse?'var(--color-neutral-600)':'var(--color-bg)'),cursor:(inUse?'default':'pointer'),borderRadius:'999px',padding:'8px 18px',fontFamily:'var(--font-heading)',fontSize:'13px',whiteSpace:'nowrap'}, hover:(inUse?null:primaryHover), onClick:() => { if (!inUse){ usePlan(id); setState({overlay:null}); } }}, inUse ? 'In use' : 'Use split')
+      h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'8px',marginTop:'14px'}},
+        h('div', {style:{flex:'1',minWidth:'0',fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, p.days),
+        h('button', {title:'Use & edit in the builder', style:{flex:'none',border:'1px solid var(--color-divider)',background:'transparent',color:'var(--color-text)',cursor:'pointer',borderRadius:'999px',padding:'8px 14px',fontFamily:'var(--font-heading)',fontSize:'13px',whiteSpace:'nowrap'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:() => { if (!inUse) usePlan(id); setState({overlay:'builder', day:firstTrain(), dayPick:null}); }}, 'Customise'),
+        h('button', {style:{flex:'none',border:(inUse?'1px solid var(--color-divider)':'none'),background:(inUse?'transparent':'var(--color-accent)'),color:(inUse?'var(--color-neutral-600)':'var(--color-bg)'),cursor:(inUse?'default':'pointer'),borderRadius:'999px',padding:'8px 16px',fontFamily:'var(--font-heading)',fontSize:'13px',whiteSpace:'nowrap'}, hover:(inUse?null:primaryHover), onClick:() => { if (!inUse){ usePlan(id); setState({overlay:null}); } }}, inUse ? 'In use' : 'Use')
       )
     );
   });
   const panel = h('div', {class:'sx', style:{width:'100%',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px',maxHeight:'86%',overflowY:'auto'},
       onClick:(ev) => ev.stopPropagation()},
     h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 16px'}}),
-    h('h3', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',margin:'0 0 4px'}}, 'Change split'),
+    h('h3', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',margin:'0 0 4px'}}, 'Templates'),
     h('p', {style:{fontSize:'13px',color:'var(--color-neutral-700)',margin:'0 0 16px'}}, 'Pick one and it fills your week. You can swap any exercise after.'),
     ...presets
   );
