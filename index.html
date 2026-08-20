@@ -379,7 +379,7 @@ const FRIENDS = [
 // Activity feed — one entry per finished session, newest first. Same shape as S.log + userId.
 const FEED = [
   {id:'a1', userId:'u_sami',  date:_ago(0), name:'Push', vol:5820, mins:54, sets:[{id:'bench',g:'Chest',kg:80,reps:6},{id:'ohp',g:'Shoulders',kg:45,reps:8},{id:'incline',g:'Chest',kg:60,reps:8},{id:'pushdown',g:'Arms',kg:30,reps:12}]},
-  {id:'a2', userId:'u_jonas', date:_ago(0), name:'Chest/Back', vol:7410, mins:68, photo:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMzIwIj48ZGVmcz48bGluZWFyR3JhZGllbnQgaWQ9ImciIHgxPSIwIiB5MT0iMCIgeDI9IjEiIHkyPSIxIj48c3RvcCBvZmZzZXQ9IjAiIHN0b3AtY29sb3I9IiMyZjZkNDciLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiMxZjNkMmIiLz48L2xpbmVhckdyYWRpZW50PjwvZGVmcz48cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0idXJsKCNnKSIvPjxyZWN0IHg9IjcwIiB5PSIxNTAiIHdpZHRoPSIzMCIgaGVpZ2h0PSI3MCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIxMDAiIHk9IjEzMCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIxMjYiIHk9IjE3OCIgd2lkdGg9IjIyOCIgaGVpZ2h0PSIxNCIgcng9IjciIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIzNTQiIHk9IjEzMCIgd2lkdGg9IjI2IiBoZWlnaHQ9IjExMCIgcng9IjgiIGZpbGw9IiNlOWUyZDAiLz48cmVjdCB4PSIzODAiIHk9IjE1MCIgd2lkdGg9IjMwIiBoZWlnaHQ9IjcwIiByeD0iOCIgZmlsbD0iI2U5ZTJkMCIvPjx0ZXh0IHg9IjMwIiB5PSI2MCIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMzQiIGZvbnQtd2VpZ2h0PSI3MDAiIGZpbGw9IiNmZmZmZmYiPlBVU0ggREFZPC90ZXh0Pjx0ZXh0IHg9IjMwIiB5PSI5MiIgZm9udC1mYW1pbHk9InNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiNmZmZmZmYiIG9wYWNpdHk9IjAuNyI+bmV3IGJlbmNoIFBSPC90ZXh0Pjwvc3ZnPg==', sets:[{id:'bench',g:'Chest',kg:95,reps:5},{id:'row',g:'Back',kg:80,reps:8},{id:'incline',g:'Chest',kg:70,reps:8},{id:'lat',g:'Back',kg:65,reps:10}]},
+  {id:'a2', userId:'u_jonas', date:_ago(0), name:'Chest/Back', vol:7410, mins:68, photo:'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0ODAiIGhlaWdodD0iMzIwIiB2aWV3Qm94PSIwIDAgNDgwIDMyMCI+CjxkZWZzPgo8bGluZWFyR3JhZGllbnQgaWQ9ImJnIiB4MT0iMCIgeTE9IjAiIHgyPSIwIiB5Mj0iMSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjM2E3ZDVjIi8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMWMzYTJiIi8+PC9saW5lYXJHcmFkaWVudD4KPHJhZGlhbEdyYWRpZW50IGlkPSJzcG90IiBjeD0iNTAlIiBjeT0iMTglIiByPSI3MCUiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjE2Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjZmZmZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48L3JhZGlhbEdyYWRpZW50Pgo8L2RlZnM+CjxyZWN0IHdpZHRoPSI0ODAiIGhlaWdodD0iMzIwIiBmaWxsPSJ1cmwoI2JnKSIvPgo8cmVjdCB3aWR0aD0iNDgwIiBoZWlnaHQ9IjMyMCIgZmlsbD0idXJsKCNzcG90KSIvPgo8ZWxsaXBzZSBjeD0iMjQwIiBjeT0iMzAwIiByeD0iMTUwIiByeT0iMjAiIGZpbGw9IiMwMDAwMDAiIG9wYWNpdHk9IjAuMTgiLz4KPCEtLSBiYXJiZWxsIG92ZXJoZWFkIC0tPgo8ZyBzdHJva2U9IiNjZmUzZDYiIHN0cm9rZS13aWR0aD0iMCIgZmlsbD0iI2NmZTNkNiI+CjxyZWN0IHg9IjEyMCIgeT0iNjAiIHdpZHRoPSIyNDAiIGhlaWdodD0iMTAiIHJ4PSI1Ii8+CjxyZWN0IHg9IjExOCIgeT0iNDYiIHdpZHRoPSIxNiIgaGVpZ2h0PSIzOCIgcng9IjQiIGZpbGw9IiNlOWYxZWEiLz4KPHJlY3QgeD0iMTA0IiB5PSI1MiIgd2lkdGg9IjEyIiBoZWlnaHQ9IjI2IiByeD0iMyIgZmlsbD0iI2U5ZjFlYSIvPgo8cmVjdCB4PSIzNDYiIHk9IjQ2IiB3aWR0aD0iMTYiIGhlaWdodD0iMzgiIHJ4PSI0IiBmaWxsPSIjZTlmMWVhIi8+CjxyZWN0IHg9IjM2NCIgeT0iNTIiIHdpZHRoPSIxMiIgaGVpZ2h0PSIyNiIgcng9IjMiIGZpbGw9IiNlOWYxZWEiLz4KPC9nPgo8IS0tIGFybXMgdXAgdG8gYmFyIC0tPgo8ZyBzdHJva2U9IiNlMGE4NzgiIHN0cm9rZS13aWR0aD0iMjAiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgZmlsbD0ibm9uZSI+CjxwYXRoIGQ9Ik0yMTIgMTUwIEwyMDYgNzgiLz4KPHBhdGggZD0iTTI2OCAxNTAgTDI3NCA3OCIvPgo8L2c+CjwhLS0gaGVhZCAtLT4KPGNpcmNsZSBjeD0iMjQwIiBjeT0iMTI4IiByPSIyNiIgZmlsbD0iI2U4YjQ4NyIvPgo8cGF0aCBkPSJNMjE2IDExOCBRMjQwIDk2IDI2NCAxMTggTDI2NCAxMTIgUTI0MCA5MiAyMTYgMTEyIFoiIGZpbGw9IiMzYTJhMWUiLz4KPCEtLSB0b3JzbyAodGFuayB0b3ApIC0tPgo8cGF0aCBkPSJNMjEwIDE1MCBRMjQwIDE0MCAyNzAgMTUwIEwyNzYgMjI2IFEyNDAgMjM2IDIwNCAyMjYgWiIgZmlsbD0iIzJmOWU4OCIvPgo8cGF0aCBkPSJNMjEwIDE1MCBMMjA0IDIyNiIgc3Ryb2tlPSIjMjY4MDZmIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz4KPCEtLSBzaG9ydHMgLS0+CjxwYXRoIGQ9Ik0yMDYgMjI0IFEyNDAgMjM0IDI3NCAyMjQgTDI3MiAyNTggTDI0NiAyNTggTDI0MCAyMzYgTDIzNCAyNTggTDIwOCAyNTggWiIgZmlsbD0iIzFmM2E0ZCIvPgo8IS0tIGxlZ3MgLS0+CjxnIHN0cm9rZT0iI2UwYTg3OCIgc3Ryb2tlLXdpZHRoPSIyMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIj4KPHBhdGggZD0iTTIyMyAyNTggTDIyMSAzMDAiLz4KPHBhdGggZD0iTTI1NyAyNTggTDI1OSAzMDAiLz4KPC9nPgo8IS0tIHNob2VzIC0tPgo8cmVjdCB4PSIyMDYiIHk9IjI5OCIgd2lkdGg9IjM0IiBoZWlnaHQ9IjE0IiByeD0iNiIgZmlsbD0iI2VlZjJlZSIvPgo8cmVjdCB4PSIyNDQiIHk9IjI5OCIgd2lkdGg9IjM0IiBoZWlnaHQ9IjE0IiByeD0iNiIgZmlsbD0iI2VlZjJlZSIvPgo8L3N2Zz4=', sets:[{id:'bench',g:'Chest',kg:95,reps:5},{id:'row',g:'Back',kg:80,reps:8},{id:'incline',g:'Chest',kg:70,reps:8},{id:'lat',g:'Back',kg:65,reps:10}]},
   {id:'a3', userId:'u_maria', date:_ago(1), name:'Upper', vol:4260, mins:47, sets:[{id:'bench',g:'Chest',kg:52,reps:8},{id:'row',g:'Back',kg:45,reps:10},{id:'ohp',g:'Shoulders',kg:30,reps:10},{id:'curl',g:'Arms',kg:22,reps:12}]},
   {id:'a4', userId:'u_aino',  date:_ago(1), name:'Full A', vol:2980, mins:41, sets:[{id:'squat',g:'Legs',kg:50,reps:8},{id:'bench',g:'Chest',kg:35,reps:10},{id:'row',g:'Back',kg:35,reps:10}]},
   {id:'a5', userId:'u_sami',  date:_ago(2), name:'Legs', vol:6900, mins:58, sets:[{id:'squat',g:'Legs',kg:110,reps:6},{id:'rdl',g:'Legs',kg:90,reps:8},{id:'legpress',g:'Legs',kg:160,reps:10}]},
@@ -1054,7 +1054,8 @@ function viewFriends(){
       // Photo post — big image, workout name overlaid, tap "See workout" for the detail.
       return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
         header,
-        h('div', {style:{position:'relative',height:'220px',borderRadius:'12px',overflow:'hidden',marginBottom:'12px',backgroundImage:'url('+a.photo+')',backgroundSize:'cover',backgroundPosition:'center'}},
+        h('div', {style:{position:'relative',borderRadius:'12px',overflow:'hidden',marginBottom:'12px',background:'#000'}},
+          h('img', {src:a.photo, style:{display:'block',width:'100%',height:'auto'}}),
           h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',height:'88px',background:'linear-gradient(transparent, rgba(0,0,0,.72))'}}),
           h('div', {style:{position:'absolute',left:'14px',bottom:'12px',right:'14px'}},
             h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',color:'#fff',lineHeight:'1.05'}}, a.name),
@@ -1078,9 +1079,9 @@ function viewFriends(){
     return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
       header,
       h('div', {style:{background:'var(--color-bg)',borderRadius:'10px',padding:'4px 12px',marginBottom:'10px'}},
-        h('div', {style:{display:'flex',justifyContent:'space-between',alignItems:'baseline',padding:'8px 0 6px',borderBottom:'1px solid var(--color-divider)',marginBottom:'2px'}},
-          h('span', {style:{fontFamily:'var(--font-heading)',fontSize:'15px'}}, a.name),
-          h('span', {style:{fontSize:'11px',color:'var(--color-neutral-600)',fontWeight:'600'}}, a.mins + ' min · ' + Math.round(a.vol) + ' kg')
+        h('div', {style:{padding:'10px 0 8px',borderBottom:'1px solid var(--color-divider)',marginBottom:'2px'}},
+          h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',lineHeight:'1.05'}}, a.name),
+          h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',fontWeight:'600',marginTop:'2px'}}, a.mins + ' min · ' + Math.round(a.vol) + ' kg')
         ),
         ...preview,
         more > 0 ? h('div', {style:{fontSize:'11px',color:'var(--color-neutral-600)',padding:'6px 0 2px'}}, '+' + more + ' more exercise' + (more>1?'s':'')) : null
@@ -1120,7 +1121,7 @@ function viewFriendProfile(){
     h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-accent-700)',marginBottom:'6px'}}, last ? parseYmd(last.date).toLocaleString('en-US',{month:'short',day:'numeric'}) : 'No workouts yet'),
     last ? h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',marginBottom:'2px'}}, last.name) : null,
     last ? h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',marginBottom:'8px'}}, last.mins + ' min · ' + Math.round(last.vol) + ' kg') : null,
-    last && last.photo ? h('div', {style:{height:'170px',borderRadius:'var(--radius-md)',margin:'4px 0 6px',backgroundImage:'url('+last.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}) : null,
+    last && last.photo ? h('img', {src:last.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',margin:'4px 0 6px'}}) : null,
     ...setRows
   );
 
@@ -1450,15 +1451,12 @@ function viewWorkout(){
           h('div', {style:{fontSize:'10px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginTop:'5px'}}, 'Duration'))
       ),
       h('div', {class:'sx', style:{flex:'1',overflowY:'auto',background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'14px 16px'}}, ...summary),
-      // Attach a photo to remember the session — shows in your day-detail and the friends feed.
-      (() => {
-        const photoInput = h('input', {type:'file', accept:'image/*', style:{display:'none'}, onChange:(e) => { const f = e.target.files && e.target.files[0]; if (f) readPhoto(f, url => setState({w:{...S.w, photo:url}})); }});
-        return w.photo
-          ? h('div', {style:{position:'relative',marginTop:'14px'}},
-              h('div', {style:{height:'160px',borderRadius:'var(--radius-md)',backgroundImage:'url('+w.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}),
-              h('button', {title:'Remove photo', style:{position:'absolute',top:'8px',right:'8px',width:'30px',height:'30px',borderRadius:'999px',border:'none',background:'rgba(0,0,0,.55)',color:'#fff',cursor:'pointer',fontSize:'15px'}, onClick:() => setState({w:{...S.w, photo:null}})}, '✕'))
-          : h('button', {style:{width:'100%',marginTop:'14px',border:'1px dashed var(--color-neutral-400)',background:'transparent',cursor:'pointer',borderRadius:'var(--radius-md)',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 5%, transparent)'}, onClick:() => photoInput.click()}, '📷  Add a photo', photoInput);
-      })(),
+      // Attach a photo — opens the in-app camera; shows in your day-detail and the friends feed.
+      w.photo
+        ? h('div', {style:{position:'relative',marginTop:'14px'}},
+            h('img', {src:w.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)'}}),
+            h('button', {title:'Retake', style:{position:'absolute',top:'8px',right:'8px',display:'flex',alignItems:'center',gap:'6px',borderRadius:'999px',border:'none',background:'rgba(0,0,0,.6)',color:'#fff',cursor:'pointer',fontSize:'13px',fontFamily:'var(--font-heading)',padding:'8px 12px'}, onClick:openCamera}, '↺ Retake'))
+        : h('button', {style:{width:'100%',marginTop:'14px',border:'1px dashed var(--color-neutral-400)',background:'transparent',cursor:'pointer',borderRadius:'var(--radius-md)',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 5%, transparent)'}, onClick:openCamera}, '📷  Add a photo'),
       h('button', {style:primaryBtn({marginTop:'16px',padding:'18px',fontSize:'17px'}), hover:primaryHover, onClick:saveSession}, 'Save session')
     );
   } else if (w.resting){
@@ -1571,7 +1569,7 @@ function viewDayDetail(){
         h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'21px'}}, sess.name),
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, Math.round(sess.vol) + ' kg · ' + sess.mins + ' min')
       ),
-      sess.photo ? h('div', {style:{height:'170px',borderRadius:'var(--radius-md)',marginBottom:'10px',backgroundImage:'url('+sess.photo+')',backgroundSize:'cover',backgroundPosition:'center'}}) : null,
+      sess.photo ? h('img', {src:sess.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',marginBottom:'10px'}}) : null,
       h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'4px 16px',boxShadow:'var(--shadow-sm)'}}, ...setRows)
     );
   }) : [h('div', {style:{fontSize:'14px',color:'var(--color-neutral-600)',padding:'8px 0 20px'}}, 'Nothing logged this day.')];
@@ -1695,15 +1693,86 @@ function readPhoto(file, cb){
   r.onload = () => {
     const img = new Image();
     img.onload = () => {
-      const max = 256, scale = Math.min(1, max/Math.max(img.width, img.height));
+      const max = 1080, scale = Math.min(1, max/Math.max(img.width, img.height));
       const w = Math.round(img.width*scale), hgt = Math.round(img.height*scale);
       const c = document.createElement('canvas'); c.width = w; c.height = hgt;
-      c.getContext('2d').drawImage(img, 0, 0, w, hgt);
+      const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high'; cx.drawImage(img, 0, 0, w, hgt);
       cb(c.toDataURL('image/jpeg', 0.85));
     };
     img.src = r.result;
   };
   r.readAsDataURL(file);
+}
+// Native camera/file picker fallback (no live-camera API, or on permission failure).
+function pickPhotoFallback(){
+  const inp = h('input', {type:'file', accept:'image/*', capture:'environment', style:{display:'none'},
+    onChange:(e) => { const f = e.target.files && e.target.files[0]; if (f) readPhoto(f, url => setState({w:{...S.w, photo:url}})); if (inp.parentNode) document.body.removeChild(inp); }});
+  document.body.appendChild(inp); inp.click();
+}
+// In-app camera: live preview + flash (torch), zoom, shutter, retake/use. Lives outside render().
+function openCamera(){
+  const md = navigator.mediaDevices;
+  if (!md || !md.getUserMedia){ pickPhotoFallback(); return; }
+  let stream = null, track = null, hwZoom = false, zoom = 1;
+
+  const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'cover',transformOrigin:'center center'}});
+  video.muted = true; video.playsInline = true;
+  const flashPop = h('div', {style:{position:'absolute',inset:'0',background:'#fff',opacity:'0',pointerEvents:'none',transition:'opacity .18s'}});
+
+  const iconBtn = (glyph, extra) => h('button', {style:Object.assign({width:'44px',height:'44px',flex:'none',borderRadius:'999px',border:'none',background:'rgba(255,255,255,.16)',color:'#fff',cursor:'pointer',fontSize:'18px',display:'flex',alignItems:'center',justifyContent:'center'}, extra||{})}, glyph);
+  const closeBtn = iconBtn('✕');
+  const flashBtn = iconBtn('⚡');
+  const topBar = h('div', {style:{position:'absolute',top:'0',left:'0',right:'0',display:'flex',justifyContent:'space-between',padding:'46px 20px 0',zIndex:'2'}}, closeBtn, flashBtn);
+
+  const zoomInput = h('input', {type:'range', min:'1', max:'4', step:'0.1', value:'1', style:{width:'70%',accentColor:'#fff'}});
+  const shutter = h('button', {style:{width:'74px',height:'74px',flex:'none',borderRadius:'999px',border:'5px solid #fff',background:'rgba(255,255,255,.35)',cursor:'pointer'}});
+  const bottomBar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',flexDirection:'column',alignItems:'center',gap:'18px',padding:'0 20px 42px',zIndex:'2'}}, zoomInput, shutter);
+
+  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, video, flashPop, topBar, bottomBar);
+  document.body.appendChild(overlay);
+
+  const applyZoom = () => { if (hwZoom){ try { track.applyConstraints({advanced:[{zoom:zoom}]}); } catch(_){} video.style.transform = 'none'; } else { video.style.transform = 'scale('+zoom+')'; } };
+  zoomInput.addEventListener('input', (e) => { zoom = parseFloat(e.target.value) || 1; applyZoom(); });
+
+  let torchOn = false;
+  flashBtn.addEventListener('click', () => { if (!track) return; torchOn = !torchOn; try { track.applyConstraints({advanced:[{torch:torchOn}]}); } catch(_){} flashBtn.style.background = torchOn ? '#fff' : 'rgba(255,255,255,.16)'; flashBtn.style.color = torchOn ? '#000' : '#fff'; });
+
+  const cleanup = () => { if (stream) stream.getTracks().forEach(t => t.stop()); if (overlay.parentNode) document.body.removeChild(overlay); };
+  closeBtn.addEventListener('click', cleanup);
+
+  const capture = () => {
+    if (!video.videoWidth) return;
+    const vw = video.videoWidth, vh = video.videoHeight;
+    let sw = vw, sh = vh, sx = 0, sy = 0;
+    if (!hwZoom && zoom > 1){ sw = vw/zoom; sh = vh/zoom; sx = (vw-sw)/2; sy = (vh-sh)/2; }
+    const scale = Math.min(1, 1080/sw), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
+    const c = document.createElement('canvas'); c.width = cw; c.height = ch;
+    const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high'; cx.drawImage(video, sx, sy, sw, sh, 0, 0, cw, ch);
+    const url = c.toDataURL('image/jpeg', 0.85);
+    flashPop.style.opacity = '0.9'; setTimeout(() => { flashPop.style.opacity = '0'; }, 180);
+    showPreview(url);
+  };
+  shutter.addEventListener('click', capture);
+
+  function showPreview(url){
+    const img = h('img', {src:url, style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'contain',background:'#000',zIndex:'3'}});
+    const btn = (label, primary) => h('button', {style:{flex:'1',border:primary?'none':'1px solid rgba(255,255,255,.5)',background:primary?'#fff':'transparent',color:primary?'#000':'#fff',cursor:'pointer',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'16px'}}, label);
+    const retake = btn('↺ Retake', false), use = btn('Use photo', true);
+    const pbar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',gap:'12px',padding:'0 20px 42px',zIndex:'4'}}, retake, use);
+    video.style.display = 'none'; topBar.style.display = 'none'; bottomBar.style.display = 'none';
+    overlay.appendChild(img); overlay.appendChild(pbar);
+    retake.addEventListener('click', () => { overlay.removeChild(img); overlay.removeChild(pbar); video.style.display = ''; topBar.style.display = ''; bottomBar.style.display = ''; });
+    use.addEventListener('click', () => { cleanup(); setState({w:{...S.w, photo:url}}); });
+  }
+
+  md.getUserMedia({video:{facingMode:{ideal:'environment'}, width:{ideal:1920}, height:{ideal:1080}}, audio:false})
+    .then(s => {
+      stream = s; video.srcObject = s; track = s.getVideoTracks()[0];
+      const caps = track.getCapabilities ? track.getCapabilities() : {};
+      if (caps.zoom){ hwZoom = true; zoomInput.min = caps.zoom.min; zoomInput.max = caps.zoom.max; zoomInput.step = caps.zoom.step || 0.1; zoom = caps.zoom.min || 1; zoomInput.value = String(zoom); }
+      if (!caps.torch){ flashBtn.style.display = 'none'; }
+    })
+    .catch(() => { cleanup(); pickPhotoFallback(); });
 }
 // Edit-profile sheet: change photo anytime; username only once every 7 days.
 function viewEditProfile(){
