@@ -591,7 +591,7 @@ function estimate(day){
 function usePlan(id){ setState({planId:id, week:clone(PLANS[id].week), day:0, dayPick:null}); }
 // Start a blank plan from scratch (7 rest days) and drop straight into the builder.
 function createPlan(){
-  PLANS.custom = {name:'My Plan', level:'Custom', days:'', blurb:'Your own plan, built from scratch.',
+  PLANS.custom = {name:'My Split', level:'Custom', days:'', blurb:'Your own split, built from scratch.',
     week:Array.from({length:7}, () => ({name:'Rest', ex:[]}))};
   setState({planId:'custom', week:clone(PLANS.custom.week), day:0, dayPick:null, exPick:null, group:null, overlay:'builder'});
 }
@@ -954,18 +954,18 @@ function viewPlans(){
   );
 
   const activeCard = h('div', {style:{background:'var(--color-accent)',color:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'20px',boxShadow:'0 14px 30px -6px color-mix(in srgb, var(--color-accent) 55%, transparent), 0 4px 10px rgba(0,0,0,.18)',marginBottom:'22px'}},
-    h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',opacity:'.8',fontWeight:'700'}}, 'Active plan'),
+    h('div', {style:{fontSize:'11px',letterSpacing:'.12em',textTransform:'uppercase',opacity:'.8',fontWeight:'700'}}, 'Active split'),
     h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'27px',margin:'4px 0 16px'}}, plan.name),
     h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',opacity:'.7',marginBottom:'2px'}}, 'Your week'),
     weekWell,
-    h('button', {style:{width:'100%',marginTop:'16px',border:'none',cursor:'pointer',background:'var(--color-bg)',color:'var(--color-accent-800)',borderRadius:'999px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'0 3px 8px rgba(0,0,0,.18)'}, hover:{background:'var(--color-accent-100)'}, onClick:() => setState({overlay:'builder', day:firstTrain(), dayPick:null})}, 'Customise plan')
+    h('button', {style:{width:'100%',marginTop:'16px',border:'none',cursor:'pointer',background:'var(--color-bg)',color:'var(--color-accent-800)',borderRadius:'999px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'0 3px 8px rgba(0,0,0,.18)'}, hover:{background:'var(--color-accent-100)'}, onClick:() => setState({overlay:'builder', day:firstTrain(), dayPick:null})}, 'Customise split')
   );
 
-  const changeBtn = h('button', {style:{width:'100%',border:'1px solid var(--color-divider)',cursor:'pointer',background:'var(--color-surface)',color:'var(--color-text)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:() => setState({overlay:'plans'})}, 'Change plan');
-  const createBtn = h('button', {style:{width:'100%',marginTop:'10px',border:'none',cursor:'pointer',background:'var(--color-text)',color:'var(--color-bg)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 85%, #fff)'}, onClick:createPlan}, 'Create plan');
+  const changeBtn = h('button', {style:{width:'100%',border:'1px solid var(--color-divider)',cursor:'pointer',background:'var(--color-surface)',color:'var(--color-text)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 6%, transparent)'}, onClick:() => setState({overlay:'plans'})}, 'Change split');
+  const createBtn = h('button', {style:{width:'100%',marginTop:'10px',border:'none',cursor:'pointer',background:'var(--color-text)',color:'var(--color-bg)',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'15px',boxShadow:'var(--shadow-sm)'}, hover:{background:'color-mix(in srgb, var(--color-text) 85%, #fff)'}, onClick:createPlan}, 'Create split');
 
   return h('div', {style:{padding:'6px 22px 152px'}},
-    h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Your plan'),
+    h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',margin:'0 0 16px'}}, 'Your split'),
     activeCard,
     changeBtn,
     createBtn
@@ -984,14 +984,14 @@ function viewPlanPicker(){
       ),
       h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'10px',marginTop:'14px'}},
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, p.days),
-        h('button', {style:{border:(inUse?'1px solid var(--color-divider)':'none'),background:(inUse?'transparent':'var(--color-accent)'),color:(inUse?'var(--color-neutral-600)':'var(--color-bg)'),cursor:(inUse?'default':'pointer'),borderRadius:'999px',padding:'8px 18px',fontFamily:'var(--font-heading)',fontSize:'13px',whiteSpace:'nowrap'}, hover:(inUse?null:primaryHover), onClick:() => { if (!inUse){ usePlan(id); setState({overlay:null}); } }}, inUse ? 'In use' : 'Use plan')
+        h('button', {style:{border:(inUse?'1px solid var(--color-divider)':'none'),background:(inUse?'transparent':'var(--color-accent)'),color:(inUse?'var(--color-neutral-600)':'var(--color-bg)'),cursor:(inUse?'default':'pointer'),borderRadius:'999px',padding:'8px 18px',fontFamily:'var(--font-heading)',fontSize:'13px',whiteSpace:'nowrap'}, hover:(inUse?null:primaryHover), onClick:() => { if (!inUse){ usePlan(id); setState({overlay:null}); } }}, inUse ? 'In use' : 'Use split')
       )
     );
   });
   const panel = h('div', {class:'sx', style:{width:'100%',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px',maxHeight:'86%',overflowY:'auto'},
       onClick:(ev) => ev.stopPropagation()},
     h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 16px'}}),
-    h('h3', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',margin:'0 0 4px'}}, 'Change plan'),
+    h('h3', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',margin:'0 0 4px'}}, 'Change split'),
     h('p', {style:{fontSize:'13px',color:'var(--color-neutral-700)',margin:'0 0 16px'}}, 'Pick one and it fills your week. You can swap any exercise after.'),
     ...presets
   );
@@ -1110,10 +1110,10 @@ function viewFriendProfile(){
 
   // Focus: the workout they just completed — same look as the week-strip day-detail card.
   const setRows = last ? last.sets.map((s,i) => {
-    const g = GROUP_COLOR[s.g] || GROUP_COLOR[GROUPS[0]];
     const name = (EX[s.id] && EX[s.id].n) || s.id;
-    return h('div', {style:{display:'flex',alignItems:'center',gap:'12px',padding:'10px 0',borderBottom:(i<last.sets.length-1?'1px solid var(--color-divider)':'none')}},
-      h('div', {style:{width:'26px',height:'26px',flex:'none',borderRadius:'999px',background:g[0],color:g[1],display:'flex',alignItems:'center',justifyContent:'center',fontSize:'11px',fontWeight:'700'}}, i+1),
+    const groupChanges = i < last.sets.length-1 && last.sets[i+1].g !== s.g;   // divide only where the muscle group changes
+    return h('div', {style:{display:'flex',alignItems:'center',gap:'12px',padding:'10px 0',borderBottom:(groupChanges?'1px solid var(--color-divider)':'none')}},
+      h('div', {style:{width:'18px',flex:'none',textAlign:'center',fontFamily:'var(--font-heading)',fontSize:'15px',color:'var(--color-neutral-500)'}}, i+1),
       h('div', {style:{flex:'1',minWidth:'0',fontSize:'15px',fontWeight:'600',whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, name),
       h('div', {style:{flex:'none',fontFamily:'var(--font-heading)',fontSize:'17px'}}, (s.kg ? s.kg + ' kg' : 'Body') + ' × ' + s.reps)
     );
@@ -1137,7 +1137,7 @@ function viewFriendProfile(){
       h('div', {style:{flex:'1',minWidth:'0'}},
         h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',lineHeight:'1.05'}}, fr.name)
       ),
-      h('button', {style:{flex:'none',border:'1px solid var(--color-divider)',cursor:'pointer',background:'transparent',color:'var(--color-text)',borderRadius:'999px',padding:'9px 15px',fontFamily:'var(--font-heading)',fontSize:'13px'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({friendPlan:fr.id})}, 'See plan')
+      h('button', {style:{flex:'none',border:'1px solid var(--color-divider)',cursor:'pointer',background:'transparent',color:'var(--color-text)',borderRadius:'999px',padding:'9px 15px',fontFamily:'var(--font-heading)',fontSize:'13px'}, hover:{background:'color-mix(in srgb, var(--color-text) 7%, transparent)'}, onClick:() => setState({friendPlan:fr.id})}, 'See split')
     ),
     workoutCard
   );
@@ -1163,7 +1163,7 @@ function viewFriendPlan(){
   const panel = h('div', {class:'sx', style:{width:'100%',maxHeight:'86%',overflowY:'auto',background:'var(--color-bg)',borderTopLeftRadius:'var(--radius-lg)',borderTopRightRadius:'var(--radius-lg)',padding:'14px 22px 34px'},
       onClick:(ev) => ev.stopPropagation()},
     h('div', {style:{width:'44px',height:'5px',borderRadius:'999px',background:'var(--color-neutral-400)',margin:'0 auto 18px'}}),
-    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)',marginBottom:'4px'}}, firstName + '’s plan'),
+    h('div', {style:{fontSize:'11px',letterSpacing:'.1em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-600)',marginBottom:'4px'}}, firstName + '’s split'),
     h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'30px',lineHeight:'1.05',marginBottom:'18px'}}, fr.planName),
     weekWell
   );
@@ -1390,7 +1390,7 @@ function viewBuilder(){
         h('div', {style:{fontSize:'10px',letterSpacing:'.12em',textTransform:'uppercase',color:'var(--color-neutral-600)',fontWeight:'700',marginBottom:'4px'}}, 'Customise'),
         // Editable plan name — bubble + pen so it reads as tappable. Updates model live, repaints on blur.
         h('div', {style:{display:'inline-flex',alignItems:'center',gap:'6px',maxWidth:'100%',background:'color-mix(in srgb, var(--color-text) 5%, transparent)',border:'1px solid var(--color-divider)',borderRadius:'10px',padding:'5px 9px'}},
-          h('input', {value:plan.name, placeholder:'Plan name', maxlength:'28', size:String(Math.max(6, plan.name.length)),
+          h('input', {value:plan.name, placeholder:'Split name', maxlength:'28', size:String(Math.max(6, plan.name.length)),
             onInput:(e) => { PLANS[S.planId].name = e.target.value; },
             onKeydown:(e) => { if (e.key === 'Enter') e.target.blur(); },
             onBlur:() => setState({}),
@@ -1900,7 +1900,7 @@ function statusBar(){
   );
 }
 function header(){
-  return h('div', {style:{padding:'60px 22px 4px'}});
+  return h('div', {style:{padding:'calc(env(safe-area-inset-top) + 16px) 22px 4px'}});
 }
 const TAB_ICONS = {
   today: '<rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><circle cx="12" cy="15" r="1.5" fill="currentColor" stroke="none"/>',
@@ -1913,8 +1913,8 @@ function tabIcon(id){
   return svg({width:'23',height:'23',viewBox:'0 0 24 24',fill:'none',stroke:'currentColor','stroke-width':'2','stroke-linecap':'round','stroke-linejoin':'round'}, TAB_ICONS[id]);
 }
 function tabBar(){
-  const tabs = [['progress','Progress'],['plans','Plans'],['today','Today'],['friends','Friends'],['settings','Settings']];
-  return h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',paddingBottom:'24px',background:'var(--color-bg)',borderTop:'1px solid var(--color-divider)',display:'flex',zIndex:'30'}},
+  const tabs = [['progress','Progress'],['plans','Split'],['today','Today'],['friends','Friends'],['settings','Settings']];
+  return h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',paddingBottom:'calc(env(safe-area-inset-bottom) + 12px)',background:'var(--color-bg)',borderTop:'1px solid var(--color-divider)',display:'flex',zIndex:'30'}},
     tabs.map(([id,name]) => {
       const on = S.tab === id;
       return h('button', {style:{flex:'1',cursor:'pointer',border:'none',background:'transparent',color:(on?'var(--color-accent)':'var(--color-neutral-600)'),padding:'10px 0 0',display:'flex',flexDirection:'column',alignItems:'center',gap:'4px',fontFamily:'var(--font-body)',fontSize:'11px',fontWeight:'700',letterSpacing:'.02em'}, onClick:() => { setState({tab:id, overlay:null}); if (id === 'friends') loadSocial(); }},
@@ -1948,12 +1948,7 @@ function render(){
   );
 
   phone.innerHTML = '';
-  phone.append(
-    h('div', {class:'island'}),
-    statusBar(),
-    app,
-    h('div', {class:'homebar'}, h('div', {}))
-  );
+  phone.append(app);
 
   // The tapped day grows fast and "jumps" into the middle of the screen, blooming into the card.
   if (S.dayDetail && S.dayFrom){
