@@ -461,8 +461,8 @@ const BOW_PINK = '#f4a7c0', BOW_LINE = '#7c4a44';
 function bowSvg(size, fill, line, lw){
   return svg({viewBox:'0 0 100 92', width:size, height:size, style:'overflow:visible;display:block'},
     '<g fill="'+fill+'" stroke="'+line+'" stroke-width="'+lw+'" stroke-linejoin="round" stroke-linecap="round">'
-    + '<path d="M47 49 C44 62 40 74 37 85 L44 80 L49 88 L51 54 Z"/>'      // left tail
-    + '<path d="M53 49 C56 62 60 74 63 85 L56 80 L51 88 L49 54 Z"/>'      // right tail
+    + '<path d="M46 50 C42 62 36 75 31 88 L39 82 L45 90 L49 54 Z"/>'      // left tail (splayed out)
+    + '<path d="M54 50 C58 62 64 75 69 88 L61 82 L55 90 L51 54 Z"/>'      // right tail (splayed out)
     + '<path d="M45 33 C24 19 9 25 9 41 C9 57 24 63 45 49 Z"/>'           // left loop
     + '<path d="M55 33 C76 19 91 25 91 41 C91 57 76 63 55 49 Z"/>'        // right loop
     + '<rect x="41" y="29" width="18" height="23" rx="8"/>'               // knot
@@ -484,8 +484,9 @@ function doneMark(size, extraStyle){
 // Empty "holster": faint ghost of the mark, shown on scheduled-but-not-done days.
 function holsterMark(size){
   if (S.mark === 'bowtie'){
-    return h('div', {style:{width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center',opacity:'.4'}},
-      bowSvg(Math.round(size*1.28), 'none', BOW_LINE, 4));
+    // base outline reads as a clear bow, waiting to be filled in
+    return h('div', {style:{width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center',opacity:'.6'}},
+      bowSvg(Math.round(size*1.28), 'none', 'color-mix(in srgb, '+BOW_LINE+' 70%, transparent)', 5));
   }
   const gi = Math.round(size * 0.5), ghost = 'color-mix(in srgb, var(--color-accent) 45%, transparent)';
   return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',border:'2px dashed color-mix(in srgb, var(--color-accent) 42%, transparent)',display:'flex',alignItems:'center',justifyContent:'center'}},
