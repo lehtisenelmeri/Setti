@@ -921,7 +921,7 @@ function saveSession(){
   const hist = clone(S.hist);
   let log = S.log;
   let slapDay = null;   // set to the finished day so the strip sticker slaps in on the next render
-  let week = S.week;
+  let splitPrompt = null;
   if (w){
     const name = w.name || day.name;
     const mins = Math.max(1, Math.round((Date.now() - w.start)/60000));
@@ -933,16 +933,15 @@ function saveSession(){
       const today = ymd(new Date());
       log = [...(S.log||[]), {date:today, name, sets, vol, mins, photo:w.photo || null}];
       slapDay = today;
-      // Optionally write this session's exercises into today's split.
-      if (S.saveToPlan){
-        const ids = []; w.queue.forEach(q => { if (q.done.length && !ids.includes(q.id)) ids.push(q.id); });
-        week = clone(S.week); const ti = todayIdx();
-        week[ti] = {name:(week[ti].ex.length ? week[ti].name : (EX[ids[0]] ? EX[ids[0]].g : 'Workout')), ex:ids};
-      }
+      // Did this session diverge from today's split? (custom, or exercises added/removed)
+      const ids = []; w.queue.forEach(q => { if (q.done.length && !ids.includes(q.id)) ids.push(q.id); });
+      const ti = todayIdx(), planEx = S.week[ti].ex;
+      const diverged = !!w.name || ids.length !== planEx.length || ids.some(id => !planEx.includes(id)) || planEx.some(id => !ids.includes(id));
+      if (diverged && ids.length) splitPrompt = {ids, di:ti};
     }
   }
   Social.setPresence(false);
-  setState({hist, log, week, overlay:null, w:null, tab:'today', slapDay, saveToPlan:false});
+  setState({hist, log, overlay:null, w:null, tab:'today', slapDay, splitPrompt});
 }
 
 /* ── shared button styles ── */
@@ -1670,21 +1669,13 @@ function viewWorkout(){
           h('div', {style:{fontSize:'10px',letterSpacing:'.08em',textTransform:'uppercase',fontWeight:'700',color:'var(--color-neutral-700)',marginTop:'5px'}}, 'Duration'))
       ),
       h('div', {class:'sx', style:{flex:'1',overflowY:'auto',background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'14px 16px'}}, ...summary),
-      // Optionally save this session's exercises into today's split.
-      h('div', {style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:'12px',marginTop:'14px'}},
-        h('div', {style:{flex:'1',minWidth:'0'}},
-          h('div', {style:{fontSize:'14px',fontWeight:'600'}}, 'Update ' + DAY_FULL[todayIdx()] + '’s split'),
-          h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',marginTop:'2px'}}, 'Save these exercises to your split')
-        ),
-        toggle(!!S.saveToPlan, () => setState({saveToPlan:!S.saveToPlan}))
-      ),
       // Attach a photo — opens the in-app camera; shows in your day-detail and the friends feed.
       w.photo
         ? h('div', {style:{position:'relative',marginTop:'14px'}},
             h('img', {src:w.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)'}}),
             h('button', {title:'Retake', style:{position:'absolute',top:'8px',right:'8px',display:'flex',alignItems:'center',gap:'6px',borderRadius:'999px',border:'none',background:'rgba(0,0,0,.6)',color:'#fff',cursor:'pointer',fontSize:'13px',fontFamily:'var(--font-heading)',padding:'8px 12px'}, onClick:openCamera}, '↺ Retake'))
         : h('button', {style:{width:'100%',marginTop:'14px',border:'1px dashed var(--color-neutral-400)',background:'transparent',cursor:'pointer',borderRadius:'var(--radius-md)',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 5%, transparent)'}, onClick:openCamera}, 'Add a photo'),
-      h('button', {style:primaryBtn({marginTop:'16px',padding:'18px',fontSize:'17px'}), hover:primaryHover, onClick:saveSession}, 'Save session')
+      h('button', {style:primaryBtn({marginTop:'16px',padding:'19px',fontSize:'19px'}), hover:primaryHover, active:primaryActive, onClick:saveSession}, 'Finish')
     );
   } else if (w.resting){
     const left = Math.max(0, Math.ceil((w.restEnd - Date.now())/1000));
@@ -1796,6 +1787,26 @@ function viewWorkout(){
   return h('div', {style:{position:'absolute',inset:'0',background:'var(--color-bg)',display:'flex',flexDirection:'column',zIndex:'70'}},
     topBar, dots, body
   );
+}
+// After a finished workout that diverged from the plan — ask to save it into the split.
+function applySplitUpdate(){
+  const p = S.splitPrompt; if (!p) return;
+  const week = clone(S.week);
+  week[p.di] = {name:(EX[p.ids[0]] ? EX[p.ids[0]].g : 'Workout'), ex:p.ids};
+  setState({week, splitPrompt:null});
+}
+function viewSplitPrompt(){
+  if (!S.splitPrompt) return null;
+  const p = S.splitPrompt;
+  const card = h('div', {style:{width:'86%',maxWidth:'340px',background:'var(--color-bg)',borderRadius:'var(--radius-lg)',padding:'22px',boxShadow:'0 18px 50px rgba(0,0,0,.4)'},
+      onClick:(ev) => ev.stopPropagation()},
+    h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'22px',marginBottom:'6px'}}, 'Update your split?'),
+    h('div', {style:{fontSize:'14px',color:'var(--color-neutral-700)',lineHeight:'1.5',marginBottom:'18px'}}, 'This workout differs from your ' + DAY_FULL[p.di] + ' split. Save these ' + p.ids.length + ' exercises as your ' + DAY_FULL[p.di] + ' split?'),
+    h('button', {style:primaryBtn({padding:'15px',fontSize:'16px'}), hover:primaryHover, onClick:applySplitUpdate}, 'Update split'),
+    h('button', {style:{width:'100%',marginTop:'8px',border:'none',cursor:'pointer',background:'transparent',color:'var(--color-neutral-600)',borderRadius:'999px',padding:'12px',fontFamily:'var(--font-heading)',fontSize:'14px'}, onClick:() => setState({splitPrompt:null})}, 'Keep as is')
+  );
+  return h('div', {style:{position:'absolute',inset:'0',background:'rgba(32,30,29,.45)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:'95'},
+      onClick:() => setState({splitPrompt:null})}, card);
 }
 // In-workout exercise picker — tap an exercise to append it to the live queue.
 function viewWorkoutPick(){
@@ -2029,8 +2040,8 @@ function openCamera(){
 
   const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'cover',transformOrigin:'center center'}});
   video.muted = true; video.playsInline = true;
-  // 3:4 (portrait "4:3") frame — the visible + captured area.
-  const frame = h('div', {style:{position:'absolute',left:'0',right:'0',top:'50%',transform:'translateY(-50%)',aspectRatio:'3 / 4',overflow:'hidden',background:'#000'}}, video);
+  // 3:4 (portrait "4:3") frame — the visible + captured area (flex-centred in the overlay).
+  const frame = h('div', {style:{position:'relative',width:'100%',aspectRatio:'3 / 4',flexShrink:'0',overflow:'hidden',background:'#000'}}, video);
   const flashPop = h('div', {style:{position:'absolute',inset:'0',background:'#fff',opacity:'0',pointerEvents:'none',transition:'opacity .18s'}});
 
   const iconBtn = (glyph, extra) => h('button', {style:Object.assign({width:'44px',height:'44px',flex:'none',borderRadius:'999px',border:'none',background:'rgba(255,255,255,.16)',color:'#fff',cursor:'pointer',fontSize:'18px',display:'flex',alignItems:'center',justifyContent:'center'}, extra||{})}, glyph);
@@ -2046,7 +2057,7 @@ function openCamera(){
   const shutter = h('button', {style:{width:'74px',height:'74px',flex:'none',borderRadius:'999px',border:'5px solid #fff',background:'rgba(255,255,255,.35)',cursor:'pointer'}});
   const bottomBar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',flexDirection:'column',alignItems:'center',gap:'18px',padding:'0 20px 42px',zIndex:'2'}}, zoomRow, shutter);
 
-  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, frame, flashPop, topBar, bottomBar);
+  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300',display:'flex',alignItems:'center',justifyContent:'center'}}, frame, flashPop, topBar, bottomBar);
   document.body.appendChild(overlay);
 
   const effZoom = () => Math.max(1, zoom);   // digital zoom can't go below 1
@@ -2066,12 +2077,13 @@ function openCamera(){
 
   const capture = () => {
     if (!video.videoWidth) return;
-    const vw = video.videoWidth, vh = video.videoHeight, targ = 3/4;   // portrait 3:4
-    // largest 3:4 rect that fits the sensor
-    let bw, bh; if (vw/vh > targ){ bh = vh; bw = vh*targ; } else { bw = vw; bh = vw/targ; }
+    const vw = video.videoWidth, vh = video.videoHeight;
+    const fr = frame.getBoundingClientRect(), fAsp = fr.width / fr.height;   // the exact visible frame
+    // object-fit:cover mapping — grab exactly the part of the sensor the preview shows
+    let bw, bh; if (vw/vh > fAsp){ bh = vh; bw = vh*fAsp; } else { bw = vw; bh = vw/fAsp; }
     const eff = hwZoom ? 1 : effZoom();                                 // extra digital zoom (crop)
     const sw = bw/eff, sh = bh/eff, sx = (vw-sw)/2, sy = (vh-sh)/2;
-    const scale = Math.min(1, 1080/sh), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
+    const scale = Math.min(1, 1080/Math.max(sw, sh)), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
     const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high';
     if (facing === 'user'){ cx.translate(cw, 0); cx.scale(-1, 1); }   // match the mirrored selfie preview
@@ -2099,6 +2111,7 @@ function openCamera(){
     md.getUserMedia({video:{facingMode:{ideal:facing}, width:{ideal:1920}, height:{ideal:1080}}, audio:false})
       .then(s => {
         stream = s; video.srcObject = s; track = s.getVideoTracks()[0];
+        try { const p = video.play(); if (p && p.catch) p.catch(function(){}); } catch(_){}
         const caps = track.getCapabilities ? track.getCapabilities() : {};
         if (caps.zoom) hwZoom = true;
         flashBtn.style.display = caps.torch ? '' : 'none';   // torch only on the back camera usually
@@ -2280,7 +2293,8 @@ function render(){
     viewFriendProfile(),
     viewFriendPlan(),
     viewInviteCompose(),
-    viewEditProfile()
+    viewEditProfile(),
+    viewSplitPrompt()
   );
 
   phone.innerHTML = '';
