@@ -118,9 +118,10 @@
     /* plum secondary — cool, no orange */
     --b1:#f3ecf6; --b2:#e3d3ea; --b3:#ccb0d9; --b4:#ad86c1; --b5:#8f63a6; --b6:#734b88; --b7:#583a68; --b8:#3d2848; --b9:#281a2f; --b-base:#8f63a6;
   }
-  body.pal-graphite {
-    --a1:#f1efec; --a2:#ddd9d2; --a3:#c2bcb0; --a4:#a0978a; --a5:#7f7566; --a6:#615849; --a7:#473f34; --a8:#2f2a22; --a9:#1c1813; --a-base:#6f6557;
-    --b1:#eef1f4; --b2:#d7dee6; --b3:#b6c2d0; --b4:#8ea0b4; --b5:#6a7d94; --b6:#516375; --b7:#3d4b59; --b8:#2a333d; --b9:#1a2027; --b-base:#6a7d94;
+  body.pal-pink {
+    --a1:#ffe6f0; --a2:#ffcfe1; --a3:#ffabc9; --a4:#f57ba8; --a5:#e85691; --a6:#d13c78; --a7:#a72d60; --a8:#7c2247; --a9:#4f1530; --a-base:#e0669e;
+    /* teal secondary — cool contrast to the pink */
+    --b1:#e3f4f1; --b2:#c2e7e0; --b3:#93d3c8; --b4:#5cb8aa; --b5:#329888; --b6:#217a6d; --b7:#1a5d53; --b8:#14413a; --b9:#0d2b26; --b-base:#329888;
   }
 
   /* ── dark theme: bg/surface/text flip, tonal ramps invert so every
@@ -404,7 +405,7 @@ const S = {
   log: load('log', DEMO_LOG),         // real logged sessions: {date,name,sets:[{g,kg,reps}],vol,mins}
   dark: load('dark', false),
   unit: load('unit', 'kg'),
-  accent: load('accent', 'forest'),
+  accent: (load('accent', 'forest') === 'graphite' ? 'pink' : load('accent', 'forest')),
   rest: load('rest', REST_SECONDS),
   mark: load('mark', 'check')          // completed-day marker: 'check' | 'bowtie'
 };
@@ -514,7 +515,7 @@ const PALETTES = [
   {id:'clay',     name:'Clay',     c:'#c67139'},
   {id:'forest',   name:'Forest',   c:'#5a9440'},
   {id:'ocean',    name:'Ocean',    c:'#2f88b4'},
-  {id:'graphite', name:'Graphite', c:'#6f6557'}
+  {id:'pink', name:'Pink', c:'#e0669e'}
 ];
 
 function applyPrefs(){
