@@ -455,30 +455,41 @@ function stickerNode(dateStr, size, extraStyle){
   Object.assign(el.style, {color:stickerInkForDate(dateStr), pointerEvents:'none', display:'block'}, extraStyle || {});
   return el;
 }
-// ── completed-day marker: accent check, or pink bowtie (Settings toggle) ──
-const MARK_PINK = '#e0669e';
-function _markInk(){ return S.mark === 'bowtie' ? MARK_PINK : 'var(--color-accent)'; }
-// filled/stroked icon inner for a 0 0 24 24 box; ink = stroke(check)/fill(bowtie) colour.
-function _markGlyph(ink){
-  return S.mark === 'bowtie'
-    ? '<path fill="'+ink+'" d="M12 12 C8 8.8 4.8 8 3.8 8.5 C2.7 9 2.7 15 3.8 15.5 C4.8 16 8 15.2 12 12 Z"/>'
-      + '<path fill="'+ink+'" d="M12 12 C16 8.8 19.2 8 20.2 8.5 C21.3 9 21.3 15 20.2 15.5 C19.2 16 16 15.2 12 12 Z"/>'
-      + '<rect fill="'+ink+'" x="10.4" y="9.5" width="3.2" height="5" rx="1.6"/>'
-    : '<path fill="none" stroke="'+ink+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>';
+// ── completed-day marker: accent check, or a cute pink bow (Settings toggle) ──
+const BOW_PINK = '#f4a7c0', BOW_LINE = '#7c4a44';
+// Cute bow: two loops + knot + two tails, in a 0 0 100 92 box. fill/line/lw tunable.
+function bowSvg(size, fill, line, lw){
+  return svg({viewBox:'0 0 100 92', width:size, height:size, style:'overflow:visible;display:block'},
+    '<g fill="'+fill+'" stroke="'+line+'" stroke-width="'+lw+'" stroke-linejoin="round" stroke-linecap="round">'
+    + '<path d="M47 49 C44 62 40 74 37 85 L44 80 L49 88 L51 54 Z"/>'      // left tail
+    + '<path d="M53 49 C56 62 60 74 63 85 L56 80 L51 88 L49 54 Z"/>'      // right tail
+    + '<path d="M45 33 C24 19 9 25 9 41 C9 57 24 63 45 49 Z"/>'           // left loop
+    + '<path d="M55 33 C76 19 91 25 91 41 C91 57 76 63 55 49 Z"/>'        // right loop
+    + '<rect x="41" y="29" width="18" height="23" rx="8"/>'               // knot
+    + '</g>'
+  );
 }
-// Done marker: solid coloured circle with a white glyph.
+// keep only positional style keys (bow has no circle to take border/background)
+function _posOnly(s){ const o = {}; if (s) ['position','top','left','right','bottom','transform','zIndex','margin'].forEach(k => { if (s[k] != null) o[k] = s[k]; }); return o; }
+// Done marker.
 function doneMark(size, extraStyle){
+  if (S.mark === 'bowtie'){
+    return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center'}, _posOnly(extraStyle))},
+      bowSvg(Math.round(size*1.28), BOW_PINK, BOW_LINE, 5));
+  }
   const gi = Math.round(size * 0.56);
-  const node = h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:_markInk(),display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, '+_markInk()+' 45%, transparent)'}, extraStyle || {})},
-    svg({viewBox:'0 0 24 24',width:gi,height:gi}, _markGlyph('#fff')));
-  return node;
+  return h('div', {style:Object.assign({width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',background:'var(--color-accent)',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 3px 8px color-mix(in srgb, var(--color-accent) 45%, transparent)'}, extraStyle || {})},
+    svg({viewBox:'0 0 24 24',width:gi,height:gi}, '<path fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>'));
 }
-// Empty "holster": faint dashed ring + ghost glyph, shown on scheduled-but-not-done days.
+// Empty "holster": faint ghost of the mark, shown on scheduled-but-not-done days.
 function holsterMark(size){
-  const gi = Math.round(size * 0.5);
-  const ghost = 'color-mix(in srgb, '+_markInk()+' 45%, transparent)';
-  return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',border:'2px dashed color-mix(in srgb, '+_markInk()+' 42%, transparent)',display:'flex',alignItems:'center',justifyContent:'center'}},
-    svg({viewBox:'0 0 24 24',width:gi,height:gi}, _markGlyph(ghost)));
+  if (S.mark === 'bowtie'){
+    return h('div', {style:{width:size+'px',height:size+'px',flex:'none',display:'flex',alignItems:'center',justifyContent:'center',opacity:'.4'}},
+      bowSvg(Math.round(size*1.28), 'none', BOW_LINE, 4));
+  }
+  const gi = Math.round(size * 0.5), ghost = 'color-mix(in srgb, var(--color-accent) 45%, transparent)';
+  return h('div', {style:{width:size+'px',height:size+'px',flex:'none',borderRadius:'999px',border:'2px dashed color-mix(in srgb, var(--color-accent) 42%, transparent)',display:'flex',alignItems:'center',justifyContent:'center'}},
+    svg({viewBox:'0 0 24 24',width:gi,height:gi}, '<path fill="none" stroke="'+ghost+'" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>'));
 }
 // White die-cut rim + drop shadow — the "slapped-on peel-and-stick" look, shared by week strip, calendar, day sheet.
 const STICKER_RIM = '#fff';
