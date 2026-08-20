@@ -1846,6 +1846,8 @@ function openCamera(){
 
   const video = h('video', {autoplay:'', playsinline:'', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'cover',transformOrigin:'center center'}});
   video.muted = true; video.playsInline = true;
+  // 3:4 (portrait "4:3") frame — the visible + captured area.
+  const frame = h('div', {style:{position:'absolute',left:'0',right:'0',top:'50%',transform:'translateY(-50%)',aspectRatio:'3 / 4',overflow:'hidden',background:'#000'}}, video);
   const flashPop = h('div', {style:{position:'absolute',inset:'0',background:'#fff',opacity:'0',pointerEvents:'none',transition:'opacity .18s'}});
 
   const iconBtn = (glyph, extra) => h('button', {style:Object.assign({width:'44px',height:'44px',flex:'none',borderRadius:'999px',border:'none',background:'rgba(255,255,255,.16)',color:'#fff',cursor:'pointer',fontSize:'18px',display:'flex',alignItems:'center',justifyContent:'center'}, extra||{})}, glyph);
@@ -1854,19 +1856,24 @@ function openCamera(){
   const flashBtn = iconBtn('⚡');
   const topBar = h('div', {style:{position:'absolute',top:'0',left:'0',right:'0',display:'flex',justifyContent:'space-between',padding:'46px 20px 0',zIndex:'2'}}, closeBtn, h('div', {style:{display:'flex',gap:'12px'}}, flipBtn, flashBtn));
 
-  const zoomInput = h('input', {type:'range', min:'1', max:'4', step:'0.1', value:'1', style:{width:'70%',accentColor:'#fff'}});
+  // Zoom preset buttons (0.5× / 1× / 2×).
+  const zoomLevels = [0.5, 1, 2];
+  const zoomBtns = zoomLevels.map(z => h('button', {style:{minWidth:'46px',height:'34px',borderRadius:'999px',border:'none',cursor:'pointer',fontFamily:'var(--font-heading)',fontSize:'13px',background:'rgba(255,255,255,.18)',color:'#fff',padding:'0 12px'}}, (z===1?'1':String(z))+'×'));
+  const zoomRow = h('div', {style:{display:'flex',gap:'10px'}}, ...zoomBtns);
   const shutter = h('button', {style:{width:'74px',height:'74px',flex:'none',borderRadius:'999px',border:'5px solid #fff',background:'rgba(255,255,255,.35)',cursor:'pointer'}});
-  const bottomBar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',flexDirection:'column',alignItems:'center',gap:'18px',padding:'0 20px 42px',zIndex:'2'}}, zoomInput, shutter);
+  const bottomBar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',flexDirection:'column',alignItems:'center',gap:'18px',padding:'0 20px 42px',zIndex:'2'}}, zoomRow, shutter);
 
-  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, video, flashPop, topBar, bottomBar);
+  const overlay = h('div', {style:{position:'fixed',inset:'0',background:'#000',zIndex:'300'}}, frame, flashPop, topBar, bottomBar);
   document.body.appendChild(overlay);
 
+  const effZoom = () => Math.max(1, zoom);   // digital zoom can't go below 1
   const applyView = () => {   // combine zoom + selfie mirror on the preview
     const mx = facing === 'user' ? -1 : 1;
-    if (hwZoom){ try { track.applyConstraints({advanced:[{zoom:zoom}]}); } catch(_){} video.style.transform = 'scaleX('+mx+')'; }
-    else video.style.transform = 'scale('+(mx*zoom)+','+zoom+')';
+    if (hwZoom){ try { track.applyConstraints({advanced:[{zoom:Math.max((track.getCapabilities&&track.getCapabilities().zoom?track.getCapabilities().zoom.min:1), Math.min((track.getCapabilities&&track.getCapabilities().zoom?track.getCapabilities().zoom.max:zoom), zoom))}]}); } catch(_){} video.style.transform = 'scaleX('+mx+')'; }
+    else video.style.transform = 'scale('+(mx*effZoom())+','+effZoom()+')';
+    zoomBtns.forEach((b,i) => { const on = zoomLevels[i] === zoom; b.style.background = on ? '#fff' : 'rgba(255,255,255,.18)'; b.style.color = on ? '#000' : '#fff'; });
   };
-  zoomInput.addEventListener('input', (e) => { zoom = parseFloat(e.target.value) || 1; applyView(); });
+  zoomBtns.forEach((b,i) => b.addEventListener('click', () => { zoom = zoomLevels[i]; applyView(); }));
 
   let torchOn = false;
   flashBtn.addEventListener('click', () => { if (!track) return; torchOn = !torchOn; try { track.applyConstraints({advanced:[{torch:torchOn}]}); } catch(_){} flashBtn.style.background = torchOn ? '#fff' : 'rgba(255,255,255,.16)'; flashBtn.style.color = torchOn ? '#000' : '#fff'; });
@@ -1876,10 +1883,12 @@ function openCamera(){
 
   const capture = () => {
     if (!video.videoWidth) return;
-    const vw = video.videoWidth, vh = video.videoHeight;
-    let sw = vw, sh = vh, sx = 0, sy = 0;
-    if (!hwZoom && zoom > 1){ sw = vw/zoom; sh = vh/zoom; sx = (vw-sw)/2; sy = (vh-sh)/2; }
-    const scale = Math.min(1, 1080/sw), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
+    const vw = video.videoWidth, vh = video.videoHeight, targ = 3/4;   // portrait 3:4
+    // largest 3:4 rect that fits the sensor
+    let bw, bh; if (vw/vh > targ){ bh = vh; bw = vh*targ; } else { bw = vw; bh = vw/targ; }
+    const eff = hwZoom ? 1 : effZoom();                                 // extra digital zoom (crop)
+    const sw = bw/eff, sh = bh/eff, sx = (vw-sw)/2, sy = (vh-sh)/2;
+    const scale = Math.min(1, 1080/sh), cw = Math.round(sw*scale), ch = Math.round(sh*scale);
     const c = document.createElement('canvas'); c.width = cw; c.height = ch;
     const cx = c.getContext('2d'); cx.imageSmoothingQuality = 'high';
     if (facing === 'user'){ cx.translate(cw, 0); cx.scale(-1, 1); }   // match the mirrored selfie preview
@@ -1903,12 +1912,12 @@ function openCamera(){
 
   function startStream(firstTime){
     if (stream) stream.getTracks().forEach(t => t.stop());
-    hwZoom = false; zoom = 1; zoomInput.min = '1'; zoomInput.max = '4'; zoomInput.step = '0.1'; zoomInput.value = '1';
+    hwZoom = false; zoom = 1;
     md.getUserMedia({video:{facingMode:{ideal:facing}, width:{ideal:1920}, height:{ideal:1080}}, audio:false})
       .then(s => {
         stream = s; video.srcObject = s; track = s.getVideoTracks()[0];
         const caps = track.getCapabilities ? track.getCapabilities() : {};
-        if (caps.zoom){ hwZoom = true; zoomInput.min = caps.zoom.min; zoomInput.max = caps.zoom.max; zoomInput.step = caps.zoom.step || 0.1; zoom = caps.zoom.min || 1; zoomInput.value = String(zoom); }
+        if (caps.zoom) hwZoom = true;
         flashBtn.style.display = caps.torch ? '' : 'none';   // torch only on the back camera usually
         applyView();
       })
