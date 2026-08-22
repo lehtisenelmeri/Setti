@@ -83,11 +83,15 @@ The **tab bar** is a **solid `--color-surface` with a 1px divider** - no blur/gl
 - `flameSvg(size, color)` — every streak badge in the UI (Friends strip, friend profile).
 - The **favicon**, **apple-touch-icon** and **manifest icon** — all three are inline `data:` URIs of a coral tile (`rx 5.4` on a 24 grid) plus the same path at `translate(2.72 2.9) scale(.772)`.
 
-If the flame changes, change it in **all four** places or they drift apart. The shape is a deliberate silhouette: one dominant leaning tip, a shorter secondary lick, a wide shallow valley between them, and a fat round base. **No hairline cuts or thin inner flames** — it has to survive a 40px home-screen render and a 22px badge. It was redrawn once already because a smoother version read as a water droplet; if you edit it, re-check it at 40px and 24px before committing.
+If the flame changes, change it in **all four** places (plus `404.html` and the OG script) or they drift apart. The shape is **faceted**: straight angled planes, a tall dominant peak with a shorter second peak beside it, and a wide weighted base that nods at a kettlebell. Ink bbox `x 4.6 y 1.5 w 14.8 h 20`.
 
-**App icon is symbol only.** No wordmark inside the tile — the name already renders under the icon on the home screen, and baking text in forces the mark too small.
+**Two failure modes this mark already hit, do not walk back into them:**
+- A **smooth round bottom** (a semicircle base) makes it read as the **Tinder** logo. That is what the first two drafts did. The faceted top alone does not save it; the giveaway is the base.
+- A **literal kettlebell** (handle arch with a hole over a wide bell) reads as a **padlock, handbag or a person's head and shoulders** at icon size. Tried and rejected.
 
-**`streakBadge(size, count, color)`** — the flame with the streak count set **inside its belly** (`<text>` centred at `12.1, 16`, font-size steps down as the number gets more digits). No pill, no wrapper: one shape carries both the metaphor and the number. Used on the Friends avatar strip (28px), the friend profile (40px) and the Today header (48px). `flameSvg()` is the plain, numberless flame.
+Check any edit at **24px and 40px** (where detail collapses) *and* at 200px+ (where a too-wide base starts to read as a sack). The OG card deliberately renders the flame small for that reason.
+
+**`streakBadge(size, count, color)`** — the flame with the streak count set **inside its belly** (`<text>` centred at `12, 17.2`, font-size steps down as the number gets more digits). No pill, no wrapper: one shape carries both the metaphor and the number. Used on the Friends avatar strip (28px), the friend profile (40px) and the Today header (48px). `flameSvg()` is the plain, numberless flame.
 
 **Wordmark** (not used in-app; lives as a brand asset): `TORCH` set in Barlow Condensed 700 with the flame occupying the O slot. Measured, not eyeballed — at `font-size 200`: cap height 141, advances `T 93.60 · O 94.60 · R 94.21 · C 92.80 · H 96.00`, O ink `83 × 143`. The flame gets its own slightly wider slot (advance 102, ink 90 × 150, so it overshoots the cap line by 7 like a pointed glyph should) via `translate(71.674 38.63) scale(6.0708 7.4272)`, with `RCH` starting at `x 195.6`. The non-uniform scale is intentional: a condensed wordmark needs a condensed flame.
 
