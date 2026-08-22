@@ -2,7 +2,7 @@
 
 Treenipäiväkirja ja treenikaverit. Yksi HTML-tiedosto, ei riippuvuuksia, ei build-vaihetta. Toimii selaimessa ja tallentaa treenit paikallisesti.
 
-**Live:** https://lehtisenelmeri.github.io/Setti/
+**Live:** https://lehtisenelmeri.github.io/torch/
 
 ## Ominaisuudet
 
