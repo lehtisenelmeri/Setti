@@ -1,26 +1,32 @@
-# SETTI
+# TORCH
 
-Minimalistinen treenisovellus — yksi HTML-tiedosto, ei riippuvuuksia. Toimii selaimessa, tallentaa treenit paikallisesti.
+Treenipäiväkirja ja treenikaverit. Yksi HTML-tiedosto, ei riippuvuuksia, ei build-vaihetta. Toimii selaimessa ja tallentaa treenit paikallisesti.
+
+**Live:** https://lehtisenelmeri.github.io/Setti/
 
 ## Ominaisuudet
 
-- **Treenin logaus** — liikkeet, sarjat, painot ja toistot. Volyymi ja ennätykset lasketaan automaattisesti.
-- **Millisekuntikello** — treenin kesto reaaliajassa (`H:MM:SS.mmm`).
-- **Lepoajastin** — countdown, kesto valittavissa (1:00–3:00), "Valmiina" ajan päättyessä.
-- **Treenipohjat** — tallenna treeni pohjaksi ja toista se myöhemmin.
-- **Viikko-ohjelmointi** — kiinnitä pohja viikonpäiville, sovellus ehdottaa päivän treeniä.
-- **Historia** — kaikki tallennetut treenit, volyymit ja sarjat.
+- **Treenin kirjaus** - liikkeet, sarjat, painot ja toistot. Volyymi ja arvioitu 1RM lasketaan automaattisesti.
+- **Lepoajastin** - countdown-rengas sarjojen välissä, kesto säädettävissä.
+- **Kardio** - sekuntikello (aloita, pysäytä, jatka) painojen sijaan.
+- **Splitit** - valmiit mallit (PPL, Upper/Lower, Arnold, Bro, Full Body) tai oma. Kiinnitä liikkeet viikonpäiville, sovellus ehdottaa päivän treenin.
+- **Kehitys** - kuukausikalenteri, eniten kehittynyt liike, lihastasapaino.
+- **Kaverit** - aktiviteettifeedi, treenistriikit, salikutsut. Demodatalla; backend-sauma on `Social`-objektissa.
+- **Kuva treenistä** - sisäänrakennettu kamera (etu/taka, zoom, salama) tai tiedostovalinta.
+- **Varmuuskopio** - vie ja tuo kaikki data JSON-tiedostona.
 
 ## Käyttö
 
 Avaa `index.html` selaimessa. Ei asennusta, ei palvelinta.
 
-Tai käytä GitHub Pagesin kautta (Settings → Pages → Deploy from branch → `main` / root).
+Kamera vaatii HTTPS-origin, eli se toimii vain julkaistussa osoitteessa tai oikealla puhelimella, ei `file:`-protokollalla.
 
 ## Tallennus
 
-Data tallentuu `window.storage`-rajapintaan; jos ei saatavilla, muistiin istunnon ajaksi. Ei ulkoisia palveluita, ei seurantaa.
+`localStorage`, avainprefix `setti.*` (historiallinen, säilytetty jotta vanhat treenit eivät katoa). Ei ulkoisia palveluita, ei seurantaa.
 
 ## Tekniikka
 
-Yksi tiedosto: HTML + CSS + vanilla JS. Fontit Google Fonts -importilla (Anton, Archivo, JetBrains Mono).
+Yksi tiedosto: HTML + CSS + vanilla JS. Ei kirjastoja, ei framework-riippuvuuksia. Fontit Google Fontsista (Barlow Condensed, Figtree).
+
+Asennettavissa kotinäytölle: PWA-manifesti ja ikoni ovat inline `data:`-URI:na.
