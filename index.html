@@ -3,7 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
-<title>Torch</title>
+<title>Torch — workout log &amp; streaks</title>
+<meta name="description" content="Log your lifts, follow a split, and keep your streak alive. Torch runs entirely in your browser and stores every session on your own device." />
+<!-- Link previews (shared in chats, which is how this app actually spreads). Absolute URLs
+     are required here - crawlers can't resolve relative paths or data: URIs. -->
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Torch" />
+<meta property="og:title" content="Torch — workout log &amp; streaks" />
+<meta property="og:description" content="Log your lifts, follow a split, and keep your streak alive. Everything stays on your device." />
+<meta property="og:url" content="https://lehtisenelmeri.github.io/Setti/" />
+<meta property="og:image" content="https://lehtisenelmeri.github.io/Setti/og.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="The Torch flame on a coral field, beside the word Torch." />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="theme-color" content="#FB5A34" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -1502,7 +1515,7 @@ function viewFriends(){
       return h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'14px 16px',marginBottom:'12px'}},
         header,
         h('div', {style:{position:'relative',borderRadius:'12px',overflow:'hidden',marginBottom:'12px',background:'#000'}},
-          h('img', {src:a.photo, style:{display:'block',width:'100%',height:'auto'}}),
+          h('img', {src:a.photo, alt:(isMe ? 'Photo from your ' : 'Photo from ' + fr.name + '’s ') + a.name + ' session', style:{display:'block',width:'100%',height:'auto'}}),
           h('div', {style:{position:'absolute',left:'0',right:'0',bottom:'0',height:'88px',background:'linear-gradient(transparent, rgba(0,0,0,.72))'}}),
           h('div', {style:{position:'absolute',left:'14px',bottom:'12px',right:'14px'}},
             h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'24px',color:'#fff',lineHeight:'1.05'}}, a.name),
@@ -1660,7 +1673,7 @@ function viewFriendProfile(){
     h('div', {style:{fontSize:'11px',letterSpacing:'0',fontWeight:'700',color:'var(--color-accent-700)',marginBottom:'6px'}}, last ? parseYmd(last.date).toLocaleString('en-US',{month:'short',day:'numeric'}) : 'No workouts yet'),
     last ? h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'23px',marginBottom:'2px'}}, last.name) : null,
     last ? h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',marginBottom:'8px'}}, last.mins + ' min · ' + Math.round(last.vol) + ' kg') : null,
-    last && last.photo ? h('img', {src:last.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',margin:'4px 0 6px'}}) : null,
+    last && last.photo ? h('img', {src:last.photo, alt:'Photo from ' + fr.name + '’s ' + last.name + ' session', style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',margin:'4px 0 6px'}}) : null,
     ...setRows
   );
 
@@ -2214,7 +2227,7 @@ function viewWorkout(){
       // Attach a photo - opens the in-app camera; shows in your day-detail and the friends feed.
       w.photo
         ? h('div', {style:{position:'relative',marginTop:'14px'}},
-            h('img', {src:w.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)'}}),
+            h('img', {src:w.photo, alt:'Photo you attached to this session', style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)'}}),
             h('button', {title:'Retake', style:{position:'absolute',top:'8px',right:'8px',display:'flex',alignItems:'center',gap:'6px',borderRadius:'12px',border:'none',background:'rgba(0,0,0,.6)',color:'#fff',cursor:'pointer',fontSize:'13px',fontFamily:'var(--font-heading)',padding:'8px 12px'}, onClick:openCamera}, '↺ Retake'))
         : h('button', {style:{width:'100%',marginTop:'14px',border:'1px dashed var(--color-neutral-400)',background:'transparent',cursor:'pointer',borderRadius:'var(--radius-md)',padding:'16px',fontFamily:'var(--font-heading)',fontSize:'14px',color:'var(--color-text)'}, hover:{background:'color-mix(in srgb, var(--color-text) 5%, transparent)'}, onClick:openCamera}, 'Add a photo'),
       h('button', {style:primaryBtn({marginTop:'16px',padding:'19px',fontSize:'19px'}), hover:primaryHover, active:primaryActive, onClick:saveSession}, 'Finish')
@@ -2470,7 +2483,7 @@ function viewDayDetail(){
         h('div', {style:{fontFamily:'var(--font-heading)',fontSize:'21px'}}, sess.name),
         h('div', {style:{fontSize:'12px',color:'var(--color-neutral-600)',fontWeight:'600'}}, Math.round(sess.vol) + ' kg · ' + sess.mins + ' min')
       ),
-      sess.photo ? h('img', {src:sess.photo, style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',marginBottom:'10px'}}) : null,
+      sess.photo ? h('img', {src:sess.photo, alt:'Photo from your ' + sess.name + ' session', style:{display:'block',width:'100%',height:'auto',borderRadius:'var(--radius-md)',marginBottom:'10px'}}) : null,
       h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',padding:'4px 16px',boxShadow:'var(--shadow-sm)'}}, ...setRows)
     );
   }) : [h('div', {style:{fontSize:'14px',color:'var(--color-neutral-600)',padding:'8px 0 20px'}}, 'Nothing logged this day.')];
@@ -2622,11 +2635,22 @@ function viewSettings(){
 
   const reset = h('button', {style:{width:'100%',border:'1px solid var(--color-divider)',background:'transparent',cursor:'pointer',borderRadius:'12px',padding:'14px',fontFamily:'var(--font-heading)',fontSize:'16px',color:'var(--color-accent-700)'}, hover:{background:'color-mix(in srgb, var(--color-accent) 10%, transparent)'}, onClick:() => setState({confirm:{title:'Reset demo data?', body:'All logged sessions will be cleared and your split reset. This cannot be undone.', ok:'Reset', run:() => setState({confirm:null, week:clone(PLANS[S.planId].week), hist:clone(HISTORY), log:[], w:null, overlay:null})}})}, 'Reset demo data')
 
+  // The honest version of a privacy policy: it fits in a card because the app
+  // genuinely does not phone home. Keep this truthful - if a backend or analytics
+  // ever lands, this text has to change with it.
+  const privacy = h('div', {style:{background:'var(--color-surface)',borderRadius:'var(--radius-md)',boxShadow:'var(--shadow-sm)',padding:'18px 20px',marginBottom:'18px'}},
+    h('div', {style:{fontSize:'15px',lineHeight:'1.55',color:'var(--color-neutral-700)'}},
+      'Every session, photo and setting is stored on this device only, in your browser. There is no account, no server and no analytics, so nothing you log is sent anywhere.'),
+    h('div', {style:{fontSize:'15px',lineHeight:'1.55',color:'var(--color-neutral-700)',marginTop:'10px'}},
+      'That also means clearing your browser data deletes it. Use Export above to keep a copy.')
+  );
+
   return h('div', {style:{padding:'6px 22px 152px'}},
     h('h2', {style:{fontFamily:'var(--font-heading)',fontSize:'34px',margin:'0 0 16px'}}, 'Settings'),
     profile,
     sectionLbl('General'), general,
     sectionLbl('Account'), account,
+    sectionLbl('Your data'), privacy,
     reset,
     h('div', {style:{textAlign:'center',fontSize:'11px',color:'var(--color-neutral-500)',marginTop:'18px'}}, 'Torch · v1.0')
   );
@@ -2715,7 +2739,7 @@ function openCamera(){
   shutter.addEventListener('click', capture);
 
   function showPreview(url){
-    const img = h('img', {src:url, style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'contain',background:'#000',zIndex:'3'}});
+    const img = h('img', {src:url, alt:'Photo you just took, for review', style:{position:'absolute',inset:'0',width:'100%',height:'100%',objectFit:'contain',background:'#000',zIndex:'3'}});
     const btn = (label, primary) => h('button', {style:{flex:'1',border:primary?'none':'1px solid rgba(255,255,255,.5)',background:primary?'#fff':'transparent',color:primary?'#000':'#fff',cursor:'pointer',borderRadius:'999px',padding:'15px',fontFamily:'var(--font-heading)',fontSize:'16px'}}, label);
     const retake = btn('↺ Retake', false), use = btn('Use photo', true);
     const pbar = h('div', {style:{position:'absolute',bottom:'0',left:'0',right:'0',display:'flex',gap:'12px',padding:'0 20px 42px',zIndex:'4'}}, retake, use);
@@ -2754,8 +2778,23 @@ function viewEditProfile(){
   let nameInput = h('input', {value:S.uname, maxlength:'20', disabled:locked||undefined,
     style:{width:'100%',border:'1px solid var(--color-divider)',borderRadius:'12px',background:(locked?'var(--color-neutral-200)':'var(--color-bg)'),color:(locked?'var(--color-neutral-600)':'var(--color-text)'),fontFamily:'var(--font-heading)',fontSize:'18px',padding:'12px 14px',outline:'none'}});
 
+  // Inline validation. Handled imperatively so a keystroke-level error doesn't
+  // need a full re-render (which would blow away the caret).
+  const err = h('div', {style:{fontSize:'12px',fontWeight:'700',color:'#e5484d',marginTop:'8px',display:'none'}});
+  const showErr = (msg) => {
+    err.textContent = msg || '';
+    err.style.display = msg ? 'block' : 'none';
+    nameInput.style.borderColor = msg ? '#e5484d' : 'var(--color-divider)';
+  };
+  nameInput.addEventListener('input', () => showErr(null));
+
   const save = () => {
     const v = (nameInput.value || '').trim();
+    if (!locked){
+      // Silently discarding an empty name (the old behaviour) reads as a broken Save.
+      if (!v){ showErr('Your username can’t be empty.'); nameInput.focus(); return; }
+      if (v.length < 2){ showErr('Use at least 2 characters.'); nameInput.focus(); return; }
+    }
     const patch = {editProfile:false};
     if (!locked && v && v !== S.uname){ patch.uname = v; patch.unameAt = now; }
     setState(patch);
@@ -2779,6 +2818,7 @@ function viewEditProfile(){
     // Username - once a week.
     h('div', {style:{fontSize:'11px',letterSpacing:'0',fontWeight:'700',color:'var(--color-neutral-700)',marginBottom:'8px'}}, 'Username'),
     nameInput,
+    err,
     h('div', {style:{fontSize:'12px',color:(locked?'var(--color-accent-700)':'var(--color-neutral-600)'),marginTop:'8px'}},
       locked ? 'You can change your username again in ' + daysLeft + ' day' + (daysLeft>1?'s':'') + '.' : 'You can change your username once a week.'),
 
